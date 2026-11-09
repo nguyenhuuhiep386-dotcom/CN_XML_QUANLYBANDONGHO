@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DanhSachLichHen>
+  <LichHen>
+    <MaLH>LH20260001</MaLH>
+    <MaKH>KH002</MaKH>
+    <MaMau>DH003</MaMau>
+    <Showroom>Showroom Đà Nẵng</Showroom>
+    <NgayHen>2026-11-15T10:00:00</NgayHen>
+    <HoTen>Lê Thị Bình</HoTen>
+    <SoDienThoai>0900123456</SoDienThoai>
+    <GhiChu>Muốn xem trực tiếp mặt số</GhiChu>
+    <TrangThai>ChoXacNhan</TrangThai>
+    <NgayTao>2026-11-06T20:00:00</NgayTao>
+  </LichHen>
+  <LichHen>
+    <MaLH>LH20260002</MaLH>
+    <MaKH>KH001</MaKH>
+    <MaMau>DH001</MaMau>
+    <Showroom>Showroom Đà Nẵng</Showroom>
+    <NgayHen>2026-10-28T15:30:00</NgayHen>
+    <HoTen>Nguyễn Văn An</HoTen>
+    <SoDienThoai>0900111222</SoDienThoai>
+    <TrangThai>HoanTat</TrangThai>
+    <MaNVXuLy>NV002</MaNVXuLy>
+    <NgayTao>2026-10-26T09:00:00</NgayTao>
+  </LichHen>
+</DanhSachLichHen>

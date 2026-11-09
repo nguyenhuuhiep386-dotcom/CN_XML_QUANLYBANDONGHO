@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DanhSachTaiKhoan>
+  <TaiKhoan>
+    <MaTK>TK001</MaTK>
+    <Email>admin@aurel.vn</Email>
+    <MatKhauHash>AQAAAAIAAYagAAAAEMed5yP+8lTNSKHI8v2XXq8qZTYIsKl5g/5ksb4NMG5JepTe1oa06O9kcuXL8sgrhA==</MatKhauHash>
+    <VaiTro>Admin</VaiTro>
+    <TrangThai>HoatDong</TrangThai>
+    <NgayTao>2026-10-01T08:00:00</NgayTao>
+  </TaiKhoan>
+  <TaiKhoan>
+    <MaTK>TK002</MaTK>
+    <Email>nhanvien@aurel.vn</Email>
+    <MatKhauHash>AQAAAAIAAYagAAAAEHH8Tl1CyKlQYEnjmOWRus5/rBWJ/K5uImxa8oLczFkWIOfMm9kYvtP4EAt2YRqduA==</MatKhauHash>
+    <VaiTro>NhanVien</VaiTro>
+    <TrangThai>HoatDong</TrangThai>
+    <NgayTao>2026-10-01T08:05:00</NgayTao>
+  </TaiKhoan>
+  <TaiKhoan>
+    <MaTK>TK003</MaTK>
+    <Email>khach1@gmail.com</Email>
+    <MatKhauHash>AQAAAAIAAYagAAAAEPPoXl0ZY2hB9ysbeYQ6Utq5T7+PS9x6FhMBLPLq22JhUy0st3z0ey9xBPkOnpnHLA==</MatKhauHash>
+    <VaiTro>KhachHang</VaiTro>
+    <TrangThai>HoatDong</TrangThai>
+    <NgayTao>2026-10-25T19:20:00</NgayTao>
+  </TaiKhoan>
+  <TaiKhoan>
+    <MaTK>TK004</MaTK>
+    <Email>khach2@gmail.com</Email>
+    <MatKhauHash>AQAAAAIAAYagAAAAEL2JLePCJfk6JqODCRgzQ/0PZD94iPYMLNWO9XyteP7NnikQkAfW3MxLdTPjrLjRBw==</MatKhauHash>
+    <VaiTro>KhachHang</VaiTro>
+    <TrangThai>HoatDong</TrangThai>
+    <NgayTao>2026-11-05T21:10:00</NgayTao>
+  </TaiKhoan>
+</DanhSachTaiKhoan>

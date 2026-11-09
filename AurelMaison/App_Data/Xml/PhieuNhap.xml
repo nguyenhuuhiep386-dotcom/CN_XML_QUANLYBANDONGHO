@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DanhSachPhieuNhap>
+  <PhieuNhap>
+    <MaPN>PN001</MaPN>
+    <NgayNhap>2026-10-20T09:00:00</NgayNhap>
+    <MaNV>NV001</MaNV>
+    <GhiChu>Nhập lô đầu tiên</GhiChu>
+  </PhieuNhap>
+  <PhieuNhap>
+    <MaPN>PN002</MaPN>
+    <NgayNhap>2026-11-03T10:30:00</NgayNhap>
+    <MaNV>NV001</MaNV>
+    <GhiChu>Bổ sung Rolex Datejust</GhiChu>
+  </PhieuNhap>
+</DanhSachPhieuNhap>

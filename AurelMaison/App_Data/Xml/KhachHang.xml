@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DanhSachKhachHang>
+  <KhachHang>
+    <MaKH>KH001</MaKH>
+    <MaTK>TK003</MaTK>
+    <HoTen>Nguyễn Văn An</HoTen>
+    <SoDienThoai>0900111222</SoDienThoai>
+    <Email>khach1@gmail.com</Email>
+    <DiaChi>12 Lê Duẩn, Hải Châu, Đà Nẵng</DiaChi>
+    <NgayTao>2026-10-25T19:20:00</NgayTao>
+  </KhachHang>
+  <KhachHang>
+    <MaKH>KH002</MaKH>
+    <MaTK>TK004</MaTK>
+    <HoTen>Lê Thị Bình</HoTen>
+    <SoDienThoai>0900123456</SoDienThoai>
+    <Email>khach2@gmail.com</Email>
+    <DiaChi>45 Nguyễn Văn Linh, Thanh Khê, Đà Nẵng</DiaChi>
+    <NgayTao>2026-11-05T21:10:00</NgayTao>
+  </KhachHang>
+  <KhachHang>
+    <MaKH>KH003</MaKH>
+    <HoTen>Trần Quốc Cường</HoTen>
+    <SoDienThoai>0911222333</SoDienThoai>
+    <NgayTao>2026-11-02T15:00:00</NgayTao>
+  </KhachHang>
+</DanhSachKhachHang>

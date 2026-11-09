@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DanhSachHangSanXuat>
+  <HangSanXuat>
+    <MaHang>HG001</MaHang>
+    <TenHang>Rolex</TenHang>
+    <QuocGia>Thụy Sĩ</QuocGia>
+    <MoTa>Đồng hồ cơ cao cấp, nổi bật với dòng Oyster Perpetual.</MoTa>
+  </HangSanXuat>
+  <HangSanXuat>
+    <MaHang>HG002</MaHang>
+    <TenHang>Patek Philippe</TenHang>
+    <QuocGia>Thụy Sĩ</QuocGia>
+    <MoTa>Thương hiệu đồng hồ cơ truyền thống, dòng Calatrava.</MoTa>
+  </HangSanXuat>
+  <HangSanXuat>
+    <MaHang>HG003</MaHang>
+    <TenHang>Audemars Piguet</TenHang>
+    <QuocGia>Thụy Sĩ</QuocGia>
+    <MoTa>Nổi tiếng với dòng Royal Oak vỏ bát giác.</MoTa>
+  </HangSanXuat>
+  <HangSanXuat>
+    <MaHang>HG004</MaHang>
+    <TenHang>Cartier</TenHang>
+    <QuocGia>Pháp</QuocGia>
+    <MoTa>Đồng hồ thời trang cao cấp, dòng Santos và Tank.</MoTa>
+  </HangSanXuat>
+  <HangSanXuat>
+    <MaHang>HG005</MaHang>
+    <TenHang>Omega</TenHang>
+    <QuocGia>Thụy Sĩ</QuocGia>
+    <MoTa>Dòng Speedmaster và Seamaster.</MoTa>
+  </HangSanXuat>
+</DanhSachHangSanXuat>

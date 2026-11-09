@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DanhSachPhieuBaoHanh>
+  <PhieuBaoHanh>
+    <MaPBH>BH20260012</MaPBH>
+    <MaDon>AM20260012</MaDon>
+    <Serial>DEMO012</Serial>
+    <MaKH>KH001</MaKH>
+    <NgayBatDau>2026-11-01</NgayBatDau>
+    <NgayHetHan>2028-11-01</NgayHetHan>
+    <MaNVLap>NV002</MaNVLap>
+    <GhiChu>Đủ hộp và giấy tờ</GhiChu>
+  </PhieuBaoHanh>
+</DanhSachPhieuBaoHanh>
