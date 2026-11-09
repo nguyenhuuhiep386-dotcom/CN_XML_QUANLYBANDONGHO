@@ -1,0 +1,134 @@
+@model DongHoIndexVM
+@{
+    ViewData["Title"] = "Đồng hồ & kho";
+    var hs = Model.HangDangSua;
+}
+
+<p class="am-duongdan">AUREL / Đồng hồ &amp; kho</p>
+<h1 class="am-tieude">Danh mục đồng hồ</h1>
+<p class="am-mota">Mẫu sản phẩm và hồ sơ từng chiếc.</p>
+
+<div class="am-hang-nut">
+    <a class="am-nut rong-300" asp-action="Them">+ Thêm đồng hồ</a>
+    <a class="am-nut phu rong-330" asp-controller="Kho" asp-action="Index">Serial / nhập kho</a>
+</div>
+
+<form method="get" class="am-loc" role="search">
+    <div class="am-truong rong">
+        <label for="tuKhoa">Tìm theo mã, tên, hãng</label>
+        <input class="am-o nho" id="tuKhoa" name="tuKhoa" value="@Model.TuKhoa" placeholder="Ví dụ: Datejust, DH003" />
+    </div>
+    <div class="am-truong">
+        <label for="maHang">Hãng</label>
+        <select class="am-o nho" id="maHang" name="maHang">
+            <option value="">Tất cả hãng</option>
+            @foreach (var h in Model.Hang)
+            {
+                <option value="@h.MaHang" selected="@(h.MaHang == Model.MaHang)">@h.TenHang</option>
+            }
+        </select>
+    </div>
+    <div class="am-truong">
+        <label for="trangThai">Trạng thái</label>
+        <select class="am-o nho" id="trangThai" name="trangThai">
+            <option value="">Tất cả</option>
+            <option value="@TrangThaiMau.DangBan" selected="@(Model.TrangThai == TrangThaiMau.DangBan)">Đang bán</option>
+            <option value="@TrangThaiMau.NgungBan" selected="@(Model.TrangThai == TrangThaiMau.NgungBan)">Ngừng bán</option>
+        </select>
+    </div>
+    <button type="submit" class="am-nut-nho dam">Lọc</button>
+    <a class="am-nut-nho" asp-action="Index">Xóa lọc</a>
+</form>
+
+<div class="am-bang-boc">
+    <table class="am-bang">
+        <thead>
+            <tr>
+                <th>Mã mẫu</th>
+                <th>Tên</th>
+                <th>Hãng</th>
+                <th>Giá minh họa</th>
+                <th>Còn hàng</th>
+                <th>Trạng thái</th>
+                <th class="thao-tac"><span class="visually-hidden">Thao tác</span></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var m in Model.DanhSach)
+            {
+                var ngung = m.TrangThai == TrangThaiMau.NgungBan;
+                <tr class="@(ngung ? "mo" : null)">
+                    <td>@m.MaMau</td>
+                    <td>@m.TenMau</td>
+                    <td>@m.TenHang</td>
+                    <td>@HienThi.Tien(m.Gia)</td>
+                    <td><a asp-controller="Kho" asp-action="Index" asp-route-maMau="@m.MaMau">@m.SoConHang chiếc</a></td>
+                    <td><span class="am-nhan @(ngung ? "xau" : null)">@HienThi.TrangThaiMau(m.TrangThai)</span></td>
+                    <td class="thao-tac">
+                        <a class="am-nut-nho" asp-action="Sua" asp-route-id="@m.MaMau">Chỉnh sửa</a>
+                        <form method="post" asp-action="DoiTrangThai" asp-route-id="@m.MaMau" class="am-nho">
+                            <input type="hidden" name="trangThai" value="@(ngung ? TrangThaiMau.DangBan : TrangThaiMau.NgungBan)" />
+                            <button type="submit" class="am-nut-nho">@(ngung ? "Mở bán lại" : "Ngừng bán")</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            @if (Model.DanhSach.Count == 0)
+            {
+                <tr><td colspan="7" class="trong">Không có mẫu nào khớp bộ lọc.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<h2 class="am-khoi-tieude" id="hang">Hãng sản xuất</h2>
+<div class="am-hai-cot">
+    <div class="am-bang-boc">
+        <table class="am-bang">
+            <thead>
+                <tr><th>Mã</th><th>Tên hãng</th><th>Quốc gia</th><th>Số mẫu</th><th class="thao-tac"><span class="visually-hidden">Thao tác</span></th></tr>
+            </thead>
+            <tbody>
+                @foreach (var h in Model.Hang)
+                {
+                    <tr>
+                        <td>@h.MaHang</td>
+                        <td>@h.TenHang</td>
+                        <td>@h.QuocGia</td>
+                        <td>@h.SoMau</td>
+                        <td class="thao-tac">
+                            <a class="am-nut-nho" asp-action="Index" asp-route-suaHang="@h.MaHang" asp-fragment="hang">Sửa</a>
+                            <form method="post" asp-action="XoaHang" class="am-nho"
+                                  data-hoi="Xóa hãng @h.TenHang?" onsubmit="return confirm(this.dataset.hoi);">
+                                <input type="hidden" name="maHang" value="@h.MaHang" />
+                                <button type="submit" class="am-nut-nho xoa">Xóa</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <form method="post" asp-action="LuuHang" class="am-khoi">
+        <h3 class="am-khoi-tieude" style="font-size:18px">@(hs == null ? "Thêm hãng" : $"Sửa hãng {hs.MaHang}")</h3>
+        <input type="hidden" name="maHang" value="@hs?.MaHang" />
+        <div class="am-truong">
+            <label for="tenHang">Tên hãng</label>
+            <input class="am-o" id="tenHang" name="tenHang" value="@hs?.TenHang" required maxlength="100" />
+        </div>
+        <div class="am-truong">
+            <label for="quocGia">Quốc gia</label>
+            <input class="am-o" id="quocGia" name="quocGia" value="@hs?.QuocGia" maxlength="50" />
+        </div>
+        <div class="am-truong">
+            <label for="moTaHang">Mô tả</label>
+            <textarea class="am-o" id="moTaHang" name="moTa" maxlength="500">@hs?.MoTa</textarea>
+        </div>
+        <button type="submit" class="am-nut day">@(hs == null ? "Thêm hãng" : "Lưu hãng")</button>
+        @if (hs != null)
+        {
+            <a class="am-nut phu day" asp-action="Index" asp-fragment="hang">Hủy sửa</a>
+        }
+    </form>
+</div>

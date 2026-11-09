@@ -1,0 +1,38 @@
+@model DongTaiKhoan
+@{
+    var moi = ViewData["Moi"] is true;
+    ViewData["Title"] = moi ? "Đã tạo tài khoản" : "Đã lưu quyền tài khoản";
+}
+
+<p class="am-duongdan">AUREL / @ViewData["Title"]</p>
+<h1 class="am-tieude">@ViewData["Title"]</h1>
+<p class="am-mota">@Model.Email · @HienThi.VaiTro(Model.VaiTro) · @HienThi.TrangThaiTaiKhoan(Model.TrangThai)</p>
+
+<section class="am-ketqua">
+    <span class="am-nhan-ok">THÀNH CÔNG</span>
+    <h2>@ViewData["Title"]</h2>
+    <p>
+        @if (moi)
+        {
+            @:Gửi email và mật khẩu tạm cho nhân viên; họ đổi mật khẩu sau khi đăng nhập.
+        }
+        else if (Model.TrangThai == TrangThaiTaiKhoan.Khoa)
+        {
+            @:Tài khoản đã bị khóa. Nếu người này đang đăng nhập, lần bấm kế tiếp sẽ bị đăng xuất.
+        }
+        else
+        {
+            @:Quyền mới có hiệu lực ngay ở lần bấm kế tiếp của người dùng.
+        }
+    </p>
+    <dl>
+        <dt>Tài khoản</dt><dd>@Model.MaTK · @Model.Email</dd>
+        <dt>Họ tên</dt><dd>@Model.HoTen</dd>
+        <dt>Vai trò</dt><dd>@HienThi.VaiTro(Model.VaiTro)</dd>
+        <dt>Trạng thái</dt><dd>@HienThi.TrangThaiTaiKhoan(Model.TrangThai)</dd>
+        <dt>Hồ sơ</dt><dd>@(Model.MaHoSo ?? "Chưa có")</dd>
+    </dl>
+    <div class="am-hang-nut">
+        <a class="am-nut rong-400" asp-action="Index">Tiếp tục</a>
+    </div>
+</section>

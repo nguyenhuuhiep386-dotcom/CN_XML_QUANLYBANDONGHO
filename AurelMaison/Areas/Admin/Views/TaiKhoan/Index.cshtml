@@ -1,0 +1,128 @@
+@model TaiKhoanIndexVM
+@{
+    ViewData["Title"] = "Tài khoản & phân quyền";
+    var chon = Model.DangChon;
+    var t = Model.Tao;
+    var laChinhMinh = chon != null && chon.MaTK == Model.MaTKDangDung;
+    (string Ma, string Ten)[] vaiTroLoc = [("", "Tất cả"), (VaiTro.KhachHang, "Khách hàng"), (VaiTro.NhanVien, "Nhân viên"), (VaiTro.Admin, "Admin")];
+}
+
+<p class="am-duongdan">AUREL / Tài khoản &amp; phân quyền</p>
+<h1 class="am-tieude">Con người &amp; quyền truy cập</h1>
+<p class="am-mota">Khách hàng · Nhân viên bán hàng · Admin</p>
+
+@if (ViewData["Loi"] is string loi)
+{
+    <div class="am-thongbao loi" role="alert">@loi</div>
+}
+
+<nav class="am-hang-nut" aria-label="Lọc theo vai trò">
+    @foreach (var (ma, ten) in vaiTroLoc)
+    {
+        <a class="am-nut-nho @((Model.VaiTro ?? "") == ma ? "dam" : null)" asp-action="Index" asp-route-vaiTro="@(ma == "" ? null : ma)">@ten</a>
+    }
+</nav>
+
+<div class="am-bang-boc">
+    <table class="am-bang">
+        <thead>
+            <tr><th>Họ tên</th><th>Email</th><th>Vai trò</th><th>Trạng thái</th><th class="thao-tac"><span class="visually-hidden">Thao tác</span></th></tr>
+        </thead>
+        <tbody>
+            @foreach (var d in Model.DanhSach)
+            {
+                <tr>
+                    <td>@d.HoTen @if (d.MaTK == Model.MaTKDangDung) { <span class="am-chu-thich">(bạn)</span> }</td>
+                    <td>@d.Email</td>
+                    <td>@HienThi.VaiTro(d.VaiTro)</td>
+                    <td><span class="am-nhan @(d.TrangThai == TrangThaiTaiKhoan.Khoa ? "xau" : "tot")">@HienThi.TrangThaiTaiKhoan(d.TrangThai)</span></td>
+                    <td class="thao-tac">
+                        <a class="am-nut-nho @(chon?.MaTK == d.MaTK ? "dam" : null)" asp-action="Index" asp-route-vaiTro="@Model.VaiTro" asp-route-chon="@d.MaTK" asp-fragment="phanQuyen">Phân quyền</a>
+                    </td>
+                </tr>
+            }
+            @if (Model.DanhSach.Count == 0)
+            {
+                <tr><td colspan="5" class="trong">Không có tài khoản nào.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="am-hai-cot" id="phanQuyen" style="grid-template-columns: 1fr 1fr">
+    <form method="post" asp-action="CapNhat" class="am-khoi">
+        <h2 class="am-khoi-tieude">Phân quyền</h2>
+        @if (chon == null)
+        {
+            <p class="am-chu-thich">Bấm "Phân quyền" ở một dòng trong bảng để đổi vai trò hoặc khóa tài khoản.</p>
+        }
+        else
+        {
+            <input type="hidden" name="maTK" value="@chon.MaTK" />
+            <div class="am-truong">
+                <span class="am-nhan-truong">Tài khoản</span>
+                <div class="am-o">@chon.Email · @chon.HoTen · @chon.MaTK</div>
+            </div>
+            <div class="am-truong">
+                <label for="vaiTro">Vai trò</label>
+                <select class="am-o" id="vaiTro" name="vaiTro">
+                    <option value="@VaiTro.KhachHang" selected="@(chon.VaiTro == VaiTro.KhachHang)">Khách hàng</option>
+                    <option value="@VaiTro.NhanVien" selected="@(chon.VaiTro == VaiTro.NhanVien)">Nhân viên bán hàng</option>
+                    <option value="@VaiTro.Admin" selected="@(chon.VaiTro == VaiTro.Admin)">Admin</option>
+                </select>
+            </div>
+            <div class="am-truong">
+                <label for="trangThai">Trạng thái</label>
+                <select class="am-o" id="trangThai" name="trangThai">
+                    <option value="@TrangThaiTaiKhoan.HoatDong" selected="@(chon.TrangThai == TrangThaiTaiKhoan.HoatDong)">Hoạt động</option>
+                    <option value="@TrangThaiTaiKhoan.Khoa" selected="@(chon.TrangThai == TrangThaiTaiKhoan.Khoa)">Khóa</option>
+                </select>
+            </div>
+            @if (laChinhMinh)
+            {
+                <p class="am-chu-thich">Đây là tài khoản bạn đang dùng: không thể tự khóa hoặc tự hạ quyền.</p>
+            }
+            else
+            {
+                <p class="am-chu-thich">Người dùng đang đăng nhập sẽ bị đăng xuất ngay ở lần bấm kế tiếp. Vai trò mới chưa có hồ sơ thì hệ thống tự tạo.</p>
+            }
+            <button type="submit" class="am-nut rong-400">Lưu quyền tài khoản</button>
+        }
+    </form>
+
+    <form method="post" asp-action="TaoNhanVien" class="am-khoi">
+        <h2 class="am-khoi-tieude">Tạo tài khoản nhân viên</h2>
+        <div class="am-truong">
+            <label for="Tao_HoTen">Họ tên</label>
+            <input class="am-o" id="Tao_HoTen" name="HoTen" value="@t.HoTen" required maxlength="100" />
+        </div>
+        <div class="am-luoi-2">
+            <div class="am-truong">
+                <label for="Tao_Email">Email đăng nhập</label>
+                <input class="am-o" id="Tao_Email" name="Email" type="email" value="@t.Email" required maxlength="100" />
+            </div>
+            <div class="am-truong">
+                <label for="Tao_MatKhau">Mật khẩu tạm</label>
+                <input class="am-o" id="Tao_MatKhau" name="MatKhauTam" type="text" minlength="6" required autocomplete="off" />
+            </div>
+        </div>
+        <div class="am-luoi-2">
+            <div class="am-truong">
+                <label for="Tao_Sdt">Số điện thoại</label>
+                <input class="am-o" id="Tao_Sdt" name="SoDienThoai" value="@t.SoDienThoai" inputmode="numeric" pattern="\d{9,15}" />
+            </div>
+            <div class="am-truong">
+                <label for="Tao_ChucVu">Chức vụ</label>
+                <input class="am-o" id="Tao_ChucVu" name="ChucVu" value="@t.ChucVu" maxlength="50" placeholder="Tư vấn bán hàng" />
+            </div>
+        </div>
+        <div class="am-truong">
+            <label for="Tao_VaiTro">Vai trò</label>
+            <select class="am-o" id="Tao_VaiTro" name="VaiTro">
+                <option value="@VaiTro.NhanVien" selected="@(t.VaiTro == VaiTro.NhanVien)">Nhân viên bán hàng</option>
+                <option value="@VaiTro.Admin" selected="@(t.VaiTro == VaiTro.Admin)">Admin</option>
+            </select>
+        </div>
+        <button type="submit" class="am-nut rong-400">Tạo tài khoản</button>
+    </form>
+</div>

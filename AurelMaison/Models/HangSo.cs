@@ -33,6 +33,12 @@ public static class TrangThaiChiec
     public const string KhongBan = "KhongBan";
 }
 
+public static class TinhTrangChiec
+{
+    public const string Moi = "Moi";
+    public const string DaSuDung = "DaSuDung";
+}
+
 /// <summary>ChoXacNhan → DaXacNhan → (DangGiao) → HoanTat, hoặc DaHuy.</summary>
 public static class TrangThaiDon
 {

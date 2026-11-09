@@ -30,4 +30,10 @@
     <QuocGia>Thụy Sĩ</QuocGia>
     <MoTa>Dòng Speedmaster và Seamaster.</MoTa>
   </HangSanXuat>
+  <HangSanXuat>
+    <MaHang>HG006</MaHang>
+    <TenHang>Jaeger-LeCoultre</TenHang>
+    <QuocGia>Thụy Sĩ</QuocGia>
+    <MoTa>Nổi tiếng với dòng Reverso mặt lật.</MoTa>
+  </HangSanXuat>
 </DanhSachHangSanXuat>

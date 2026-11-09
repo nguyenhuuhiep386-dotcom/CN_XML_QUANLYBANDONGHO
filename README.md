@@ -67,6 +67,12 @@ var kq = XmlHelper.ChayTrongKhoa(() =>
 - Thao tác ghi hai file: gọi `KiemTraXsd` cho cả hai trước khi `Save` file đầu tiên.
 - XSD làm theo [HangSanXuat.xsd](AurelMaison/App_Data/Xsd/HangSanXuat.xsd): dòng dùng `xs:all` (không dùng `xs:sequence`, vì cột NULL gán sau sẽ nằm cuối dòng), cột NULL có `minOccurs="0"`, khóa chính dùng `xs:key`.
 
+### Đăng nhập và lấy người dùng hiện tại
+
+Tài khoản demo, mật khẩu `123456`: `admin@aurel.vn` (Admin → `/Admin`), `nhanvien@aurel.vn` (NhanVien → `/Staff`), `khach1@gmail.com`, `khach2@gmail.com` (KhachHang → trang chủ).
+
+Mã người đang đăng nhập luôn lấy từ `User`, không nhận từ form: `User.MaKH()`, `User.MaNV()`, `User.MaTK()`, `User.VaiTro()` (cần `using AurelMaison.Services;`). Khu nhân viên dùng `[Authorize(Roles = VaiTro.NhanVienHoacAdmin)]`, khu Admin dùng `[Authorize(Roles = VaiTro.Admin)]`. Đường dẫn `/api/*` trả 401 khi chưa đăng nhập, 403 khi sai vai trò. Tài khoản bị khóa hoặc đổi vai trò bị đăng xuất ngay ở yêu cầu kế tiếp.
+
 ### Chạy dự án
 
 Cần .NET SDK 8 trở lên; máy chỉ có .NET 10 vẫn build và chạy được.

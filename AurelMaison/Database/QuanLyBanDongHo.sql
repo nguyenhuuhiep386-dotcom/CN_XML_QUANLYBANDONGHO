@@ -278,7 +278,8 @@ INSERT INTO dbo.HangSanXuat (MaHang, TenHang, QuocGia, MoTa) VALUES
 ('HG002',N'Patek Philippe',   N'Thụy Sĩ',N'Thương hiệu đồng hồ cơ truyền thống, dòng Calatrava.'),
 ('HG003',N'Audemars Piguet',  N'Thụy Sĩ',N'Nổi tiếng với dòng Royal Oak vỏ bát giác.'),
 ('HG004',N'Cartier',          N'Pháp',   N'Đồng hồ thời trang cao cấp, dòng Santos và Tank.'),
-('HG005',N'Omega',            N'Thụy Sĩ',N'Dòng Speedmaster và Seamaster.');
+('HG005',N'Omega',            N'Thụy Sĩ',N'Dòng Speedmaster và Seamaster.'),
+('HG006',N'Jaeger-LeCoultre', N'Thụy Sĩ',N'Nổi tiếng với dòng Reverso mặt lật.');   -- chưa có mẫu, dùng để demo Xóa hãng
 
 INSERT INTO dbo.DongHo (MaMau, TenMau, MaHang, Gia, LoaiMay, KichThuoc, ChatLieu, MoTa, HinhAnh, ThoiHanBaoHanh, TrangThai) VALUES
 ('DH001',N'Rolex Datejust 36',              'HG001',285000000,N'Automatic',  36.0,N'Thép Oystersteel',  N'Mặt số xám, vành khía, dây Jubilee.',      '/images/dh001.jpg',24,'DangBan'),
