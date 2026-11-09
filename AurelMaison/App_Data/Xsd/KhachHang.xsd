@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+  <xs:element name="DanhSachKhachHang">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="KhachHang" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:all>
+              <xs:element name="MaKH">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:pattern value="KH\d{3,}"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <!-- Khách tại quầy có thể chưa có tài khoản -->
+              <xs:element name="MaTK" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:pattern value="TK\d{3,}"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="HoTen">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:minLength value="1"/>
+                    <xs:maxLength value="100"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="SoDienThoai" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:pattern value="\d{9,15}"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="Email" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="100"/>
+                    <xs:pattern value="[^@\s]+@[^@\s]+"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="DiaChi" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="250"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="NgayTao" type="xs:dateTime"/>
+            </xs:all>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+    <xs:key name="PK_KhachHang">
+      <xs:selector xpath="KhachHang"/>
+      <xs:field xpath="MaKH"/>
+    </xs:key>
+    <!-- Một tài khoản chỉ gắn với một hồ sơ; dòng không có MaTK không bị xét -->
+    <xs:unique name="UX_KhachHang_MaTK">
+      <xs:selector xpath="KhachHang"/>
+      <xs:field xpath="MaTK"/>
+    </xs:unique>
+  </xs:element>
+</xs:schema>

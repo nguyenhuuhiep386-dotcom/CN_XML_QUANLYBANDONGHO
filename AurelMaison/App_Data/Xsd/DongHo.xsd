@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+  <xs:element name="DanhSachDongHo">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="DongHo" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:all>
+              <xs:element name="MaMau">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:pattern value="DH\d{3,}"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="TenMau">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:minLength value="1"/>
+                    <xs:maxLength value="150"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="MaHang">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:pattern value="HG\d{3,}"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="Gia">
+                <xs:simpleType>
+                  <xs:restriction base="xs:decimal">
+                    <xs:minExclusive value="0"/>
+                    <xs:totalDigits value="18"/>
+                    <xs:fractionDigits value="0"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="LoaiMay">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:minLength value="1"/>
+                    <xs:maxLength value="50"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="KichThuoc">
+                <xs:simpleType>
+                  <xs:restriction base="xs:decimal">
+                    <xs:minExclusive value="0"/>
+                    <xs:totalDigits value="4"/>
+                    <xs:fractionDigits value="1"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="ChatLieu">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:minLength value="1"/>
+                    <xs:maxLength value="100"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="MoTa" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="1000"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="HinhAnh" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="255"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="ThoiHanBaoHanh">
+                <xs:simpleType>
+                  <xs:restriction base="xs:int">
+                    <xs:minInclusive value="0"/>
+                    <xs:maxInclusive value="120"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="TrangThai">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:enumeration value="DangBan"/>
+                    <xs:enumeration value="NgungBan"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+            </xs:all>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+    <xs:key name="PK_DongHo">
+      <xs:selector xpath="DongHo"/>
+      <xs:field xpath="MaMau"/>
+    </xs:key>
+  </xs:element>
+</xs:schema>

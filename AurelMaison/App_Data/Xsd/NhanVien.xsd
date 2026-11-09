@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+  <xs:element name="DanhSachNhanVien">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="NhanVien" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:all>
+              <xs:element name="MaNV">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:pattern value="NV\d{3,}"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="MaTK">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:pattern value="TK\d{3,}"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="HoTen">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:minLength value="1"/>
+                    <xs:maxLength value="100"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="SoDienThoai" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:pattern value="\d{9,15}"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="ChucVu">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:minLength value="1"/>
+                    <xs:maxLength value="50"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="NgayVaoLam" type="xs:date"/>
+            </xs:all>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+    <xs:key name="PK_NhanVien">
+      <xs:selector xpath="NhanVien"/>
+      <xs:field xpath="MaNV"/>
+    </xs:key>
+    <xs:unique name="UQ_NhanVien_MaTK">
+      <xs:selector xpath="NhanVien"/>
+      <xs:field xpath="MaTK"/>
+    </xs:unique>
+  </xs:element>
+</xs:schema>

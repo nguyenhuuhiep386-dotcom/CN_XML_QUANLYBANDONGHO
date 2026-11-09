@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  File mẫu cho cả nhóm. Quy ước:
+  - Gốc DanhSach<Bảng> chứa nhiều phần tử <Bảng>; mỗi cột SQL là một phần tử con cùng tên.
+  - Dòng dùng xs:all, không dùng xs:sequence: cột NULL không có trong XML, khi gán sau này
+    SetElementValue thêm vào cuối dòng, xs:sequence sẽ từ chối vì sai thứ tự.
+  - Cột cho phép NULL: minOccurs="0". Cột NOT NULL: bắt buộc, kể cả khi SQL có DEFAULT.
+  - Mã: xs:string + pattern. Tiền: xs:decimal, fractionDigits 0. Ngày: xs:date / xs:dateTime.
+  - Trạng thái: xs:enumeration. Khóa chính: xs:key. Cột UNIQUE: xs:unique.
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+  <xs:simpleType name="MaHangType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="HG\d{3,}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:element name="DanhSachHangSanXuat">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="HangSanXuat" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:all>
+              <xs:element name="MaHang" type="MaHangType"/>
+              <xs:element name="TenHang">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:minLength value="1"/>
+                    <xs:maxLength value="100"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="QuocGia" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="MoTa" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="500"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+            </xs:all>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+    <xs:key name="PK_HangSanXuat">
+      <xs:selector xpath="HangSanXuat"/>
+      <xs:field xpath="MaHang"/>
+    </xs:key>
+    <xs:unique name="UQ_HangSanXuat_Ten">
+      <xs:selector xpath="HangSanXuat"/>
+      <xs:field xpath="TenHang"/>
+    </xs:unique>
+  </xs:element>
+</xs:schema>

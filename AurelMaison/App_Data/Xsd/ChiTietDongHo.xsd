@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+  <!-- Chỉ nhận true/false; xs:boolean thuần còn cho phép 1/0 -->
+  <xs:simpleType name="CoKhongType">
+    <xs:restriction base="xs:boolean">
+      <xs:pattern value="true|false"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:element name="DanhSachChiTietDongHo">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="ChiTietDongHo" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:all>
+              <xs:element name="Serial">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:minLength value="1"/>
+                    <xs:maxLength value="30"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="MaMau">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:pattern value="DH\d{3,}"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="MaPN">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:pattern value="PN\d{3,}"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="TinhTrang">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:enumeration value="Moi"/>
+                    <xs:enumeration value="DaSuDung"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="CoHop" type="CoKhongType"/>
+              <xs:element name="CoGiayTo" type="CoKhongType"/>
+              <xs:element name="TrangThai">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:enumeration value="ConHang"/>
+                    <xs:enumeration value="DaGiu"/>
+                    <xs:enumeration value="DaBan"/>
+                    <xs:enumeration value="KhongBan"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+            </xs:all>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+    <xs:key name="PK_ChiTietDongHo">
+      <xs:selector xpath="ChiTietDongHo"/>
+      <xs:field xpath="Serial"/>
+    </xs:key>
+  </xs:element>
+</xs:schema>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+  <xs:element name="DanhSachTaiKhoan">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="TaiKhoan" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:all>
+              <xs:element name="MaTK">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:pattern value="TK\d{3,}"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="Email">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="100"/>
+                    <xs:pattern value="[^@\s]+@[^@\s]+"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="MatKhauHash">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:minLength value="1"/>
+                    <xs:maxLength value="256"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="VaiTro">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:enumeration value="KhachHang"/>
+                    <xs:enumeration value="NhanVien"/>
+                    <xs:enumeration value="Admin"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="TrangThai">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:enumeration value="HoatDong"/>
+                    <xs:enumeration value="Khoa"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="NgayTao" type="xs:dateTime"/>
+            </xs:all>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+    <xs:key name="PK_TaiKhoan">
+      <xs:selector xpath="TaiKhoan"/>
+      <xs:field xpath="MaTK"/>
+    </xs:key>
+    <xs:unique name="UQ_TaiKhoan_Email">
+      <xs:selector xpath="TaiKhoan"/>
+      <xs:field xpath="Email"/>
+    </xs:unique>
+  </xs:element>
+</xs:schema>
