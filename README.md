@@ -48,6 +48,25 @@ Kiểu dữ liệu: tiền là decimal (VNĐ, không số lẻ); ngày giờ ISO
 
 Mỗi chi tiết đơn = một chiếc. Khách mua 2 chiếc cùng mẫu thì đơn có 2 dòng chi tiết; serial để trống lúc đặt, nhân viên gán khi xác nhận.
 
+### Dùng XmlHelper và viết XSD
+
+Mọi thao tác đọc → kiểm tra → sửa → ghi nằm trong một khối khóa; hàm ghi trả `KetQua`, không ném lỗi ra giao diện:
+
+```csharp
+var kq = XmlHelper.ChayTrongKhoa(() =>
+{
+    var ma = XmlHelper.SinhMa("KH", "KhachHang", "MaKH");       // SinhMa phải cùng khối với lần ghi
+    return XmlHelper.Them("KhachHang", "MaKH", new XElement("KhachHang",
+        new XElement("MaKH", ma),
+        new XElement("HoTen", hoTen),
+        new XElement("NgayTao", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss"))));
+});
+```
+
+- Hàm dùng chung: `Load`, `Save`, `KiemTraXsd`, `TimTheoMa`, `Them`, `Sua`, `Xoa`, `SinhMa`, `XuatHtml`. Khóa ghép như `ChiTietDonHang` (`MaDon` + `STT`) thì dùng `Load` và `Save`.
+- Thao tác ghi hai file: gọi `KiemTraXsd` cho cả hai trước khi `Save` file đầu tiên.
+- XSD làm theo [HangSanXuat.xsd](AurelMaison/App_Data/Xsd/HangSanXuat.xsd): dòng dùng `xs:all` (không dùng `xs:sequence`, vì cột NULL gán sau sẽ nằm cuối dòng), cột NULL có `minOccurs="0"`, khóa chính dùng `xs:key`.
+
 ### Chạy dự án
 
 Cần .NET SDK 8 trở lên; máy chỉ có .NET 10 vẫn build và chạy được.
