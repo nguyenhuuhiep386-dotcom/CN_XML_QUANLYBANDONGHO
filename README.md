@@ -10,7 +10,53 @@ Hệ thống hỗ trợ khách hàng tìm kiếm, đặt mua đồng hồ trực
 
 Dữ liệu nghiệp vụ được tổ chức bằng XML. Hệ thống phân biệt **mẫu đồng hồ** và **từng chiếc đồng hồ theo serial** để theo dõi tồn kho, giao hàng và bảo hành.
 
-**Phạm vi tài liệu:** README mô tả yêu cầu và thiết kế dự kiến của đồ án. Các chức năng dưới đây không phải danh sách xác nhận đã triển khai. Phiên bản .NET và hướng dẫn chạy cụ thể cần được cập nhật theo mã nguồn thực tế.
+**Phạm vi tài liệu:** README mô tả yêu cầu và thiết kế dự kiến của đồ án. Các chức năng dưới đây không phải danh sách xác nhận đã triển khai. Khi có khác biệt, mục **Phạm vi chốt** ngay bên dưới được ưu tiên hơn các mục còn lại, kể cả bảng phân công cũ.
+
+## 📌 Phạm vi chốt
+
+Nhóm làm theo 30 màn hình trên Figma, cộng các mục XML bắt buộc. Công nghệ: ASP.NET Core MVC (.NET 8), LINQ to XML, SQL Server. Lúc chạy, website đọc/ghi file XML; SQL Server là nguồn dữ liệu gốc để xuất ra XML và nhận dữ liệu cập nhật ngược lại.
+
+**Bắt buộc có:**
+
+- 12 bảng SQL ↔ 12 file XML, mỗi file có một XSD và được kiểm tra hợp lệ trước khi ghi.
+- Thêm / sửa / xóa / tìm kiếm trên XML.
+- 3 file XSLT xuất HTML: `DanhMucDongHo`, `PhieuHoaDon`, `BaoCaoDoanhThu`.
+- Chuyển SQL → XML và XML → SQL, sao lưu và phục hồi.
+- Web Service tra cứu bảo hành trả về XML.
+- 3 vai trò Khách / Nhân viên / Admin, kiểm tra quyền ở máy chủ.
+
+**Đưa vào "Hướng phát triển" (không làm):** giỏ hàng lưu theo tài khoản, giá riêng theo từng chiếc, điều chỉnh kho, nhật ký kho, chống gửi lặp, giao dịch nhiều file có rollback, hai nhân viên tranh nhận một việc, liên kết hồ sơ khách tại quầy với tài khoản, RSS/tỷ giá/khuyến mãi.
+
+### Quy ước
+
+Mọi người đọc/ghi XML chỉ qua `XmlHelper` và dịch vụ của người sở hữu file, không tự mở file XML của người khác để ghi.
+
+File XML có gốc `DanhSach<Bảng>`, mỗi dòng là một phần tử `<Bảng>`, mỗi cột là một phần tử con cùng tên cột SQL. XML và XSD cùng tên, ví dụ `Xml/DongHo.xml` và `Xsd/DongHo.xsd`.
+
+| Đối tượng | Mẫu mã | Ví dụ |
+| --- | --- | --- |
+| Tài khoản / Khách / Nhân viên | TK / KH / NV + 3 số | TK001, KH001, NV001 |
+| Hãng / Mẫu đồng hồ | HG / DH + 3 số | HG001, DH001 |
+| Serial | Chuỗi do Admin nhập, duy nhất | DEMO001 |
+| Phiếu nhập | PN + 3 số | PN001 |
+| Đơn hàng | AM + năm + 4 số | AM20260018 |
+| Hóa đơn / Lịch hẹn / Phiếu bảo hành | HD / LH / BH + năm + 4 số | BH20260012 |
+
+Mã trạng thái nằm trong `Models/HangSo.cs`, lưu không dấu, giao diện hiển thị tiếng Việt. Tồn khả dụng = số chiếc `ConHang`, không lưu cột số lượng riêng.
+
+Kiểu dữ liệu: tiền là decimal (VNĐ, không số lẻ); ngày giờ ISO `2026-11-09T14:30:00`; ngày `2026-11-09`; có/không là `true`/`false`. Mật khẩu lưu `SHA256(mật khẩu + Salt)` dạng hex.
+
+Mỗi chi tiết đơn = một chiếc. Khách mua 2 chiếc cùng mẫu thì đơn có 2 dòng chi tiết; serial để trống lúc đặt, nhân viên gán khi xác nhận.
+
+### Chạy dự án
+
+Cần .NET SDK 8 trở lên; máy chỉ có .NET 10 vẫn build và chạy được.
+
+```bash
+dotnet run --project QuanLyBanDongHo.Web --launch-profile http
+```
+
+Website chạy ở `http://localhost:5269`. Chuỗi kết nối nằm trong `appsettings.json`, mặc định là instance `.` với Windows Authentication; đổi thành `.\SQLEXPRESS` nếu máy dùng bản đó.
 
 ## 👥 Thành viên thực hiện & Phân công nhiệm vụ
 

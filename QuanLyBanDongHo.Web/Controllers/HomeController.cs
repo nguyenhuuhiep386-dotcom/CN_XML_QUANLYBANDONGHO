@@ -1,8 +1,8 @@
+using AurelMaison.Models;
 using Microsoft.AspNetCore.Mvc;
-using QuanLyBanDongHo.Web.Models;
 using System.Diagnostics;
 
-namespace QuanLyBanDongHo.Web.Controllers
+namespace AurelMaison.Controllers
 {
     public class HomeController : Controller
     {

@@ -5,3 +5,7 @@
 [Oo]bj/
 *.user
 *.suo
+
+# Bản sao lưu sinh ra lúc chạy
+**/App_Data/Backup/*
+!**/App_Data/Backup/.gitkeep
