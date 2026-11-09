@@ -1,0 +1,57 @@
+@{
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+    string Chon(params string[] ten) => ten.Contains(controller) ? "am-nav dang-chon" : "am-nav";
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] · Quản trị AUREL</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Playfair+Display&display=swap" />
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+</head>
+<body class="am">
+    <header class="am-header">
+        <a class="am-logo" asp-area="Admin" asp-controller="Home" asp-action="Index">AUREL MAISON</a>
+        <div class="am-header-phai">
+            <span class="am-nguoi-dung">@User.Identity?.Name</span>
+            Quản trị hệ thống
+        </div>
+    </header>
+
+    <div class="am-workspace">
+        <nav class="am-sidebar" aria-label="Điều hướng quản trị">
+            <p class="am-sidebar-nhom">Admin</p>
+            <a class="@Chon("Home")" asp-area="Admin" asp-controller="Home" asp-action="Index">Tổng quan</a>
+            <a class="@Chon("DongHo", "Kho")" asp-area="Admin" asp-controller="DongHo" asp-action="Index">Đồng hồ &amp; kho</a>
+            <a class="@Chon("TaiKhoan")" asp-area="Admin" asp-controller="TaiKhoan" asp-action="Index">Tài khoản &amp; quyền</a>
+            <a class="@Chon("BaoCao")" asp-area="Admin" asp-controller="BaoCao" asp-action="Index">Báo cáo doanh thu</a>
+            <a class="@Chon("DuLieu")" asp-area="Admin" asp-controller="DuLieu" asp-action="Index">Dữ liệu XML</a>
+
+            <p class="am-sidebar-nhom">Bán hàng</p>
+            @* Màn đơn, lịch hẹn, bảo hành thuộc khu Staff (Nguyên). *@
+            <a class="am-nav" asp-area="Staff" asp-controller="Home" asp-action="Index">Đơn · Lịch · Bảo hành</a>
+
+            <form method="post" asp-area="" asp-controller="Account" asp-action="Logout">
+                <button type="submit" class="am-nav-dangxuat">Đăng xuất</button>
+            </form>
+        </nav>
+
+        <main class="am-noidung">
+            @if (TempData["Loi"] is string loi)
+            {
+                <div class="am-thongbao loi" role="alert">@loi</div>
+            }
+            @if (TempData["ThongBao"] is string tb)
+            {
+                <div class="am-thongbao ok" role="status">@tb</div>
+            }
+            @RenderBody()
+        </main>
+    </div>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

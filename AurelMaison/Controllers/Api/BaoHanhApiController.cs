@@ -1,19 +1,25 @@
+using AurelMaison.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Xml.Linq;
 
 namespace AurelMaison.Controllers.Api;
 
-/// <summary>Web Service tra cứu bảo hành, trả về XML. Chờ PhieuBaoHanh.xml từ script CSDL.</summary>
+/// <summary>
+/// Web Service tra cứu bảo hành, trả về XML (Nguyên viết phần thân).
+/// Chưa đăng nhập → 401, không phải KhachHang → 403 (cấu hình cookie trong Program.cs).
+/// </summary>
 [ApiController]
 [Route("api/baohanh")]
+[Authorize(Roles = VaiTro.KhachHang)]
 public class BaoHanhApiController : ControllerBase
 {
-    [HttpGet("{serial}")]
-    public ContentResult TraCuu(string serial)
+    [HttpGet("{maPhieu}")]
+    public ContentResult TraCuu(string maPhieu)
     {
         var ketQua = new XDocument(
             new XElement("KetQuaTraCuu",
-                new XElement("Serial", serial),
+                new XElement("MaPhieu", maPhieu),
                 new XElement("ThongBao", "Chưa triển khai")));
 
         return new ContentResult

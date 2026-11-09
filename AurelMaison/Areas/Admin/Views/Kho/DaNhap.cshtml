@@ -1,0 +1,29 @@
+@model DaNhapVM
+@{
+    ViewData["Title"] = "Đã ghi nhận nhập kho";
+    var dsSerial = string.Join(", ", Model.Chiec.Select(c => c.Serial));
+}
+
+<p class="am-duongdan">AUREL / Đã ghi nhận nhập kho</p>
+<h1 class="am-tieude">Đã ghi nhận nhập kho</h1>
+<p class="am-mota">Serial @dsSerial được thêm vào kho.</p>
+
+<section class="am-ketqua">
+    <span class="am-nhan-ok">THÀNH CÔNG</span>
+    <h2>Đã ghi nhận nhập kho</h2>
+    <p>@Model.Chiec.Count chiếc @Model.TenMau đã vào kho, hiện còn @Model.SoConHangMoi chiếc sẵn bán.</p>
+    <dl>
+        <dt>Phiếu nhập</dt><dd>@Model.Phieu.MaPN · @HienThi.NgayGio(Model.Phieu.NgayNhap) · @Model.Phieu.MaNV</dd>
+        <dt>Mẫu</dt><dd>@Model.MaMau · @Model.TenMau</dd>
+        <dt>Serial</dt><dd>@dsSerial</dd>
+        <dt>Còn hàng mới</dt><dd>@Model.SoConHangMoi chiếc</dd>
+        @if (!string.IsNullOrEmpty(Model.Phieu.GhiChu))
+        {
+            <dt>Ghi chú</dt><dd>@Model.Phieu.GhiChu</dd>
+        }
+    </dl>
+    <div class="am-hang-nut">
+        <a class="am-nut rong-400" asp-action="Index" asp-route-maMau="@Model.MaMau">Tiếp tục</a>
+        <a class="am-nut phu rong-300" asp-controller="DongHo" asp-action="Index">Về danh mục đồng hồ</a>
+    </div>
+</section>

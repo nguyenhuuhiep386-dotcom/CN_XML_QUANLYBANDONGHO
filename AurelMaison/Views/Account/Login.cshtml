@@ -1,0 +1,26 @@
+@{
+    ViewData["Title"] = "Đăng nhập";
+}
+
+<div class="row justify-content-center">
+    <div class="col-12 col-sm-8 col-md-5">
+        <h1 class="h4 mb-3">Đăng nhập</h1>
+
+        @if (ViewData["Loi"] is string loi)
+        {
+            <div class="alert alert-danger">@loi</div>
+        }
+
+        <form method="post" asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]">
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input id="email" name="email" type="email" class="form-control" value="@ViewData["Email"]" required autofocus />
+            </div>
+            <div class="mb-3">
+                <label for="matKhau" class="form-label">Mật khẩu</label>
+                <input id="matKhau" name="matKhau" type="password" class="form-control" required />
+            </div>
+            <button type="submit" class="btn btn-dark w-100">Đăng nhập</button>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,114 @@
+@model SuaDongHoVM
+@using System.Globalization
+@{
+    var m = Model.Mau;
+    ViewData["Title"] = Model.LaMoi ? "Thêm đồng hồ" : $"Sửa {m.MaMau}";
+}
+
+<p class="am-duongdan">AUREL / Thêm / sửa đồng hồ</p>
+<h1 class="am-tieude">Thông tin mẫu đồng hồ</h1>
+<p class="am-mota">
+    @(Model.LaMoi ? "Thêm mẫu mới vào danh mục website." : $"Cập nhật nội dung hiển thị trên website · {m.MaMau} · {HienThi.TrangThaiMau(m.TrangThai)}")
+</p>
+
+@if (ViewData["Loi"] is string loi)
+{
+    <div class="am-thongbao loi" role="alert">@loi</div>
+}
+
+<form method="post" asp-action="Luu" enctype="multipart/form-data" class="am-bieumau">
+    <input type="hidden" name="LaMoi" value="@(Model.LaMoi ? "true" : "false")" />
+    <input type="hidden" name="HinhAnh" value="@m.HinhAnh" />
+
+    <div class="am-bieumau-thongtin">
+        <div class="am-luoi-2">
+            <div class="am-truong">
+                <label for="MaMau">Mã mẫu</label>
+                @if (Model.LaMoi)
+                {
+                    <input class="am-o" id="MaMau" name="MaMau" value="@m.MaMau" placeholder="Để trống để tự sinh (DH…)" pattern="DH\d{3,}" maxlength="10" />
+                }
+                else
+                {
+                    <input class="am-o" id="MaMau" name="MaMau" value="@m.MaMau" readonly />
+                }
+            </div>
+            <div class="am-truong">
+                <label for="MaHang">Thương hiệu</label>
+                <select class="am-o" id="MaHang" name="MaHang" required>
+                    <option value="">Chọn hãng</option>
+                    @foreach (var h in Model.Hang)
+                    {
+                        <option value="@h.MaHang" selected="@(h.MaHang == m.MaHang)">@h.TenHang (@h.MaHang)</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="am-truong">
+            <label for="TenMau">Tên đồng hồ</label>
+            <input class="am-o" id="TenMau" name="TenMau" value="@m.TenMau" required maxlength="150" placeholder="Rolex Datejust 36" />
+        </div>
+
+        <div class="am-luoi-2">
+            <div class="am-truong">
+                <label for="Gia">Giá minh họa (₫)</label>
+                <input class="am-o" id="Gia" name="Gia" inputmode="numeric" required
+                       value="@(m.Gia > 0 ? m.Gia.ToString("0", CultureInfo.InvariantCulture) : "")" placeholder="285000000" />
+            </div>
+            <div class="am-truong">
+                <label for="ThoiHanBaoHanh">Thời hạn bảo hành (tháng, 0–120)</label>
+                <input class="am-o" id="ThoiHanBaoHanh" name="ThoiHanBaoHanh" type="number" min="0" max="120" required value="@m.ThoiHanBaoHanh" />
+            </div>
+        </div>
+
+        <div class="am-truong">
+            <span class="am-nhan-truong">Thông số</span>
+            <div class="am-luoi-3">
+                <input class="am-o" name="LoaiMay" value="@m.LoaiMay" required maxlength="50" placeholder="Automatic" aria-label="Loại máy" />
+                <input class="am-o" name="KichThuoc" inputmode="decimal" required aria-label="Kích thước (mm)"
+                       value="@(m.KichThuoc > 0 ? m.KichThuoc.ToString("0.0", CultureInfo.InvariantCulture) : "")" placeholder="36 mm" />
+                <input class="am-o" name="ChatLieu" value="@m.ChatLieu" required maxlength="100" placeholder="Thép Oystersteel" aria-label="Chất liệu" />
+            </div>
+            <p class="am-chu-thich">Loại máy · kích thước mặt (mm) · chất liệu vỏ</p>
+        </div>
+
+        <div class="am-truong">
+            <label for="MoTa">Mô tả</label>
+            <textarea class="am-o" id="MoTa" name="MoTa" maxlength="1000">@m.MoTa</textarea>
+        </div>
+
+        <button type="submit" class="am-nut day">Lưu sản phẩm</button>
+        <a class="am-nut phu day" asp-action="Index">Quay lại danh mục</a>
+    </div>
+
+    <div class="am-bieumau-anh">
+        @if (string.IsNullOrEmpty(m.HinhAnh))
+        {
+            <div class="am-anh am-anh-trong" id="khungAnh">Chưa có ảnh</div>
+            <img class="am-anh" id="xemAnh" alt="" hidden />
+        }
+        else
+        {
+            <img class="am-anh" id="xemAnh" src="@m.HinhAnh" alt="Ảnh @m.TenMau" />
+        }
+        <label class="am-nut phu day" for="anh" style="cursor:pointer">Tải ảnh sản phẩm</label>
+        <input type="file" id="anh" name="anh" accept=".jpg,.jpeg,.png,.webp" class="visually-hidden" />
+        <p class="am-chu-thich" id="tenAnh">JPG, PNG hoặc WEBP, tối đa 5 MB. Ảnh lưu vào wwwroot/images.</p>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        document.getElementById('anh').addEventListener('change', function () {
+            var file = this.files[0];
+            if (!file) return;
+            var img = document.getElementById('xemAnh');
+            img.src = URL.createObjectURL(file);
+            img.hidden = false;
+            var khung = document.getElementById('khungAnh');
+            if (khung) khung.remove();
+            document.getElementById('tenAnh').textContent = file.name;
+        });
+    </script>
+}

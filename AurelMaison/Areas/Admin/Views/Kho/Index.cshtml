@@ -1,0 +1,156 @@
+@model KhoIndexVM
+@{
+    ViewData["Title"] = "Serial & nhập kho";
+    var f = Model.Form;
+}
+
+<p class="am-duongdan">AUREL / Serial &amp; nhập kho</p>
+<h1 class="am-tieude">Hồ sơ từng chiếc</h1>
+<p class="am-mota">Mỗi chiếc được quản lý bằng một serial duy nhất.</p>
+
+@if (ViewData["Loi"] is string loi)
+{
+    <div class="am-thongbao loi" role="alert">@loi</div>
+}
+
+<form method="get" class="am-loc">
+    <div class="am-truong rong">
+        <label for="locMau">Mẫu</label>
+        <select class="am-o nho" id="locMau" name="maMau">
+            <option value="">Tất cả mẫu</option>
+            @foreach (var m in Model.Mau)
+            {
+                <option value="@m.MaMau" selected="@(m.MaMau == Model.MaMau)">@m.MaMau · @m.TenMau</option>
+            }
+        </select>
+    </div>
+    <div class="am-truong">
+        <label for="locTrangThai">Trạng thái kho</label>
+        <select class="am-o nho" id="locTrangThai" name="trangThai">
+            <option value="">Tất cả (@Model.TheoTrangThai.Values.Sum())</option>
+            @foreach (var tt in new[] { TrangThaiChiec.ConHang, TrangThaiChiec.DaGiu, TrangThaiChiec.DaBan, TrangThaiChiec.KhongBan })
+            {
+                <option value="@tt" selected="@(tt == Model.TrangThai)">@HienThi.TrangThaiChiec(tt) (@Model.TheoTrangThai.GetValueOrDefault(tt))</option>
+            }
+        </select>
+    </div>
+    <button type="submit" class="am-nut-nho dam">Lọc</button>
+    <a class="am-nut-nho" asp-action="Index">Xóa lọc</a>
+</form>
+
+<div class="am-bang-boc">
+    <table class="am-bang">
+        <thead>
+            <tr><th>Serial</th><th>Mẫu</th><th>Tình trạng</th><th>Kho</th><th>Phiếu nhập</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var c in Model.DanhSach)
+            {
+                var nhan = c.TrangThai switch
+                {
+                    TrangThaiChiec.ConHang => "tot",
+                    TrangThaiChiec.KhongBan => "xau",
+                    _ => null
+                };
+                <tr>
+                    <td>@c.Serial</td>
+                    <td>@c.TenMau <span class="am-chu-thich">(@c.MaMau)</span></td>
+                    <td>@HienThi.TinhTrangDayDu(c.TinhTrang, c.CoHop, c.CoGiayTo)</td>
+                    <td><span class="am-nhan @nhan">@HienThi.TrangThaiChiec(c.TrangThai)</span></td>
+                    <td>@c.MaPN</td>
+                </tr>
+            }
+            @if (Model.DanhSach.Count == 0)
+            {
+                <tr><td colspan="5" class="trong">Chưa có chiếc nào khớp bộ lọc.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<form method="post" asp-action="NhapKho" class="am-khoi" id="nhapKho">
+    <h2 class="am-khoi-tieude">Nhập kho</h2>
+    <p class="am-khoi-phu">Một phiếu nhập cho một mẫu. Trùng serial thì không nhập chiếc nào.</p>
+
+    <div class="am-luoi-2">
+        <div class="am-truong">
+            <label for="MaMau">Mã mẫu</label>
+            <select class="am-o" id="MaMau" name="MaMau" required>
+                <option value="">Chọn mẫu</option>
+                @foreach (var m in Model.Mau)
+                {
+                    <option value="@m.MaMau" selected="@(m.MaMau == f.MaMau)">@m.MaMau · @m.TenMau (còn @m.SoConHang)</option>
+                }
+            </select>
+        </div>
+        <div class="am-truong">
+            <label for="GhiChu">Ghi chú phiếu nhập</label>
+            <input class="am-o" id="GhiChu" name="GhiChu" value="@f.GhiChu" maxlength="250" placeholder="Bổ sung lô tháng 11" />
+        </div>
+    </div>
+
+    <table class="am-bang am-bang-nhap">
+        <thead>
+            <tr><th>Serial mới</th><th>Tình trạng</th><th>Có hộp</th><th>Có giấy tờ</th><th class="thao-tac"><span class="visually-hidden">Xóa dòng</span></th></tr>
+        </thead>
+        <tbody id="dongNhap">
+            @for (var i = 0; i < f.Dong.Count; i++)
+            {
+                var d = f.Dong[i];
+                <tr>
+                    <td><input class="am-o" name="Dong[@i].Serial" value="@d.Serial" maxlength="30" placeholder="Serial chiếc @(i + 1)" aria-label="Serial dòng @(i + 1)" /></td>
+                    <td>
+                        <select class="am-o" name="Dong[@i].TinhTrang" aria-label="Tình trạng dòng @(i + 1)">
+                            <option value="@TinhTrangChiec.Moi" selected="@(d.TinhTrang == TinhTrangChiec.Moi)">Mới</option>
+                            <option value="@TinhTrangChiec.DaSuDung" selected="@(d.TinhTrang == TinhTrangChiec.DaSuDung)">Đã sử dụng</option>
+                        </select>
+                    </td>
+                    <td>
+                        <label class="am-check"><input type="checkbox" name="Dong[@i].CoHop" value="true" checked="@d.CoHop" /> Hộp</label>
+                        <input type="hidden" name="Dong[@i].CoHop" value="false" />
+                    </td>
+                    <td>
+                        <label class="am-check"><input type="checkbox" name="Dong[@i].CoGiayTo" value="true" checked="@d.CoGiayTo" /> Giấy tờ</label>
+                        <input type="hidden" name="Dong[@i].CoGiayTo" value="false" />
+                    </td>
+                    <td class="thao-tac"><button type="button" class="am-nut-nho xoa" data-xoa-dong>Bỏ</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="am-hang-nut">
+        <button type="button" class="am-nut phu rong-300" id="themDong">+ Thêm dòng serial</button>
+        <button type="submit" class="am-nut rong-400">Ghi nhận nhập kho</button>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        (function () {
+            var than = document.getElementById('dongNhap');
+            // Đánh lại chỉ số Dong[i] sau khi thêm/bỏ dòng để model binding đọc liền mạch.
+            function danhSo() {
+                Array.prototype.forEach.call(than.rows, function (tr, i) {
+                    tr.querySelectorAll('[name]').forEach(function (el) {
+                        el.name = el.name.replace(/Dong\[\d+\]/, 'Dong[' + i + ']');
+                    });
+                });
+            }
+            document.getElementById('themDong').addEventListener('click', function () {
+                var moi = than.rows[than.rows.length - 1].cloneNode(true);
+                moi.querySelector('input[name$=".Serial"]').value = '';
+                moi.querySelectorAll('input[type=checkbox]').forEach(function (c) { c.checked = true; });
+                moi.querySelector('select').selectedIndex = 0;
+                than.appendChild(moi);
+                danhSo();
+                moi.querySelector('input[name$=".Serial"]').focus();
+            });
+            than.addEventListener('click', function (e) {
+                if (!e.target.matches('[data-xoa-dong]') || than.rows.length === 1) return;
+                e.target.closest('tr').remove();
+                danhSo();
+            });
+        })();
+    </script>
+}

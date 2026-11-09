@@ -1,0 +1,83 @@
+@model BaoCaoDoanhThu
+@{
+    ViewData["Title"] = "Báo cáo kinh doanh";
+    var tu = Model.TuNgay.ToString("yyyy-MM-dd");
+    var den = Model.DenNgay.ToString("yyyy-MM-dd");
+}
+
+<p class="am-duongdan">AUREL / Báo cáo kinh doanh</p>
+<h1 class="am-tieude">Hiệu quả kinh doanh</h1>
+<p class="am-mota">@HienThi.Ngay(Model.TuNgay) — @HienThi.Ngay(Model.DenNgay) · Tính theo ngày hoàn tất, từ dữ liệu XML đang chạy</p>
+
+<form method="get" class="am-loc">
+    <div class="am-truong">
+        <label for="tuNgay">Từ ngày</label>
+        <input class="am-o nho" type="date" id="tuNgay" name="tuNgay" value="@tu" />
+    </div>
+    <div class="am-truong">
+        <label for="denNgay">Đến ngày</label>
+        <input class="am-o nho" type="date" id="denNgay" name="denNgay" value="@den" />
+    </div>
+    <button type="submit" class="am-nut-nho dam">Xem báo cáo</button>
+    <a class="am-nut-nho" asp-action="In" asp-route-tuNgay="@tu" asp-route-denNgay="@den" target="_blank" rel="noopener">Bản in (XSLT)</a>
+</form>
+
+<section class="am-chiso" aria-label="Chỉ số kỳ báo cáo">
+    <div class="am-the">
+        <span class="am-the-nhan">Doanh thu hoàn tất</span>
+        <span class="am-the-so">@HienThi.TienGon(Model.DoanhThu)</span>
+        <span class="am-the-chu">Không tính đơn hủy</span>
+    </div>
+    <div class="am-the">
+        <span class="am-the-nhan">Số chiếc đã bán</span>
+        <span class="am-the-so">@Model.SoChiec</span>
+        <span class="am-the-chu">@Model.SoDon đơn hoàn tất</span>
+    </div>
+    <div class="am-the">
+        <span class="am-the-nhan">Giá trị đơn TB</span>
+        <span class="am-the-so">@HienThi.TienGon(Model.GiaTriTrungBinh)</span>
+        <span class="am-the-chu">@Model.SoDon đơn</span>
+    </div>
+</section>
+
+<div class="am-bang-boc">
+    <table class="am-bang">
+        <thead>
+            <tr><th>Nhân viên</th><th>Đơn hoàn tất</th><th>Doanh thu</th><th>Tỷ trọng</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var n in Model.TheoNhanVien)
+            {
+                <tr>
+                    <td>@n.HoTen @if (n.MaNV != null) { <span class="am-chu-thich">(@n.MaNV)</span> }</td>
+                    <td>@n.SoDon</td>
+                    <td>@HienThi.Tien(n.DoanhThu)</td>
+                    <td>@HienThi.So(n.TyTrong, "0.0")%</td>
+                </tr>
+            }
+            @if (Model.TheoNhanVien.Count == 0)
+            {
+                <tr><td colspan="4" class="trong">Không có đơn hoàn tất trong kỳ.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<h2 class="am-khoi-tieude">Mẫu bán chạy</h2>
+<div class="am-bang-boc">
+    <table class="am-bang">
+        <thead>
+            <tr><th>Mã mẫu</th><th>Tên mẫu</th><th>Số chiếc</th><th>Doanh thu</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var m in Model.TopMau)
+            {
+                <tr><td>@m.MaMau</td><td>@m.TenMau</td><td>@m.SoChiec</td><td>@HienThi.Tien(m.DoanhThu)</td></tr>
+            }
+            @if (Model.TopMau.Count == 0)
+            {
+                <tr><td colspan="4" class="trong">Không có đơn hoàn tất trong kỳ.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>

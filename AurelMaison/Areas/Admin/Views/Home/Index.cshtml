@@ -1,0 +1,59 @@
+@model TongQuanHeThong
+@{
+    ViewData["Title"] = "Tổng quan";
+    var chiec = Model.ChiecTheoTrangThai;
+}
+
+<p class="am-duongdan">AUREL / Tổng quan hệ thống</p>
+<h1 class="am-tieude">Bức tranh kinh doanh</h1>
+<p class="am-mota">AUREL Maison · Tháng @Model.Thang.ToString("MM/yyyy")</p>
+
+<section class="am-chiso" aria-label="Chỉ số chính">
+    <div class="am-the">
+        <span class="am-the-nhan">Doanh thu hoàn tất</span>
+        <span class="am-the-so">@HienThi.TienGon(Model.DoanhThuThang)</span>
+        <span class="am-the-chu">@Model.SoDonHoanTatThang đơn hoàn tất</span>
+    </div>
+    <div class="am-the">
+        <span class="am-the-nhan">Đồng hồ còn hàng</span>
+        <span class="am-the-so">@chiec.GetValueOrDefault(TrangThaiChiec.ConHang) chiếc</span>
+        <span class="am-the-chu">@Model.SoMauDangBan mẫu đồng hồ đang bán</span>
+    </div>
+    <div class="am-the">
+        <span class="am-the-nhan">Đơn đang xử lý</span>
+        <span class="am-the-so">@Model.SoDonDangXuLy.ToString("00")</span>
+        <span class="am-the-chu">Chờ xác nhận, đã xác nhận, đang giao</span>
+    </div>
+</section>
+
+<section class="am-khoi">
+    <h2 class="am-khoi-tieude">Doanh thu theo tuần</h2>
+    <div class="am-tuan">
+        @foreach (var (nhan, doanhThu) in Model.TheoTuan)
+        {
+            <div class="am-tuan-o">
+                <span>@nhan</span>
+                <strong>@(doanhThu == 0 ? "0" : HienThi.TienGon(doanhThu).Replace(" ₫", ""))</strong>
+            </div>
+        }
+    </div>
+</section>
+
+<section class="am-khoi">
+    <h2 class="am-khoi-tieude">Kho theo trạng thái</h2>
+    <div class="am-tuan">
+        @foreach (var tt in new[] { TrangThaiChiec.ConHang, TrangThaiChiec.DaGiu, TrangThaiChiec.DaBan, TrangThaiChiec.KhongBan })
+        {
+            <a class="am-tuan-o" style="text-decoration:none" asp-controller="Kho" asp-action="Index" asp-route-trangThai="@tt">
+                <span>@HienThi.TrangThaiChiec(tt)</span>
+                <strong>@chiec.GetValueOrDefault(tt)</strong>
+            </a>
+        }
+    </div>
+</section>
+
+<div class="am-hang-nut">
+    <a class="am-nut rong-400" asp-controller="BaoCao" asp-action="Index">Xem báo cáo chi tiết</a>
+    <a class="am-nut phu rong-300" asp-controller="Kho" asp-action="Index">Serial / nhập kho</a>
+    <a class="am-nut phu rong-300" asp-controller="TaiKhoan" asp-action="Index">Tài khoản &amp; quyền</a>
+</div>
