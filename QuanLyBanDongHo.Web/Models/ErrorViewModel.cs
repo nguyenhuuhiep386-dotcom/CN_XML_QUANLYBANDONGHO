@@ -1,4 +1,4 @@
-namespace QuanLyBanDongHo.Web.Models
+namespace AurelMaison.Models
 {
     public class ErrorViewModel
     {
