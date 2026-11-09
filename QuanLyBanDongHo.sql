@@ -8,8 +8,19 @@
    - Tên bảng = tên file XML (DongHo  -> App_Data/Xml/DongHo.xml)
    - Mã trạng thái lưu không dấu, giao diện hiển thị tiếng Việt
    - Tiền: DECIMAL(18,0) (VNĐ) ; Ngày giờ: DATETIME2(0)
-   - Mật khẩu: SHA256(matKhau + Salt) dạng hex chữ thường
+   - Mật khẩu: chuỗi do PasswordHasher<TaiKhoan> của ASP.NET Core tạo ra
+     (định dạng V3, PBKDF2-HMACSHA512, 100.000 vòng, salt nằm sẵn trong chuỗi).
+     Kiểm tra bằng PasswordHasher.VerifyHashedPassword, không tự viết SHA256.
      Tất cả tài khoản mẫu có mật khẩu: 123456
+   - XML là dữ liệu đang vận hành. SQL Server chỉ dùng để:
+       (1) khởi tạo: SQL -> XML MỘT LẦN trước khi chạy web;
+       (2) đồng bộ: XML -> SQL (sau khi sao lưu XML);
+       (3) đối chiếu: xuất SQL ra THƯ MỤC KIỂM TRA RIÊNG, không ghi đè App_Data/Xml.
+   - Thông tin giao dịch chốt lúc bán: ChiTietDonHang lưu TenMau, DonGia,
+     ThoiHanBaoHanh; DonHang lưu tên/SĐT/địa chỉ người nhận.
+   - Doanh số tính theo DonHang.MaNVPhuTrach (người xác nhận đơn online /
+     người lập đơn tại quầy). Người thực hiện từng bước ghi ở MaNVLap,
+     HoaDon.MaNV, PhieuBaoHanh.MaNVLap, LichHen.MaNVXuLy.
 
    Chủ sở hữu bảng (người viết XSD + dịch vụ):
    - Phương : TaiKhoan, KhachHang, NhanVien, HangSanXuat, DongHo,
@@ -49,9 +60,8 @@ GO
 CREATE TABLE dbo.TaiKhoan (
     MaTK        VARCHAR(10)   NOT NULL CONSTRAINT PK_TaiKhoan PRIMARY KEY,   -- TK001
     Email       VARCHAR(100)  NOT NULL CONSTRAINT UQ_TaiKhoan_Email UNIQUE,
-    MatKhauHash CHAR(64)      NOT NULL,                                      -- SHA256 hex
-    Salt        VARCHAR(32)   NOT NULL,
-    VaiTro      VARCHAR(20)   NOT NULL,
+    MatKhauHash VARCHAR(256)  NOT NULL,                                      -- PasswordHasher (Base64)
+    VaiTro     VARCHAR(20)   NOT NULL,
     TrangThai   VARCHAR(20)   NOT NULL CONSTRAINT DF_TaiKhoan_TrangThai DEFAULT 'HoatDong',
     NgayTao     DATETIME2(0)  NOT NULL CONSTRAINT DF_TaiKhoan_NgayTao DEFAULT SYSDATETIME(),
     CONSTRAINT CK_TaiKhoan_VaiTro    CHECK (VaiTro IN ('KhachHang','NhanVien','Admin')),
@@ -136,10 +146,11 @@ GO
    PHẦN CỦA HIỆP — Lịch hẹn showroom
    ===================================================================== */
 
--- 8. Lịch hẹn tư vấn / xem đồng hồ
+-- 8. Lịch hẹn tư vấn / xem đồng hồ (bắt buộc đăng nhập -> luôn có MaKH, lấy từ phiên)
+--    Nhân viên tạo lịch hộ khách: tìm/thêm khách qua KhachHangService rồi dùng MaKH đó.
 CREATE TABLE dbo.LichHen (
     MaLH        VARCHAR(12)   NOT NULL CONSTRAINT PK_LichHen PRIMARY KEY,   -- LH20260001
-    MaKH        VARCHAR(10)   NULL CONSTRAINT FK_LichHen_KhachHang REFERENCES dbo.KhachHang(MaKH),
+    MaKH        VARCHAR(10)   NOT NULL CONSTRAINT FK_LichHen_KhachHang REFERENCES dbo.KhachHang(MaKH),
     MaMau       VARCHAR(10)   NULL CONSTRAINT FK_LichHen_DongHo REFERENCES dbo.DongHo(MaMau),
     Showroom    NVARCHAR(100) NOT NULL,
     NgayHen     DATETIME2(0)  NOT NULL,
@@ -165,13 +176,14 @@ CREATE TABLE dbo.DonHang (
     MaDon         VARCHAR(12)   NOT NULL CONSTRAINT PK_DonHang PRIMARY KEY,  -- AM20260018
     MaKH          VARCHAR(10)   NOT NULL CONSTRAINT FK_DonHang_KhachHang REFERENCES dbo.KhachHang(MaKH),
     NguonDon      VARCHAR(10)   NOT NULL,
-    MaNVLap       VARCHAR(10)   NULL CONSTRAINT FK_DonHang_NVLap  REFERENCES dbo.NhanVien(MaNV),
-    MaNVXuLy      VARCHAR(10)   NULL CONSTRAINT FK_DonHang_NVXuLy REFERENCES dbo.NhanVien(MaNV),
+    MaNVLap       VARCHAR(10)   NULL CONSTRAINT FK_DonHang_NVLap  REFERENCES dbo.NhanVien(MaNV),      -- người lập đơn tại quầy
+    MaNVPhuTrach  VARCHAR(10)   NULL CONSTRAINT FK_DonHang_NVPhuTrach REFERENCES dbo.NhanVien(MaNV),  -- tính doanh số; gán khi xác nhận / lập tại quầy, không đổi
     NgayDat       DATETIME2(0)  NOT NULL CONSTRAINT DF_DonHang_NgayDat DEFAULT SYSDATETIME(),
     TenNguoiNhan  NVARCHAR(100) NOT NULL,
     SoDienThoai   VARCHAR(15)   NOT NULL,
     HinhThucNhan  VARCHAR(20)   NOT NULL,
     DiaChiNhan    NVARCHAR(250) NULL,
+    Showroom      NVARCHAR(100) NULL,                -- bắt buộc khi NhanTaiShowroom
     TongTien      DECIMAL(18,0) NOT NULL,
     TrangThai     VARCHAR(20)   NOT NULL CONSTRAINT DF_DonHang_TrangThai DEFAULT 'ChoXacNhan',
     PhuongThucTT  VARCHAR(20)   NULL,
@@ -179,8 +191,10 @@ CREATE TABLE dbo.DonHang (
     LyDoHuy       NVARCHAR(250) NULL,
     CONSTRAINT CK_DonHang_Nguon     CHECK (NguonDon IN ('Online','TaiQuay')),
     CONSTRAINT CK_DonHang_NVLap     CHECK (NguonDon = 'Online' OR MaNVLap IS NOT NULL),
+    CONSTRAINT CK_DonHang_PhuTrach  CHECK (TrangThai IN ('ChoXacNhan','DaHuy') OR MaNVPhuTrach IS NOT NULL),
     CONSTRAINT CK_DonHang_HinhThuc  CHECK (HinhThucNhan IN ('GiaoTanNoi','NhanTaiShowroom')),
     CONSTRAINT CK_DonHang_DiaChi    CHECK (HinhThucNhan <> 'GiaoTanNoi' OR DiaChiNhan IS NOT NULL),
+    CONSTRAINT CK_DonHang_Showroom  CHECK (HinhThucNhan <> 'NhanTaiShowroom' OR Showroom IS NOT NULL),
     CONSTRAINT CK_DonHang_TongTien  CHECK (TongTien >= 0),
     CONSTRAINT CK_DonHang_TrangThai CHECK (TrangThai IN ('ChoXacNhan','DaXacNhan','DangGiao','HoanTat','DaHuy')),
     CONSTRAINT CK_DonHang_PTTT      CHECK (PhuongThucTT IS NULL OR PhuongThucTT IN ('TienMat','ChuyenKhoan','The')),
@@ -195,10 +209,13 @@ CREATE TABLE dbo.ChiTietDonHang (
     MaDon   VARCHAR(12)   NOT NULL CONSTRAINT FK_CTDon_DonHang REFERENCES dbo.DonHang(MaDon),
     STT     INT           NOT NULL,
     MaMau   VARCHAR(10)   NOT NULL CONSTRAINT FK_CTDon_DongHo REFERENCES dbo.DongHo(MaMau),
+    TenMau  NVARCHAR(150) NOT NULL,                     -- chốt lúc đặt (hóa đơn đọc từ đây)
     Serial  VARCHAR(30)   NULL CONSTRAINT FK_CTDon_Serial REFERENCES dbo.ChiTietDongHo(Serial),
     DonGia  DECIMAL(18,0) NOT NULL,                     -- giá chốt lúc đặt
+    ThoiHanBaoHanh INT    NOT NULL,                     -- tháng, chốt lúc đặt (bảo hành đọc từ đây)
     CONSTRAINT PK_ChiTietDonHang PRIMARY KEY (MaDon, STT),
-    CONSTRAINT CK_CTDon_DonGia CHECK (DonGia >= 0)
+    CONSTRAINT CK_CTDon_DonGia CHECK (DonGia >= 0),
+    CONSTRAINT CK_CTDon_BH     CHECK (ThoiHanBaoHanh BETWEEN 0 AND 120)
 );
 
 -- 11. Hóa đơn (lập khi đơn hoàn tất, một đơn một hóa đơn)
@@ -238,11 +255,11 @@ GO
    Giá chỉ để minh họa.
    ===================================================================== */
 
-INSERT INTO dbo.TaiKhoan (MaTK, Email, MatKhauHash, Salt, VaiTro, TrangThai, NgayTao) VALUES
-('TK001','admin@aurel.vn',    '15938cff25467c6bfa355af2a973acde230038eded64f6daeaef729e2630981c','a1f3c9e2b7d4','Admin',    'HoatDong','2026-10-01T08:00:00'),
-('TK002','nhanvien@aurel.vn', 'f2598aa8e65621061d2f3cab7eadf9446432a6ad442d1a1672762627fc82065d','b8e2d1f4c6a9','NhanVien', 'HoatDong','2026-10-01T08:05:00'),
-('TK003','khach1@gmail.com',  '475c9af9af821b236acb7a8bd1a71c4f08268fefd38fa338b50274247e729307','c3d7e9a1f2b5','KhachHang','HoatDong','2026-10-25T19:20:00'),
-('TK004','khach2@gmail.com',  '2ce09368c99a149e6196a1f9c5cf1e5ddf398a57e28a556e63c6438790cab3cb','d9a4b2c8e1f7','KhachHang','HoatDong','2026-11-05T21:10:00');
+INSERT INTO dbo.TaiKhoan (MaTK, Email, MatKhauHash, VaiTro, TrangThai, NgayTao) VALUES
+('TK001','admin@aurel.vn',    'AQAAAAIAAYagAAAAEMed5yP+8lTNSKHI8v2XXq8qZTYIsKl5g/5ksb4NMG5JepTe1oa06O9kcuXL8sgrhA==','Admin',    'HoatDong','2026-10-01T08:00:00'),
+('TK002','nhanvien@aurel.vn', 'AQAAAAIAAYagAAAAEHH8Tl1CyKlQYEnjmOWRus5/rBWJ/K5uImxa8oLczFkWIOfMm9kYvtP4EAt2YRqduA==','NhanVien', 'HoatDong','2026-10-01T08:05:00'),
+('TK003','khach1@gmail.com',  'AQAAAAIAAYagAAAAEPPoXl0ZY2hB9ysbeYQ6Utq5T7+PS9x6FhMBLPLq22JhUy0st3z0ey9xBPkOnpnHLA==','KhachHang','HoatDong','2026-10-25T19:20:00'),
+('TK004','khach2@gmail.com',  'AQAAAAIAAYagAAAAEL2JLePCJfk6JqODCRgzQ/0PZD94iPYMLNWO9XyteP7NnikQkAfW3MxLdTPjrLjRBw==','KhachHang','HoatDong','2026-11-05T21:10:00');
 
 INSERT INTO dbo.NhanVien (MaNV, MaTK, HoTen, SoDienThoai, ChucVu, NgayVaoLam) VALUES
 ('NV001','TK001',N'Quản trị viên',  '0905000001',N'Quản lý cửa hàng','2026-01-01'),
@@ -287,15 +304,15 @@ INSERT INTO dbo.LichHen (MaLH, MaKH, MaMau, Showroom, NgayHen, HoTen, SoDienThoa
 ('LH20260002','KH001','DH001',N'Showroom Đà Nẵng','2026-10-28T15:30:00',N'Nguyễn Văn An','0900111222',NULL,                              'HoanTat',  'NV002',NULL,'2026-10-26T09:00:00');
 
 -- Đơn đã hoàn tất (nguồn dữ liệu cho hóa đơn, bảo hành, báo cáo)
-INSERT INTO dbo.DonHang (MaDon, MaKH, NguonDon, MaNVLap, MaNVXuLy, NgayDat, TenNguoiNhan, SoDienThoai, HinhThucNhan, DiaChiNhan, TongTien, TrangThai, PhuongThucTT, NgayHoanTat, LyDoHuy) VALUES
-('AM20260012','KH001','Online', NULL,   'NV002','2026-10-30T20:15:00',N'Nguyễn Văn An',  '0900111222','NhanTaiShowroom',NULL,285000000,'HoanTat',   'ChuyenKhoan','2026-11-01T10:00:00',NULL),
-('AM20260015','KH003','TaiQuay','NV002','NV002','2026-11-02T15:05:00',N'Trần Quốc Cường','0911222333','NhanTaiShowroom',NULL,175000000,'DaHuy',     NULL,         NULL,                 N'Khách đổi ý trước khi thanh toán'),
-('AM20260018','KH002','Online', NULL,   NULL,   '2026-11-08T21:30:00',N'Lê Thị Bình',    '0900123456','NhanTaiShowroom',NULL,285000000,'ChoXacNhan',NULL,         NULL,                 NULL);
+INSERT INTO dbo.DonHang (MaDon, MaKH, NguonDon, MaNVLap, MaNVPhuTrach, NgayDat, TenNguoiNhan, SoDienThoai, HinhThucNhan, DiaChiNhan, Showroom, TongTien, TrangThai, PhuongThucTT, NgayHoanTat, LyDoHuy) VALUES
+('AM20260012','KH001','Online', NULL,   'NV002','2026-10-30T20:15:00',N'Nguyễn Văn An',  '0900111222','NhanTaiShowroom',NULL,N'Showroom Đà Nẵng',285000000,'HoanTat',   'ChuyenKhoan','2026-11-01T10:00:00',NULL),
+('AM20260015','KH003','TaiQuay','NV002','NV002','2026-11-02T15:05:00',N'Trần Quốc Cường','0911222333','NhanTaiShowroom',NULL,N'Showroom Đà Nẵng',175000000,'DaHuy',     NULL,         NULL,                 N'Khách đổi ý trước khi thanh toán'),
+('AM20260018','KH002','Online', NULL,   NULL,   '2026-11-08T21:30:00',N'Lê Thị Bình',    '0900123456','NhanTaiShowroom',NULL,N'Showroom Đà Nẵng',285000000,'ChoXacNhan',NULL,         NULL,                 NULL);
 
-INSERT INTO dbo.ChiTietDonHang (MaDon, STT, MaMau, Serial, DonGia) VALUES
-('AM20260012',1,'DH001','DEMO012',285000000),
-('AM20260015',1,'DH005',NULL,     175000000),
-('AM20260018',1,'DH001',NULL,     285000000);   -- chờ nhân viên gán serial
+INSERT INTO dbo.ChiTietDonHang (MaDon, STT, MaMau, TenMau, Serial, DonGia, ThoiHanBaoHanh) VALUES
+('AM20260012',1,'DH001',N'Rolex Datejust 36',          'DEMO012',285000000,24),
+('AM20260015',1,'DH005',N'Omega Speedmaster Moonwatch', NULL,    175000000,24),
+('AM20260018',1,'DH001',N'Rolex Datejust 36',           NULL,    285000000,24);   -- chờ nhân viên gán serial
 
 INSERT INTO dbo.HoaDon (MaHD, MaDon, NgayLap, MaNV, TongTien, PhuongThucTT) VALUES
 ('HD20260001','AM20260012','2026-11-01T10:00:00','NV002',285000000,'ChuyenKhoan');
@@ -324,12 +341,11 @@ GO
 -- Doanh thu: chỉ đơn HoanTat, giá đã chốt trên chi tiết đơn, theo ngày hoàn tất
 CREATE VIEW dbo.vw_DoanhThuHoanTat AS
 SELECT dh.MaDon, CAST(dh.NgayHoanTat AS DATE) AS NgayHoanTat, dh.NguonDon,
-       dh.MaNVXuLy, nv.HoTen AS TenNhanVien,
-       ct.MaMau, d.TenMau, ct.Serial, ct.DonGia
+       dh.MaNVPhuTrach, nv.HoTen AS TenNhanVien,
+       ct.MaMau, ct.TenMau, ct.Serial, ct.DonGia            -- tên và giá đã chốt trên đơn
 FROM dbo.DonHang dh
 JOIN dbo.ChiTietDonHang ct ON ct.MaDon = dh.MaDon
-JOIN dbo.DongHo d          ON d.MaMau  = ct.MaMau
-LEFT JOIN dbo.NhanVien nv  ON nv.MaNV  = dh.MaNVXuLy
+LEFT JOIN dbo.NhanVien nv  ON nv.MaNV  = dh.MaNVPhuTrach
 WHERE dh.TrangThai = 'HoanTat';
 GO
 
@@ -342,17 +358,24 @@ SELECT TOP 5 MaMau, TenMau, COUNT(*) AS SoChiec, SUM(DonGia) AS DoanhThu
 FROM dbo.vw_DoanhThuHoanTat WHERE NgayHoanTat BETWEEN @Tu AND @Den
 GROUP BY MaMau, TenMau ORDER BY SoChiec DESC, DoanhThu DESC;
 
-SELECT MaNVXuLy, TenNhanVien, COUNT(DISTINCT MaDon) AS SoDon, SUM(DonGia) AS DoanhSo
+SELECT MaNVPhuTrach, TenNhanVien, COUNT(DISTINCT MaDon) AS SoDon, SUM(DonGia) AS DoanhSo
 FROM dbo.vw_DoanhThuHoanTat WHERE NgayHoanTat BETWEEN @Tu AND @Den
-GROUP BY MaNVXuLy, TenNhanVien;
+GROUP BY MaNVPhuTrach, TenNhanVien;
 */
 
 /* =====================================================================
    XUẤT SQL -> XML (đúng quy ước file của nhóm)
    Gốc <DanhSach<Bảng>>, mỗi dòng <Bảng>, mỗi cột một phần tử con.
    Cột NULL bị bỏ qua -> trong XSD khai báo minOccurs="0" cho cột cho phép NULL.
-   DongBoService (Phương) có thể chạy các câu này rồi lưu kết quả ra
-   App_Data/Xml/<Bảng>.xml, hoặc dùng DataTable.WriteXml như mẫu của thầy.
+   DongBoService (Phương) chạy các câu này rồi lưu kết quả ra:
+     - App_Data/Xml/<Bảng>.xml        : CHỈ khi khởi tạo hoặc phục hồi có xác nhận;
+     - App_Data/KiemTra/<ngày>/...    : khi đối chiếu sau XML -> SQL.
+   Có thể dùng DataTable.WriteXml như mẫu của thầy thay cho FOR XML.
+
+   XML -> SQL: trong MỘT transaction, xóa 12 bảng theo thứ tự ngược khóa ngoại
+   (PhieuBaoHanh, HoaDon, ChiTietDonHang, DonHang, LichHen, ChiTietDongHo,
+   PhieuNhap, DongHo, HangSanXuat, NhanVien, KhachHang, TaiKhoan) rồi nạp lại
+   theo thứ tự xuôi; khóa ngoại/CHECK báo lỗi thì ROLLBACK toàn bộ.
    ===================================================================== */
 
 SELECT * FROM dbo.TaiKhoan       FOR XML PATH('TaiKhoan'),       ROOT('DanhSachTaiKhoan'),       ELEMENTS;
@@ -375,11 +398,10 @@ GO
 
 /* Mẫu dữ liệu Web Service bảo hành trả về (Nguyên) — chỉ phiếu của khách đang đăng nhập:
 DECLARE @MaPBH VARCHAR(12) = 'BH20260012', @MaKH VARCHAR(10) = 'KH001';
-SELECT p.MaPBH AS MaPhieu, p.MaDon, d.TenMau, p.Serial, p.NgayBatDau, p.NgayHetHan,
+SELECT p.MaPBH AS MaPhieu, p.MaDon, ct.TenMau, p.Serial, p.NgayBatDau, p.NgayHetHan,
        CASE WHEN p.NgayHetHan >= CAST(GETDATE() AS DATE) THEN 'ConBaoHanh' ELSE 'HetBaoHanh' END AS TrangThai
 FROM dbo.PhieuBaoHanh p
-JOIN dbo.ChiTietDongHo c ON c.Serial = p.Serial
-JOIN dbo.DongHo d        ON d.MaMau  = c.MaMau
-WHERE p.MaPBH = @MaPBH AND p.MaKH = @MaKH
+JOIN dbo.ChiTietDonHang ct ON ct.MaDon = p.MaDon AND ct.Serial = p.Serial
+WHERE p.MaPBH = @MaPBH AND p.MaKH = @MaKH          -- @MaKH lấy từ phiên đăng nhập
 FOR XML PATH('PhieuBaoHanh'), ELEMENTS;
 */
