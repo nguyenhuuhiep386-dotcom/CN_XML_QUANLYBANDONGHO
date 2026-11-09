@@ -15,6 +15,8 @@ builder.Services.AddSingleton<KhoService>();
 builder.Services.AddSingleton<DanhMucService>();
 builder.Services.AddSingleton<QuanLyTaiKhoanService>();
 builder.Services.AddSingleton<BaoCaoService>();
+builder.Services.AddSingleton<KhachHangService>();
+builder.Services.AddSingleton<DongBoService>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>

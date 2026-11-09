@@ -52,6 +52,31 @@ public class DaNhapVM
     public int SoConHangMoi { get; set; }
 }
 
+// xmldata · Dữ liệu XML
+public class DuLieuVM
+{
+    public List<BanSaoLuu> SaoLuu { get; set; } = [];
+    public List<BanSaoLuu> BanXuat { get; set; } = [];
+
+    public KetQuaKiemTra? KiemTra { get; set; }
+
+    public string? TenBangThu { get; set; }
+    public string? TenFileThu { get; set; }
+    public List<LoiKiemTra>? KiemTraFile { get; set; }
+
+    public KetQuaDongBo? DongBo { get; set; }
+
+    public string? TenBanXuat { get; set; }
+    public List<DongDoiChieu>? DoiChieu { get; set; }
+
+    /// <summary>So doanh thu: trang Báo cáo (XML) với view vw_DoanhThuHoanTat (SQL).</summary>
+    public bool CoSoDoanhThu { get; set; }
+    public int SoDonXml { get; set; }
+    public decimal DoanhThuXml { get; set; }
+    public (int SoDon, decimal DoanhThu)? DoanhThuSql { get; set; }
+    public string? LoiSql { get; set; }
+}
+
 // users · Tài khoản & phân quyền
 public class TaoNhanVienForm
 {
