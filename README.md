@@ -87,6 +87,11 @@ Màn `/Admin/DuLieu` (chỉ Admin): kiểm tra toàn bộ 12 file (XSD, trùng k
 
 Bảng chưa có XSD (LichHen, DonHang, ChiTietDonHang, HoaDon, PhieuBaoHanh) chỉ hiện cảnh báo; thêm file `App_Data/Xsd/<Bảng>.xsd` là tự được kiểm tra.
 
+Chuẩn bị demo (`AurelMaison/Database/Demo/`):
+
+- Bước 0: chạy `Buoc0_XoaDemo001_002.sql` trong SSMS, rồi trên web bấm "Khởi tạo từ SQL" → DH001 còn 0 chiếc. Bước 1: Admin nhập DEMO001, DEMO002 ở Serial & nhập kho.
+- Bước 9: `GiaSai.xml` (có `<Gia>abc</Gia>`) → Dữ liệu XML → Thử XSD một file, bảng DongHo → bị từ chối ở dòng 8.
+
 ### Chạy dự án
 
 Cần .NET SDK 8 trở lên; máy chỉ có .NET 10 vẫn build và chạy được.

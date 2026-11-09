@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Bước 9 của demo: Admin > Dữ liệu XML > Thử XSD một file, chọn bảng DongHo. XSD phải từ chối <Gia>abc</Gia> (dòng của DH001). -->
+<DanhSachDongHo>
+  <DongHo>
+    <MaMau>DH001</MaMau>
+    <TenMau>Rolex Datejust 36</TenMau>
+    <MaHang>HG001</MaHang>
+    <Gia>abc</Gia>
+    <LoaiMay>Automatic</LoaiMay>
+    <KichThuoc>36.0</KichThuoc>
+    <ChatLieu>Thép Oystersteel</ChatLieu>
+    <MoTa>Mặt số xám, vành khía, dây Jubilee.</MoTa>
+    <HinhAnh>/images/dh001.jpg</HinhAnh>
+    <ThoiHanBaoHanh>24</ThoiHanBaoHanh>
+    <TrangThai>DangBan</TrangThai>
+  </DongHo>
+  <DongHo>
+    <MaMau>DH002</MaMau>
+    <TenMau>Cartier Santos</TenMau>
+    <MaHang>HG004</MaHang>
+    <Gia>198000000</Gia>
+    <LoaiMay>Automatic</LoaiMay>
+    <KichThuoc>39.8</KichThuoc>
+    <ChatLieu>Thép không gỉ</ChatLieu>
+    <MoTa>Vỏ vuông, mặt số trắng, dây da nâu.</MoTa>
+    <HinhAnh>/images/dh002.jpg</HinhAnh>
+    <ThoiHanBaoHanh>24</ThoiHanBaoHanh>
+    <TrangThai>DangBan</TrangThai>
+  </DongHo>
+  <DongHo>
+    <MaMau>DH003</MaMau>
+    <TenMau>Patek Philippe Calatrava</TenMau>
+    <MaHang>HG002</MaHang>
+    <Gia>690000000</Gia>
+    <LoaiMay>Lên cót tay</LoaiMay>
+    <KichThuoc>39.0</KichThuoc>
+    <ChatLieu>Vàng hồng 18K</ChatLieu>
+    <MoTa>Thiết kế tối giản, dây da đen.</MoTa>
+    <HinhAnh>/images/dh003.jpg</HinhAnh>
+    <ThoiHanBaoHanh>24</ThoiHanBaoHanh>
+    <TrangThai>DangBan</TrangThai>
+  </DongHo>
+  <DongHo>
+    <MaMau>DH004</MaMau>
+    <TenMau>Audemars Piguet Royal Oak</TenMau>
+    <MaHang>HG003</MaHang>
+    <Gia>950000000</Gia>
+    <LoaiMay>Automatic</LoaiMay>
+    <KichThuoc>41.0</KichThuoc>
+    <ChatLieu>Thép không gỉ</ChatLieu>
+    <MoTa>Vỏ bát giác, mặt số Grande Tapisserie.</MoTa>
+    <HinhAnh>/images/dh004.jpg</HinhAnh>
+    <ThoiHanBaoHanh>24</ThoiHanBaoHanh>
+    <TrangThai>DangBan</TrangThai>
+  </DongHo>
+  <DongHo>
+    <MaMau>DH005</MaMau>
+    <TenMau>Omega Speedmaster Moonwatch</TenMau>
+    <MaHang>HG005</MaHang>
+    <Gia>175000000</Gia>
+    <LoaiMay>Lên cót tay</LoaiMay>
+    <KichThuoc>42.0</KichThuoc>
+    <ChatLieu>Thép không gỉ</ChatLieu>
+    <MoTa>Bấm giờ thể thao, kính Hesalite.</MoTa>
+    <HinhAnh>/images/dh005.jpg</HinhAnh>
+    <ThoiHanBaoHanh>24</ThoiHanBaoHanh>
+    <TrangThai>DangBan</TrangThai>
+  </DongHo>
+</DanhSachDongHo>
