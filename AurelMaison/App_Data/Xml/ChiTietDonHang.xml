@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DanhSachChiTietDonHang>
+  <ChiTietDonHang>
+    <MaDon>AM20260012</MaDon>
+    <STT>1</STT>
+    <MaMau>DH001</MaMau>
+    <TenMau>Rolex Datejust 36</TenMau>
+    <Serial>DEMO012</Serial>
+    <DonGia>285000000</DonGia>
+    <ThoiHanBaoHanh>24</ThoiHanBaoHanh>
+  </ChiTietDonHang>
+  <ChiTietDonHang>
+    <MaDon>AM20260015</MaDon>
+    <STT>1</STT>
+    <MaMau>DH005</MaMau>
+    <TenMau>Omega Speedmaster Moonwatch</TenMau>
+    <DonGia>175000000</DonGia>
+    <ThoiHanBaoHanh>24</ThoiHanBaoHanh>
+  </ChiTietDonHang>
+  <ChiTietDonHang>
+    <MaDon>AM20260018</MaDon>
+    <STT>1</STT>
+    <MaMau>DH001</MaMau>
+    <TenMau>Rolex Datejust 36</TenMau>
+    <DonGia>285000000</DonGia>
+    <ThoiHanBaoHanh>24</ThoiHanBaoHanh>
+  </ChiTietDonHang>
+</DanhSachChiTietDonHang>

@@ -2,12 +2,11 @@ using AurelMaison.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AurelMaison.Controllers.Admin;
+namespace AurelMaison.Areas.Admin.Controllers;
 
+[Area("Admin")]
 [Authorize(Roles = VaiTro.Admin)]
-[Route("Admin")]
-public class AdminHomeController : Controller
+public class HomeController : Controller
 {
-    [HttpGet("")]
     public IActionResult Index() => View("ChuaTrienKhai");
 }

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DanhSachHoaDon>
+  <HoaDon>
+    <MaHD>HD20260001</MaHD>
+    <MaDon>AM20260012</MaDon>
+    <NgayLap>2026-11-01T10:00:00</NgayLap>
+    <MaNV>NV002</MaNV>
+    <TongTien>285000000</TongTien>
+    <PhuongThucTT>ChuyenKhoan</PhuongThucTT>
+  </HoaDon>
+</DanhSachHoaDon>

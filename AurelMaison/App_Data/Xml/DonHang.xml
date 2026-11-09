@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DanhSachDonHang>
+  <DonHang>
+    <MaDon>AM20260012</MaDon>
+    <MaKH>KH001</MaKH>
+    <NguonDon>Online</NguonDon>
+    <MaNVPhuTrach>NV002</MaNVPhuTrach>
+    <NgayDat>2026-10-30T20:15:00</NgayDat>
+    <TenNguoiNhan>Nguyễn Văn An</TenNguoiNhan>
+    <SoDienThoai>0900111222</SoDienThoai>
+    <HinhThucNhan>NhanTaiShowroom</HinhThucNhan>
+    <Showroom>Showroom Đà Nẵng</Showroom>
+    <TongTien>285000000</TongTien>
+    <TrangThai>HoanTat</TrangThai>
+    <PhuongThucTT>ChuyenKhoan</PhuongThucTT>
+    <NgayHoanTat>2026-11-01T10:00:00</NgayHoanTat>
+  </DonHang>
+  <DonHang>
+    <MaDon>AM20260015</MaDon>
+    <MaKH>KH003</MaKH>
+    <NguonDon>TaiQuay</NguonDon>
+    <MaNVLap>NV002</MaNVLap>
+    <MaNVPhuTrach>NV002</MaNVPhuTrach>
+    <NgayDat>2026-11-02T15:05:00</NgayDat>
+    <TenNguoiNhan>Trần Quốc Cường</TenNguoiNhan>
+    <SoDienThoai>0911222333</SoDienThoai>
+    <HinhThucNhan>NhanTaiShowroom</HinhThucNhan>
+    <Showroom>Showroom Đà Nẵng</Showroom>
+    <TongTien>175000000</TongTien>
+    <TrangThai>DaHuy</TrangThai>
+    <LyDoHuy>Khách đổi ý trước khi thanh toán</LyDoHuy>
+  </DonHang>
+  <DonHang>
+    <MaDon>AM20260018</MaDon>
+    <MaKH>KH002</MaKH>
+    <NguonDon>Online</NguonDon>
+    <NgayDat>2026-11-08T21:30:00</NgayDat>
+    <TenNguoiNhan>Lê Thị Bình</TenNguoiNhan>
+    <SoDienThoai>0900123456</SoDienThoai>
+    <HinhThucNhan>NhanTaiShowroom</HinhThucNhan>
+    <Showroom>Showroom Đà Nẵng</Showroom>
+    <TongTien>285000000</TongTien>
+    <TrangThai>ChoXacNhan</TrangThai>
+  </DonHang>
+</DanhSachDonHang>

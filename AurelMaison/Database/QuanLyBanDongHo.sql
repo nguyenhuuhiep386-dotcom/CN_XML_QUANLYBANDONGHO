@@ -34,6 +34,9 @@ IF DB_ID(N'QuanLyBanDongHo') IS NULL
 GO
 USE QuanLyBanDongHo;
 GO
+-- sqlcmd mặc định tắt tùy chọn này; index lọc UX_KhachHang_MaTK cần nó bật.
+SET QUOTED_IDENTIFIER ON;
+GO
 
 /* ---------- Xóa bảng cũ (thứ tự ngược khóa ngoại) ---------- */
 IF OBJECT_ID(N'dbo.vw_DoanhThuHoanTat', N'V') IS NOT NULL DROP VIEW dbo.vw_DoanhThuHoanTat;

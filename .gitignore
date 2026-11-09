@@ -6,6 +6,11 @@
 *.user
 *.suo
 
-# Bản sao lưu sinh ra lúc chạy
+# Bản sao lưu và bản xuất kiểm tra sinh ra lúc chạy
 **/App_Data/Backup/*
 !**/App_Data/Backup/.gitkeep
+**/App_Data/KiemTra/*
+!**/App_Data/KiemTra/.gitkeep
+
+# Tài liệu phân công cá nhân
+/*.pdf

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DanhSachNhanVien>
+  <NhanVien>
+    <MaNV>NV001</MaNV>
+    <MaTK>TK001</MaTK>
+    <HoTen>Quản trị viên</HoTen>
+    <SoDienThoai>0905000001</SoDienThoai>
+    <ChucVu>Quản lý cửa hàng</ChucVu>
+    <NgayVaoLam>2026-01-01</NgayVaoLam>
+  </NhanVien>
+  <NhanVien>
+    <MaNV>NV002</MaNV>
+    <MaTK>TK002</MaTK>
+    <HoTen>Trần Thu Hà</HoTen>
+    <SoDienThoai>0905000002</SoDienThoai>
+    <ChucVu>Tư vấn bán hàng</ChucVu>
+    <NgayVaoLam>2026-03-01</NgayVaoLam>
+  </NhanVien>
+</DanhSachNhanVien>

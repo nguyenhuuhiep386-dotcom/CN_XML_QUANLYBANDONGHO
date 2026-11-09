@@ -14,7 +14,7 @@ Dữ liệu nghiệp vụ được tổ chức bằng XML. Hệ thống phân bi
 
 ## 📌 Phạm vi chốt
 
-Nhóm làm theo 30 màn hình trên Figma, cộng các mục XML bắt buộc. Công nghệ: ASP.NET Core MVC (.NET 8), LINQ to XML, SQL Server. Lúc chạy, website đọc/ghi file XML; SQL Server là nguồn dữ liệu gốc để xuất ra XML và nhận dữ liệu cập nhật ngược lại.
+Nhóm làm theo 32 màn hình trên Figma (gồm 2 màn hình mới: Dữ liệu XML, Tài khoản của tôi), cộng các mục XML bắt buộc. Công nghệ: ASP.NET Core MVC (.NET 8), LINQ to XML, SQL Server. Lúc chạy, website đọc/ghi file XML; XML là dữ liệu đang vận hành. SQL Server chỉ dùng để khởi tạo (SQL → XML một lần trước khi chạy) và nhận bản đồng bộ (XML → SQL). Không chạy SQL → XML đè lên dữ liệu đang chạy, trừ khi phục hồi có chủ đích.
 
 **Bắt buộc có:**
 
@@ -44,7 +44,7 @@ File XML có gốc `DanhSach<Bảng>`, mỗi dòng là một phần tử `<Bản
 
 Mã trạng thái nằm trong `Models/HangSo.cs`, lưu không dấu, giao diện hiển thị tiếng Việt. Tồn khả dụng = số chiếc `ConHang`, không lưu cột số lượng riêng.
 
-Kiểu dữ liệu: tiền là decimal (VNĐ, không số lẻ); ngày giờ ISO `2026-11-09T14:30:00`; ngày `2026-11-09`; có/không là `true`/`false`. Mật khẩu lưu `SHA256(mật khẩu + Salt)` dạng hex.
+Kiểu dữ liệu: tiền là decimal (VNĐ, không số lẻ); ngày giờ ISO `2026-11-09T14:30:00`; ngày `2026-11-09`; có/không là `true`/`false`. Mật khẩu băm và kiểm tra bằng `PasswordHasher<TaiKhoan>` của ASP.NET Core, lưu nguyên chuỗi kết quả vào cột `MatKhauHash`.
 
 Mỗi chi tiết đơn = một chiếc. Khách mua 2 chiếc cùng mẫu thì đơn có 2 dòng chi tiết; serial để trống lúc đặt, nhân viên gán khi xác nhận.
 
@@ -53,7 +53,7 @@ Mỗi chi tiết đơn = một chiếc. Khách mua 2 chiếc cùng mẫu thì đ
 Cần .NET SDK 8 trở lên; máy chỉ có .NET 10 vẫn build và chạy được.
 
 ```bash
-dotnet run --project QuanLyBanDongHo.Web --launch-profile http
+dotnet run --project AurelMaison --launch-profile http
 ```
 
 Website chạy ở `http://localhost:5269`. Chuỗi kết nối nằm trong `appsettings.json`, mặc định là instance `.` với Windows Authentication; đổi thành `.\SQLEXPRESS` nếu máy dùng bản đó.
