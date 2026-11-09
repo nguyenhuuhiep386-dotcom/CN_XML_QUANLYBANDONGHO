@@ -1,0 +1,222 @@
+@model DuLieuVM
+@{
+    ViewData["Title"] = "Dữ liệu XML";
+}
+
+<p class="am-duongdan">AUREL / Dữ liệu XML</p>
+<h1 class="am-tieude">Dữ liệu XML</h1>
+<p class="am-mota">XML là dữ liệu đang chạy. SQL Server dùng để khởi tạo và đồng bộ. Mọi thao tác ghi đều tự sao lưu trước.</p>
+
+<div class="am-hang-nut">
+    <form method="post" asp-action="KiemTra" class="am-nho"><button type="submit" class="am-nut rong-270">Kiểm tra toàn bộ</button></form>
+    <form method="post" asp-action="XmlVaoSql" class="am-nho"
+          data-hoi="Xóa toàn bộ 12 bảng trong SQL và nạp lại từ XML?" onsubmit="return confirm(this.dataset.hoi);">
+        <button type="submit" class="am-nut rong-270">XML → SQL</button>
+    </form>
+    <form method="post" asp-action="SqlRaXml" class="am-nho">
+        <input type="hidden" name="khoiTao" value="false" />
+        <button type="submit" class="am-nut phu rong-270">SQL → XML (kiểm tra)</button>
+    </form>
+    <form method="post" asp-action="SaoLuu" class="am-nho"><button type="submit" class="am-nut phu rong-270">Sao lưu ngay</button></form>
+</div>
+
+@* ===== Kết quả kiểm tra toàn bộ ===== *@
+@if (Model.KiemTra is { } kt)
+{
+    <section class="am-khoi">
+        <h2 class="am-khoi-tieude">Kiểm tra toàn bộ</h2>
+        <div class="am-thongbao @(kt.HopLe ? "ok" : "loi")">
+            @(kt.HopLe
+                ? $"Hợp lệ: đủ {kt.SoDong.Count} file, {kt.SoDong.Values.Sum()} dòng, đúng XSD, không trùng khóa, mọi tham chiếu tồn tại."
+                : $"Có {kt.SoLoi} lỗi.")
+        </div>
+        <p class="am-chu-thich">@string.Join(" · ", kt.SoDong.Select(p => $"{p.Key} {p.Value}"))</p>
+        @if (kt.DanhSach.Count > 0)
+        {
+            <partial name="_BangLoi" model="kt.DanhSach" />
+        }
+    </section>
+}
+
+@* ===== Kết quả thử một file ===== *@
+@if (Model.KiemTraFile is { } kf)
+{
+    var hopLe = kf.All(l => l.LaCanhBao);
+    <section class="am-khoi">
+        <h2 class="am-khoi-tieude">Thử XSD: @Model.TenFileThu → @Model.TenBangThu</h2>
+        <div class="am-thongbao @(hopLe ? "ok" : "loi")">@(hopLe ? "File hợp lệ với lược đồ và khóa chính." : $"Có {kf.Count(l => !l.LaCanhBao)} lỗi.")</div>
+        @if (kf.Count > 0)
+        {
+            <partial name="_BangLoi" model="kf" />
+        }
+    </section>
+}
+
+@* ===== Kết quả XML → SQL ===== *@
+@if (Model.DongBo is { } db)
+{
+    <section class="am-khoi">
+        <h2 class="am-khoi-tieude">XML → SQL</h2>
+        <div class="am-thongbao @(db.ThanhCong ? "ok" : "loi")">@db.ThongBao</div>
+        @if (db.SoDong.Count > 0)
+        {
+            <div class="am-bang-boc">
+                <table class="am-bang">
+                    <thead><tr><th>Bảng</th><th>Dòng XML</th><th>Dòng SQL</th><th>Kết quả</th></tr></thead>
+                    <tbody>
+                        @foreach (var (bang, xml, sql) in db.SoDong)
+                        {
+                            <tr><td>@bang</td><td>@xml</td><td>@sql</td><td><span class="am-nhan @(xml == sql ? "tot" : "xau")">@(xml == sql ? "Khớp" : "Lệch")</span></td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        @if (db.KiemTra is { HopLe: false } ktdb)
+        {
+            <partial name="_BangLoi" model="ktdb.DanhSach" />
+        }
+    </section>
+}
+
+@* ===== So doanh thu với view SQL ===== *@
+@if (Model.CoSoDoanhThu)
+{
+    var khop = Model.DoanhThuSql is { } s && s.SoDon == Model.SoDonXml && s.DoanhThu == Model.DoanhThuXml;
+    <section class="am-khoi">
+        <h2 class="am-khoi-tieude">Doanh thu: trang Báo cáo và vw_DoanhThuHoanTat</h2>
+        @if (Model.DoanhThuSql is { } sql)
+        {
+            <div class="am-thongbao @(khop ? "ok" : "loi")">
+                @(khop ? "Bằng nhau." : "Lệch: hãy chạy XML → SQL rồi so lại.")
+            </div>
+            <div class="am-bang-boc">
+                <table class="am-bang">
+                    <thead><tr><th>Nguồn</th><th>Đơn hoàn tất</th><th>Doanh thu</th></tr></thead>
+                    <tbody>
+                        <tr><td>XML (LINQ, trang Báo cáo)</td><td>@Model.SoDonXml</td><td>@HienThi.Tien(Model.DoanhThuXml)</td></tr>
+                        <tr><td>SQL (vw_DoanhThuHoanTat)</td><td>@sql.SoDon</td><td>@HienThi.Tien(sql.DoanhThu)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="am-thongbao loi">Không đọc được SQL: @Model.LoiSql</div>
+        }
+    </section>
+}
+
+@* ===== Đối chiếu với bản xuất từ SQL ===== *@
+@if (Model.DoiChieu is { } dc)
+{
+    var tatCaKhop = dc.Count > 0 && dc.All(d => d.Khop);
+    <section class="am-khoi">
+        <h2 class="am-khoi-tieude">Đối chiếu XML đang chạy với SQL (KiemTra/@Model.TenBanXuat)</h2>
+        <div class="am-thongbao @(tatCaKhop ? "ok" : "loi")">
+            @(dc.Count == 0 ? "Không tìm thấy bản xuất." : tatCaKhop ? "12 bảng khớp hoàn toàn: số dòng, khóa và nội dung." : $"{dc.Count(d => !d.Khop)} bảng lệch.")
+        </div>
+        <div class="am-bang-boc">
+            <table class="am-bang">
+                <thead><tr><th>Bảng</th><th>XML</th><th>SQL</th><th>Chỉ có trong XML</th><th>Chỉ có trong SQL</th><th>Khác nội dung</th><th>Kết quả</th></tr></thead>
+                <tbody>
+                    @foreach (var d in dc)
+                    {
+                        <tr>
+                            <td>@d.Bang</td>
+                            <td>@d.SoDongXml</td>
+                            <td>@d.SoDongSql</td>
+                            <td>@string.Join(", ", d.ChiCoTrongXml.Take(5))@(d.ChiCoTrongXml.Count > 5 ? " …" : "")</td>
+                            <td>@string.Join(", ", d.ChiCoTrongSql.Take(5))@(d.ChiCoTrongSql.Count > 5 ? " …" : "")</td>
+                            <td>@string.Join(", ", d.KhacNoiDung.Take(5))@(d.KhacNoiDung.Count > 5 ? " …" : "")</td>
+                            <td><span class="am-nhan @(d.Khop ? "tot" : "xau")">@(d.Khop ? "Khớp" : "Lệch")</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+}
+
+<div class="am-hai-cot" style="grid-template-columns: 1fr 1fr">
+    <form method="post" asp-action="KiemTraFile" enctype="multipart/form-data" class="am-khoi">
+        <h2 class="am-khoi-tieude">Thử XSD một file</h2>
+        <p class="am-khoi-phu">Tải lên một file XML để kiểm tra lược đồ và khóa chính. Không ghi gì vào dữ liệu.</p>
+        <div class="am-truong">
+            <label for="tenBang">Bảng</label>
+            <select class="am-o" id="tenBang" name="tenBang">
+                @foreach (var b in DongBoService.DanhSachBang)
+                {
+                    <option value="@b" selected="@(b == Model.TenBangThu)">@b</option>
+                }
+            </select>
+        </div>
+        <div class="am-truong">
+            <label for="file">File XML</label>
+            <input class="am-o" type="file" id="file" name="file" accept=".xml" required />
+        </div>
+        <button type="submit" class="am-nut day">Kiểm tra file</button>
+    </form>
+
+    <form method="post" asp-action="SqlRaXml" class="am-khoi">
+        <h2 class="am-khoi-tieude">Khởi tạo XML từ SQL</h2>
+        <p class="am-khoi-phu">Xuất 12 bảng SQL, kiểm tra, sao lưu XML hiện tại rồi ghi đè App_Data/Xml. Dùng cho bước 0 của buổi demo.</p>
+        <input type="hidden" name="khoiTao" value="true" />
+        <label class="am-check"><input type="checkbox" name="xacNhan" value="true" /> Tôi hiểu toàn bộ XML đang chạy sẽ bị thay bằng dữ liệu SQL.</label>
+        <button type="submit" class="am-nut day">Khởi tạo từ SQL</button>
+    </form>
+</div>
+
+<h2 class="am-khoi-tieude">Bản sao lưu</h2>
+<div class="am-bang-boc">
+    <table class="am-bang">
+        <thead><tr><th>Bản sao lưu</th><th>Thời điểm</th><th>Số file</th><th class="thao-tac"><span class="visually-hidden">Phục hồi</span></th></tr></thead>
+        <tbody>
+            @foreach (var b in Model.SaoLuu.Take(15))
+            {
+                <tr>
+                    <td>Backup/@b.Ten</td>
+                    <td>@HienThi.NgayGio(b.ThoiGian)</td>
+                    <td>@b.SoFile</td>
+                    <td class="thao-tac">
+                        <form method="post" asp-action="PhucHoi" class="am-nho">
+                            <input type="hidden" name="ten" value="@b.Ten" />
+                            <label class="am-check"><input type="checkbox" name="xacNhan" value="true" /> Xác nhận</label>
+                            <button type="submit" class="am-nut-nho">Phục hồi</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            @if (Model.SaoLuu.Count == 0)
+            {
+                <tr><td colspan="4" class="trong">Chưa có bản sao lưu nào.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<h2 class="am-khoi-tieude">Bản xuất từ SQL</h2>
+<div class="am-bang-boc">
+    <table class="am-bang">
+        <thead><tr><th>Thư mục</th><th>Thời điểm</th><th>Số file</th><th class="thao-tac"><span class="visually-hidden">Đối chiếu</span></th></tr></thead>
+        <tbody>
+            @foreach (var b in Model.BanXuat.Take(10))
+            {
+                <tr>
+                    <td>KiemTra/@b.Ten</td>
+                    <td>@HienThi.NgayGio(b.ThoiGian)</td>
+                    <td>@b.SoFile</td>
+                    <td class="thao-tac"><a class="am-nut-nho @(b.Ten == Model.TenBanXuat ? "dam" : null)" asp-action="Index" asp-route-doiChieu="@b.Ten">Đối chiếu</a></td>
+                </tr>
+            }
+            @if (Model.BanXuat.Count == 0)
+            {
+                <tr><td colspan="4" class="trong">Chưa xuất lần nào. Bấm "SQL → XML (kiểm tra)".</td></tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<form method="post" asp-action="DoanhThu">
+    <button type="submit" class="am-nut phu rong-400">So doanh thu với view SQL</button>
+</form>

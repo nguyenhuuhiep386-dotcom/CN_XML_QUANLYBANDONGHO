@@ -1,0 +1,21 @@
+@model List<LoiKiemTra>
+<div class="am-bang-boc">
+    <table class="am-bang">
+        <thead><tr><th>Bảng</th><th>Dòng</th><th>Nội dung</th><th>Mức</th></tr></thead>
+        <tbody>
+            @foreach (var l in Model.OrderBy(l => l.LaCanhBao).Take(100))
+            {
+                <tr>
+                    <td>@l.Bang</td>
+                    <td>@l.Dong</td>
+                    <td>@l.NoiDung</td>
+                    <td><span class="am-nhan @(l.LaCanhBao ? null : "xau")">@(l.LaCanhBao ? "Cảnh báo" : "Lỗi")</span></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@if (Model.Count > 100)
+{
+    <p class="am-chu-thich">Hiện 100 / @Model.Count dòng.</p>
+}

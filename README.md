@@ -73,6 +73,20 @@ Tài khoản demo, mật khẩu `123456`: `admin@aurel.vn` (Admin → `/Admin`),
 
 Mã người đang đăng nhập luôn lấy từ `User`, không nhận từ form: `User.MaKH()`, `User.MaNV()`, `User.MaTK()`, `User.VaiTro()` (cần `using AurelMaison.Services;`). Khu nhân viên dùng `[Authorize(Roles = VaiTro.NhanVienHoacAdmin)]`, khu Admin dùng `[Authorize(Roles = VaiTro.Admin)]`. Đường dẫn `/api/*` trả 401 khi chưa đăng nhập, 403 khi sai vai trò. Tài khoản bị khóa hoặc đổi vai trò bị đăng xuất ngay ở yêu cầu kế tiếp.
 
+### Dịch vụ dùng chung
+
+Nhận qua constructor (đã đăng ký trong `Program.cs`):
+
+- `DanhMucService`: `LayDanhSach(tuKhoa, maHang, giaTu, giaDen, loaiMay, chatLieu)` (chỉ mẫu `DangBan`, có `SoConHang`), `LayChiTiet(maMau)`, `LayDanhSachHang()`.
+- `KhoService`: `DemConHang(maMau)`, `LaySerialConHang(maMau)`, `GiuSerial(ds)`, `GiaiPhongSerial(ds)`, `DanhDauDaBan(ds)`. Một serial sai thì cả danh sách không đổi; gọi bên trong `XmlHelper.ChayTrongKhoa` của đơn vẫn an toàn.
+- `KhachHangService`: `TimTheoSoDienThoai(sdt)`, `ThemKhachTaiQuay(hoTen, sdt, email, diaChi)` (trùng số thì `Ma` là mã khách đã có), `CapNhatHoSo(maKH, ...)`, `LayTheoTaiKhoan(maTK)`.
+
+### Dữ liệu XML và đồng bộ SQL
+
+Màn `/Admin/DuLieu` (chỉ Admin): kiểm tra toàn bộ 12 file (XSD, trùng khóa, tham chiếu), thử XSD một file, XML → SQL (một transaction, lỗi thì rollback), SQL → XML ra `App_Data/KiemTra/<thời điểm>` kèm bảng đối chiếu, Khởi tạo từ SQL (ghi đè `App_Data/Xml`, phải tick xác nhận), sao lưu / phục hồi `App_Data/Backup`. Mọi thao tác ghi đều tự sao lưu trước. Chuỗi kết nối ở `ConnectionStrings:QuanLyBanDongHo` trong `appsettings.json`.
+
+Bảng chưa có XSD (LichHen, DonHang, ChiTietDonHang, HoaDon, PhieuBaoHanh) chỉ hiện cảnh báo; thêm file `App_Data/Xsd/<Bảng>.xsd` là tự được kiểm tra.
+
 ### Chạy dự án
 
 Cần .NET SDK 8 trở lên; máy chỉ có .NET 10 vẫn build và chạy được.

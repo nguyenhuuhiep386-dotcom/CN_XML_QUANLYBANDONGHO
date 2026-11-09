@@ -41,6 +41,34 @@ public static class XmlHelper
         }
     }
 
+    /// <summary>App_Data (chứa Xml, Xsd, Xslt, Backup, KiemTra).</summary>
+    public static string ThuMucAppData => _thuMucAppData ?? throw new InvalidOperationException("Chưa gọi XmlHelper.KhoiTao.");
+
+    public static bool CoXsd(string tenBang) => File.Exists(DuongDan("Xsd", tenBang, ".xsd"));
+
+    /// <summary>
+    /// Đọc một file XML ở thư mục bất kỳ (bản sao lưu, bản xuất từ SQL, file tải lên) với cùng cấu hình an toàn,
+    /// giữ số dòng để báo lỗi. Không khóa: chỉ dùng cho file không phải dữ liệu đang chạy.
+    /// </summary>
+    public static XDocument DocFile(Stream luong)
+    {
+        using var reader = XmlReader.Create(luong, CauHinhDoc);
+        return XDocument.Load(reader, LoadOptions.SetLineInfo);
+    }
+
+    public static XDocument DocFile(string duongDan)
+    {
+        using var luong = File.OpenRead(duongDan);
+        return DocFile(luong);
+    }
+
+    /// <summary>Ghi XML ra file ngoài App_Data/Xml (bản xuất kiểm tra) cùng định dạng với Save.</summary>
+    public static void GhiFile(XDocument doc, string duongDan)
+    {
+        using var writer = XmlWriter.Create(duongDan, new XmlWriterSettings { Indent = true, Encoding = new UTF8Encoding(false) });
+        doc.Save(writer);
+    }
+
     public static XDocument Load(string tenBang)
     {
         var duongDan = DuongDan("Xml", tenBang, ".xml");
