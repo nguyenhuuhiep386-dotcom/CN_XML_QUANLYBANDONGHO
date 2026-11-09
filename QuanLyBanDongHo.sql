@@ -183,6 +183,7 @@ CREATE TABLE dbo.DonHang (
     SoDienThoai   VARCHAR(15)   NOT NULL,
     HinhThucNhan  VARCHAR(20)   NOT NULL,
     DiaChiNhan    NVARCHAR(250) NULL,
+    Showroom      NVARCHAR(100) NULL,                -- bắt buộc khi NhanTaiShowroom
     TongTien      DECIMAL(18,0) NOT NULL,
     TrangThai     VARCHAR(20)   NOT NULL CONSTRAINT DF_DonHang_TrangThai DEFAULT 'ChoXacNhan',
     PhuongThucTT  VARCHAR(20)   NULL,
@@ -193,6 +194,7 @@ CREATE TABLE dbo.DonHang (
     CONSTRAINT CK_DonHang_PhuTrach  CHECK (TrangThai IN ('ChoXacNhan','DaHuy') OR MaNVPhuTrach IS NOT NULL),
     CONSTRAINT CK_DonHang_HinhThuc  CHECK (HinhThucNhan IN ('GiaoTanNoi','NhanTaiShowroom')),
     CONSTRAINT CK_DonHang_DiaChi    CHECK (HinhThucNhan <> 'GiaoTanNoi' OR DiaChiNhan IS NOT NULL),
+    CONSTRAINT CK_DonHang_Showroom  CHECK (HinhThucNhan <> 'NhanTaiShowroom' OR Showroom IS NOT NULL),
     CONSTRAINT CK_DonHang_TongTien  CHECK (TongTien >= 0),
     CONSTRAINT CK_DonHang_TrangThai CHECK (TrangThai IN ('ChoXacNhan','DaXacNhan','DangGiao','HoanTat','DaHuy')),
     CONSTRAINT CK_DonHang_PTTT      CHECK (PhuongThucTT IS NULL OR PhuongThucTT IN ('TienMat','ChuyenKhoan','The')),
@@ -302,10 +304,10 @@ INSERT INTO dbo.LichHen (MaLH, MaKH, MaMau, Showroom, NgayHen, HoTen, SoDienThoa
 ('LH20260002','KH001','DH001',N'Showroom Đà Nẵng','2026-10-28T15:30:00',N'Nguyễn Văn An','0900111222',NULL,                              'HoanTat',  'NV002',NULL,'2026-10-26T09:00:00');
 
 -- Đơn đã hoàn tất (nguồn dữ liệu cho hóa đơn, bảo hành, báo cáo)
-INSERT INTO dbo.DonHang (MaDon, MaKH, NguonDon, MaNVLap, MaNVPhuTrach, NgayDat, TenNguoiNhan, SoDienThoai, HinhThucNhan, DiaChiNhan, TongTien, TrangThai, PhuongThucTT, NgayHoanTat, LyDoHuy) VALUES
-('AM20260012','KH001','Online', NULL,   'NV002','2026-10-30T20:15:00',N'Nguyễn Văn An',  '0900111222','NhanTaiShowroom',NULL,285000000,'HoanTat',   'ChuyenKhoan','2026-11-01T10:00:00',NULL),
-('AM20260015','KH003','TaiQuay','NV002','NV002','2026-11-02T15:05:00',N'Trần Quốc Cường','0911222333','NhanTaiShowroom',NULL,175000000,'DaHuy',     NULL,         NULL,                 N'Khách đổi ý trước khi thanh toán'),
-('AM20260018','KH002','Online', NULL,   NULL,   '2026-11-08T21:30:00',N'Lê Thị Bình',    '0900123456','NhanTaiShowroom',NULL,285000000,'ChoXacNhan',NULL,         NULL,                 NULL);
+INSERT INTO dbo.DonHang (MaDon, MaKH, NguonDon, MaNVLap, MaNVPhuTrach, NgayDat, TenNguoiNhan, SoDienThoai, HinhThucNhan, DiaChiNhan, Showroom, TongTien, TrangThai, PhuongThucTT, NgayHoanTat, LyDoHuy) VALUES
+('AM20260012','KH001','Online', NULL,   'NV002','2026-10-30T20:15:00',N'Nguyễn Văn An',  '0900111222','NhanTaiShowroom',NULL,N'Showroom Đà Nẵng',285000000,'HoanTat',   'ChuyenKhoan','2026-11-01T10:00:00',NULL),
+('AM20260015','KH003','TaiQuay','NV002','NV002','2026-11-02T15:05:00',N'Trần Quốc Cường','0911222333','NhanTaiShowroom',NULL,N'Showroom Đà Nẵng',175000000,'DaHuy',     NULL,         NULL,                 N'Khách đổi ý trước khi thanh toán'),
+('AM20260018','KH002','Online', NULL,   NULL,   '2026-11-08T21:30:00',N'Lê Thị Bình',    '0900123456','NhanTaiShowroom',NULL,N'Showroom Đà Nẵng',285000000,'ChoXacNhan',NULL,         NULL,                 NULL);
 
 INSERT INTO dbo.ChiTietDonHang (MaDon, STT, MaMau, TenMau, Serial, DonGia, ThoiHanBaoHanh) VALUES
 ('AM20260012',1,'DH001',N'Rolex Datejust 36',          'DEMO012',285000000,24),
