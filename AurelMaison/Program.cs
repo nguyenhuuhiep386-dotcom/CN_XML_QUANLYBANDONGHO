@@ -1,5 +1,6 @@
 using AurelMaison.Models;
 using AurelMaison.Services;
+using AurelMaison.Services.CustomerDemo;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
@@ -18,9 +19,23 @@ builder.Services.AddSingleton<BaoCaoService>();
 builder.Services.AddSingleton<KhachHangService>();
 builder.Services.AddSingleton<DongBoService>();
 
+// Customer adapters call Phương's real account, profile, catalog and stock services.
+builder.Services.AddSingleton<CustomerGroupAdapter>();
+builder.Services.AddSingleton<IAuthService>(sp => sp.GetRequiredService<CustomerGroupAdapter>());
+builder.Services.AddSingleton<IKhachHangService>(sp => sp.GetRequiredService<CustomerGroupAdapter>());
+builder.Services.AddSingleton<IDanhMucService>(sp => sp.GetRequiredService<CustomerGroupAdapter>());
+builder.Services.AddSingleton<IKhoService>(sp => sp.GetRequiredService<CustomerGroupAdapter>());
+// Nguyên will replace the provisional online-order adapter at integration.
+builder.Services.AddSingleton<IDonHangService, DemoDonHangService>();
+builder.Services.AddScoped<GioHangService>();
+builder.Services.AddSingleton<LichHenService>();
+builder.Services.AddHttpClient<WarrantyClient>(client => client.Timeout = TimeSpan.FromSeconds(8))
+    .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AllowAutoRedirect = false, UseCookies = false });
+
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
+        options.Cookie.Name = Security.CookieName;
         options.LoginPath = "/Account/Login";
         options.AccessDeniedPath = "/Account/AccessDenied";
         options.ExpireTimeSpan = TimeSpan.FromHours(8);

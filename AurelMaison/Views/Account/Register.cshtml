@@ -1,0 +1,17 @@
+@model DangKyForm
+@{ ViewData["Title"] = "Đăng ký"; }
+<section class="auth-layout">
+    <div class="auth-art"><img src="~/images/boutique-hero.jpg" alt="" /><div><p class="kicker">AUREL MAISON</p><h2>Khởi đầu<br />một dấu mốc mới.</h2><p>Tạo tài khoản để lưu thông tin nhận hàng,<br />xem lịch hẹn và theo dõi mỗi đơn mua.</p></div></div>
+    <div class="auth-form">
+        <p class="kicker">THAM GIA CÙNG AUREL MAISON</p><h1>Tạo tài khoản</h1>
+        <form asp-action="Register" method="post" class="stack">
+            <div asp-validation-summary="All" class="validation"></div>
+            <label>Họ và tên<input asp-for="HoTen" placeholder="Nguyễn Hữu Hiệp" autocomplete="name" /></label>
+            <label>Email<input asp-for="Email" placeholder="email@example.com" autocomplete="email" /></label>
+            <label>Mật khẩu<input asp-for="MatKhau" placeholder="Tối thiểu 6 ký tự" autocomplete="new-password" /></label>
+            <label>Nhập lại mật khẩu<input asp-for="NhapLai" placeholder="Nhập lại mật khẩu" autocomplete="new-password" /></label>
+            <button>Đăng ký tài khoản <partial name="_Icon" model='@("arrow")' /></button>
+        </form>
+        <p class="auth-switch">Đã có tài khoản? <a asp-action="Login">Đăng nhập</a></p>
+    </div>
+</section>

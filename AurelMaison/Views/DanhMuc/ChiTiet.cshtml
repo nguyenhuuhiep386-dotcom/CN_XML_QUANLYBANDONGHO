@@ -1,0 +1,27 @@
+@model DongHo
+@{ ViewData["Title"] = Model.TenMau; }
+<nav class="breadcrumb" aria-label="Đường dẫn"><a asp-controller="Home" asp-action="Index">Trang chủ</a><span>/</span><a asp-action="Index">Bộ sưu tập</a><span>/</span><span>@Model.TenMau</span></nav>
+<div class="split detail-layout">
+    <div class="photo feature"><img src="@(string.IsNullOrEmpty(Model.HinhAnh) ? "/images/watch.svg" : Model.HinhAnh)" alt="@Model.TenMau" /></div>
+    <section class="detail-info">
+        <p class="kicker">@Model.TenHang · @Model.MaMau</p>
+        <h1>@Model.TenMau</h1>
+        <div class="spread"><p class="price">@Rules.Money(Model.Gia)</p><span class="stock @(Model.SoConHang == 0 ? "soldout" : "")">@(Model.SoConHang > 0 ? "Có sẵn tại showroom" : "Hiện đã hết hàng")</span></div>
+        <p class="description">@Model.MoTa</p>
+        <dl>
+            <dt>Loại máy</dt><dd>@Model.LoaiMay</dd>
+            <dt>Kích thước</dt><dd>@Model.KichThuoc.ToString("0.#") mm</dd>
+            <dt>Chất liệu</dt><dd>@Model.ChatLieu</dd>
+            <dt>Bảo hành</dt><dd>@Model.ThoiHanBaoHanh tháng</dd>
+            <dt>Tồn kho</dt><dd>@(Model.SoConHang > 0 ? $"{Model.SoConHang} chiếc có thể bán" : "Hết hàng")</dd>
+        </dl>
+        <form asp-controller="Cart" asp-action="Them" method="post" class="purchase-actions">
+            <input type="hidden" name="maMau" value="@Model.MaMau" />
+            @if (Model.SoConHang > 0)
+            { <label>Số lượng<input name="soLuong" type="number" min="1" max="@Model.SoConHang" value="1" required /></label> }
+            <button disabled="@(Model.SoConHang == 0)"><partial name="_Icon" model='@("bag")' /> Thêm vào giỏ</button>
+            <a class="button outline" asp-controller="Booking" asp-action="Index" asp-route-maMau="@Model.MaMau"><partial name="_Icon" model='@("calendar")' /> Đặt lịch xem mẫu này</a>
+        </form>
+        <p class="detail-note">Xem trực tiếp tại Showroom Đà Nẵng · 09:00–20:00</p>
+    </section>
+</div>

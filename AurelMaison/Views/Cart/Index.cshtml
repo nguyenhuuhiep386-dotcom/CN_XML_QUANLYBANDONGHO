@@ -1,0 +1,46 @@
+@model GioVm
+@{ ViewData["Title"] = "Giỏ hàng"; }
+<nav class="breadcrumb" aria-label="Đường dẫn"><a asp-controller="Home" asp-action="Index">Trang chủ</a><span>/</span><span>Giỏ hàng</span></nav>
+<header class="page-heading"><div><p class="kicker">LỰA CHỌN CỦA BẠN</p><h1>Giỏ hàng</h1><p>Kiểm tra đồng hồ và số lượng trước khi đặt hàng.</p></div><a class="text-link" asp-controller="DanhMuc" asp-action="Index">Tiếp tục khám phá →</a></header>
+<div class="steps"><span class="current">01 · Giỏ hàng</span><span>→</span><span>02 · Thông tin nhận hàng</span><span>→</span><span>03 · Hoàn tất</span></div>
+@if (Model.Dong.Count == 0)
+{
+    <section class="empty-state"><partial name="_Icon" model='@("bag")' /><h2>Giỏ hàng đang chờ chiếc đồng hồ đầu tiên</h2><p>Khám phá bộ sưu tập và chọn thiết kế bạn yêu thích.</p><a class="button" asp-controller="DanhMuc" asp-action="Index">Xem bộ sưu tập</a></section>
+}
+else
+{
+    <div class="checkout-layout">
+        <section class="panel cart-items" aria-label="Sản phẩm trong giỏ">
+        @foreach (var item in Model.Dong)
+        {
+            <article class="cartline">
+                <img src="@(string.IsNullOrEmpty(item.HinhAnh) ? "/images/watch.svg" : item.HinhAnh)" alt="@item.TenMau" />
+                <div><p class="kicker">@item.MaMau</p><h2>@item.TenMau</h2><p>@Rules.Money(item.Gia)</p>
+                    @if (!item.DangBan || item.SoLuong > item.SoConHang)
+                    { <p class="validation">Sản phẩm không đủ hàng. Hiện còn @item.SoConHang chiếc.</p> }
+                </div>
+                <div class="actions">
+                    @if (item.DangBan && item.SoConHang > 0)
+                    {
+                        <form asp-action="CapNhat" method="post" class="actions">
+                            <input type="hidden" name="maMau" value="@item.MaMau" />
+                            <label>Số lượng<input class="qty" name="soLuong" type="number" min="1" max="@item.SoConHang" value="@item.SoLuong" required /></label>
+                            <button class="outline">Cập nhật</button>
+                        </form>
+                    }
+                    <form asp-action="Xoa" method="post"><input type="hidden" name="maMau" value="@item.MaMau" /><button class="quiet">Xóa</button></form>
+                </div>
+            </article>
+        }
+        </section>
+        <aside class="panel summary">
+            <p class="kicker">THÔNG TIN ĐẶT HÀNG</p><h2>Tóm tắt giỏ hàng</h2>
+            <div class="summary-row"><span>Số lượng</span><strong>@Model.Dong.Sum(x => x.SoLuong) chiếc</strong></div>
+            <div class="summary-total"><span>Tạm tính</span><strong>@Rules.Money(Model.TongTien)</strong></div>
+            @if (Model.HopLe)
+            { <a class="button" asp-controller="Order" asp-action="Checkout">Tiếp tục đặt hàng <partial name="_Icon" model='@("arrow")' /></a> }
+            else { <p class="validation">Cập nhật giỏ hàng theo số lượng còn lại để tiếp tục.</p> }
+            <p class="summary-note">Đăng nhập để đặt hàng và theo dõi đơn của bạn.</p>
+        </aside>
+    </div>
+}

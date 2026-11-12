@@ -1,0 +1,9 @@
+@model DonHang
+@{ ViewData["Title"] = "Đặt hàng thành công"; }
+<section class="panel result">
+    <div class="result-symbol"><partial name="_Icon" model='@("check")' /></div>
+    <p class="kicker">CẢM ƠN BẠN ĐÃ CHỌN AUREL MAISON</p><h1>Đặt hàng thành công</h1>
+    <p>Đơn hàng đã được ghi nhận. Bạn có thể theo dõi trạng thái trong tài khoản của mình.</p>
+    <dl><dt>Mã đơn hàng</dt><dd><strong>@Model.MaDon</strong></dd><dt>Tổng tiền</dt><dd><strong>@Rules.Money(Model.TongTien)</strong></dd><dt>Nhận hàng</dt><dd>@(Model.HinhThucNhan == Rules.Pickup ? Model.Showroom : Model.DiaChiNhan)</dd></dl>
+    <div class="actions"><a class="button" asp-action="ChiTiet" asp-route-id="@Model.MaDon">Theo dõi đơn <partial name="_Icon" model='@("arrow")' /></a><a class="text-link" asp-controller="DanhMuc" asp-action="Index">Tiếp tục khám phá</a></div>
+</section>

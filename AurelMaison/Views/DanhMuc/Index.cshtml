@@ -1,0 +1,42 @@
+@model DanhMucVm
+@{ ViewData["Title"] = "Bộ sưu tập"; }
+<nav class="breadcrumb" aria-label="Đường dẫn"><a asp-controller="Home" asp-action="Index">Trang chủ</a><span>/</span><span>Bộ sưu tập</span></nav>
+<header class="page-heading">
+    <div><p class="kicker">THE WATCH COLLECTION</p><h1>Bộ sưu tập đồng hồ</h1><p>Chọn thiết kế phù hợp với phong cách và những dấu mốc của bạn.</p></div>
+    <a class="text-link" asp-controller="Booking" asp-action="Index">Đặt lịch xem trực tiếp <partial name="_Icon" model='@("arrow")' /></a>
+</header>
+<div class="collection-layout">
+    <form asp-action="Index" method="get" class="filters">
+        <h2>Tìm chiếc đồng hồ của bạn</h2>
+        <div asp-validation-summary="All" class="validation"></div>
+        <label>Tìm kiếm<input name="tuKhoa" type="search" placeholder="Tên hoặc mã đồng hồ" value="@Model.Loc.TuKhoa" /></label>
+        <label>Thương hiệu
+            <select name="hang"><option value="">Tất cả thương hiệu</option>
+            @foreach (var brand in Model.Hang) { <option value="@brand.MaHang" selected="@(Model.Loc.Hang == brand.MaHang)">@brand.TenHang</option> }
+            </select>
+        </label>
+        <div class="filter-pair">
+            <label>Giá từ (₫)<input name="giaTu" type="number" min="0" placeholder="Từ" value="@Model.Loc.GiaTu" /></label>
+            <label>Giá đến (₫)<input name="giaDen" type="number" min="0" placeholder="Đến" value="@Model.Loc.GiaDen" /></label>
+        </div>
+        <label>Loại máy
+            <select name="loaiMay"><option value="">Tất cả loại máy</option>
+            @foreach (var value in Model.LoaiMay) { <option value="@value" selected="@(Model.Loc.LoaiMay == value)">@value</option> }
+            </select>
+        </label>
+        <label>Chất liệu
+            <select name="chatLieu"><option value="">Tất cả chất liệu</option>
+            @foreach (var value in Model.ChatLieu) { <option value="@value" selected="@(Model.Loc.ChatLieu == value)">@value</option> }
+            </select>
+        </label>
+        <div class="actions"><button><partial name="_Icon" model='@("search")' /> Lọc kết quả</button><a asp-action="Index">Xóa bộ lọc</a></div>
+    </form>
+    <section class="collection-results" aria-label="Kết quả đồng hồ">
+        <div class="results-top"><span>Tìm thấy <strong>@Model.Mau.Count</strong> mẫu đồng hồ</span><span>Aurel Maison Collection</span></div>
+        @if (Model.Mau.Count == 0)
+        {
+            <div class="empty-state"><partial name="_Icon" model='@("search")' /><h2>Chưa tìm thấy mẫu phù hợp</h2><p>Thử thay đổi khoảng giá hoặc xóa bớt bộ lọc.</p><a class="button outline" asp-action="Index">Xem tất cả đồng hồ</a></div>
+        }
+        <partial name="_Cards" model="Model.Mau" />
+    </section>
+</div>

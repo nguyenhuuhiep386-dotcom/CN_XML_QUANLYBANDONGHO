@@ -1,0 +1,10 @@
+@model DonHang
+@{ ViewData["Title"] = "Kết quả hủy đơn"; }
+<section class="panel result">
+    <div class="result-symbol"><partial name="_Icon" model='@(Model.TrangThai == Rules.Cancelled ? "check" : "info")' /></div>
+    <p class="kicker">ĐƠN HÀNG @Model.MaDon</p>
+    <h1>@(Model.TrangThai == Rules.Cancelled ? "Đã hủy đơn hàng" : "Đơn hàng chưa được hủy")</h1>
+    <p>Trạng thái hiện tại: @Rules.State(Model.TrangThai)</p>
+    @if (Model.LyDoHuy is { } reason) { <p>Lý do hủy: @reason</p> }
+    <div class="actions"><a class="button" asp-action="Tracking">Về Đơn hàng của tôi <partial name="_Icon" model='@("arrow")' /></a></div>
+</section>
