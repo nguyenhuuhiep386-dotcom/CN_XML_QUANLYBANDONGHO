@@ -311,7 +311,29 @@ Sau khi mã nguồn được khởi tạo:
 4. Chuẩn bị dữ liệu mẫu; cấu hình SQL Server nếu sử dụng chức năng chuyển đổi dữ liệu.
 5. Build và chạy project Web; kiểm thử bằng tài khoản mẫu của từng vai trò.
 
-Tên solution, project khởi chạy, lệnh chạy, URL truy cập và cách khởi tạo tài khoản mẫu sẽ được bổ sung khi có mã nguồn thực tế.
+Mở `AurelMaison.slnx` hoặc `AurelMaison/AurelMaison.csproj`. Chạy profile **http**, hoặc dùng lệnh sau ở thư mục gốc repo.
+
+```bash
+dotnet run --project AurelMaison/AurelMaison.csproj --launch-profile http
+```
+
+Trang chủ là `http://localhost:5269`. Đăng nhập bằng tài khoản mẫu `khach1@gmail.com` hoặc `khach2@gmail.com`, mật khẩu `123456`. Website đọc XML mẫu có sẵn trong `AurelMaison/App_Data/Xml`. Giữ bản sao thư mục này nếu cần đặt lại dữ liệu demo sau khi thử.
+
+#### Giao diện khách hàng
+
+Bản giao diện dùng chung `Views/Shared/_CustomerLayout.cshtml`, `wwwroot/css/customer.css` và `wwwroot/js/customer.js`. Các trang có lưới sản phẩm, menu thu gọn cho màn hình nhỏ, bố cục giỏ hàng và đặt hàng với phần tóm tắt bên cạnh, cùng ba tab tài khoản. Ảnh banner và năm ảnh đồng hồ là ảnh minh họa tạo bằng AI để thử bố cục, cần thay bằng ảnh sản phẩm thực tế khi triển khai.
+
+#### Kiểm tra phần khách hàng
+
+- Tìm DH001 trong **Bộ sưu tập**, thêm vào giỏ khi chưa đăng nhập rồi đặt hàng. Sau khi đăng nhập, kiểm tra sản phẩm vẫn trong giỏ. Thử chọn nhận tại showroom, lưu mã đơn rồi mở lại trong **Đơn hàng của tôi**.
+- Dùng khách 2 để kiểm tra đơn `AM20260018` đang chờ xác nhận và quyền truy cập chi tiết đơn. Đặt lịch từ chi tiết DH001 vào một ngày tương lai lúc 10:00, rồi kiểm tra tab **Lịch hẹn của tôi**.
+- Mở `/DanhMuc/Xml` để xem HTML từ `DanhMucDongHo.xslt`. Trang **Bảo hành của tôi** gọi `/api/baohanh/{maPhieu}`. Khi dùng API hiện tại trả 501, trang sẽ báo chờ tích hợp.
+
+#### Điểm nối khi ghép với các thành viên
+
+- `Services/Interfaces.cs` là ranh giới của phần khách hàng. Giao diện khách hàng dùng `CustomerGroupAdapter` để gọi AuthService, KhachHangService, DanhMucService và KhoService đã có trên main. Adapter đơn online trong `Services/CustomerDemo` hỗ trợ thử đặt và hủy đơn khi chờ DonHangService của Nguyên. Đổi riêng đăng ký `IDonHangService` khi phần này được bàn giao. Giữ các XSD tài khoản và hồ sơ của Phương; ba XSD thêm cho phần khách là LichHen, DonHang và ChiTietDonHang.
+- `LichHenService` dùng cùng khóa của `XmlHelper` cho cả đọc, kiểm tra, sinh mã và ghi. Khi nối khu nhân viên, truyền mã nhân viên từ phiên đăng nhập cho thao tác xác nhận, hoàn tất hoặc hủy lịch.
+- `WarrantyClient` dùng URL gốc trong `Warranty:BaseUrl` và tên cookie trong `Security.CookieName`. Đồng bộ hai cấu hình này khi ghép API của Nguyên. Profile HTTPS cần chứng chỉ phát triển được tin cậy.
 
 ### 3. Tạo nhánh riêng cho từng chức năng
 

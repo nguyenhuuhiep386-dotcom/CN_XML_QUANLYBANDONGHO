@@ -1,26 +1,16 @@
-@{
-    ViewData["Title"] = "Đăng nhập";
-}
-
-<div class="row justify-content-center">
-    <div class="col-12 col-sm-8 col-md-5">
-        <h1 class="h4 mb-3">Đăng nhập</h1>
-
-        @if (ViewData["Loi"] is string loi)
-        {
-            <div class="alert alert-danger">@loi</div>
-        }
-
-        <form method="post" asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]">
-            <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input id="email" name="email" type="email" class="form-control" value="@ViewData["Email"]" required autofocus />
-            </div>
-            <div class="mb-3">
-                <label for="matKhau" class="form-label">Mật khẩu</label>
-                <input id="matKhau" name="matKhau" type="password" class="form-control" required />
-            </div>
-            <button type="submit" class="btn btn-dark w-100">Đăng nhập</button>
+@model DangNhapForm
+@{ ViewData["Title"] = "Đăng nhập"; }
+<section class="auth-layout">
+    <div class="auth-art"><img src="~/images/boutique-hero.jpg" alt="" /><div><p class="kicker">AUREL MAISON</p><h2>Chào mừng<br />bạn trở lại.</h2><p>Theo dõi đơn hàng, lịch hẹn và bảo hành<br />trong không gian của riêng bạn.</p></div></div>
+    <div class="auth-form">
+        <p class="kicker">KHÔNG GIAN CÁ NHÂN</p><h1>Đăng nhập</h1><p class="auth-intro">Đăng nhập để tiếp tục trải nghiệm cùng Aurel Maison.</p>
+        <form asp-action="Login" method="post" class="stack">
+            <div asp-validation-summary="All" class="validation"></div>
+            <input asp-for="ReturnUrl" type="hidden" />
+            <label>Email<input asp-for="Email" placeholder="email@example.com" autocomplete="email" /></label>
+            <label>Mật khẩu<input asp-for="MatKhau" placeholder="Nhập mật khẩu của bạn" autocomplete="current-password" /></label>
+            <button>Đăng nhập <partial name="_Icon" model='@("arrow")' /></button>
         </form>
+        <p class="auth-switch">Bạn chưa có tài khoản? <a asp-action="Register">Tạo tài khoản</a></p>
     </div>
-</div>
+</section>

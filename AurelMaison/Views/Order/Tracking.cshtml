@@ -1,0 +1,15 @@
+@model IReadOnlyList<DonHang>
+@{ ViewData["Title"] = "Đơn hàng của tôi"; }
+<nav class="breadcrumb" aria-label="Đường dẫn"><a asp-controller="Account" asp-action="Index">Tài khoản của tôi</a><span>/</span><span>Đơn hàng</span></nav>
+<header class="page-heading"><div><p class="kicker">LỊCH SỬ MUA HÀNG</p><h1>Đơn hàng của tôi</h1><p>Xem lại những lựa chọn và theo dõi trạng thái đơn hàng.</p></div><a class="text-link" asp-controller="DanhMuc" asp-action="Index">Khám phá bộ sưu tập →</a></header>
+@if (Model.Count == 0)
+{
+    <div class="empty-state"><partial name="_Icon" model='@("bag")' /><h2>Bạn chưa có đơn hàng</h2><p>Chiếc đồng hồ đầu tiên đang chờ bạn trong bộ sưu tập.</p><a class="button" asp-controller="DanhMuc" asp-action="Index">Xem bộ sưu tập</a></div>
+}
+@foreach (var item in Model)
+{
+    <article class="panel">
+        <div class="order-heading"><div><p class="kicker">MÃ ĐƠN HÀNG</p><h2>@item.MaDon</h2></div><span class="pill @(item.TrangThai == Rules.Pending ? "pending" : item.TrangThai == Rules.Cancelled ? "cancelled" : "")">@Rules.State(item.TrangThai)</span></div>
+        <div class="order-preview"><p>@item.NgayDat.ToString("dd/MM/yyyy HH:mm") · @item.Dong.Count chiếc</p><strong>@Rules.Money(item.TongTien)</strong><a class="button outline" asp-action="ChiTiet" asp-route-id="@item.MaDon">Xem chi tiết →</a></div>
+    </article>
+}

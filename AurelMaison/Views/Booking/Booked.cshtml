@@ -1,0 +1,15 @@
+@model LichHen
+@{ ViewData["Title"] = "Đã gửi lịch hẹn"; }
+<section class="panel result">
+    <div class="result-symbol"><partial name="_Icon" model='@("calendar")' /></div>
+    <p class="kicker">AUREL MAISON SHOWROOM</p><h1>Cuộc hẹn đã được ghi nhận</h1>
+    <p>Kiểm tra trạng thái xác nhận trong Lịch hẹn của tôi trước khi ghé showroom.</p>
+    <dl>
+        <dt>Mã lịch hẹn</dt><dd><strong>@Model.MaLH</strong></dd>
+        <dt>Mẫu đồng hồ</dt><dd>@ViewData["TenMau"]</dd>
+        <dt>Ngày giờ</dt><dd>@Model.NgayHen.ToString("dd/MM/yyyy HH:mm")</dd>
+        <dt>Showroom</dt><dd>@Model.Showroom</dd>
+        <dt>Trạng thái</dt><dd><span class="pill pending">@Rules.State(Model.TrangThai)</span></dd>
+    </dl>
+    <div class="actions"><a class="button" asp-controller="Account" asp-action="Index" asp-route-tab="lich-hen">Xem lịch của tôi <partial name="_Icon" model='@("arrow")' /></a><a class="text-link" asp-controller="Home" asp-action="Index">Về trang chủ</a></div>
+</section>

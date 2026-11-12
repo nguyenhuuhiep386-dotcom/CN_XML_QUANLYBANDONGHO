@@ -1,0 +1,31 @@
+@model DatHangForm
+@{
+    ViewData["Title"] = "Đặt hàng";
+    var cart = (GioVm)ViewData["Gio"]!;
+}
+<nav class="breadcrumb" aria-label="Đường dẫn"><a asp-controller="Cart" asp-action="Index">Giỏ hàng</a><span>/</span><span>Đặt hàng</span></nav>
+<header class="page-heading"><div><p class="kicker">HOÀN THIỆN ĐƠN HÀNG</p><h1>Thông tin nhận hàng</h1><p>Chọn hình thức nhận và kiểm tra lại thông tin của bạn.</p></div></header>
+<div class="steps"><span>01 · Giỏ hàng</span><span>→</span><span class="current">02 · Thông tin nhận hàng</span><span>→</span><span>03 · Hoàn tất</span></div>
+<div class="checkout-layout">
+    <form asp-action="Checkout" method="post" class="panel stack">
+        <h2>Thông tin người nhận</h2>
+        <div asp-validation-summary="All" class="validation"></div>
+        <div class="form-row">
+            <label>Người nhận<input asp-for="TenNguoiNhan" autocomplete="name" /></label>
+            <label>Số điện thoại<input asp-for="SoDienThoai" type="tel" autocomplete="tel" /></label>
+        </div>
+        <label>Hình thức nhận hàng
+            <select asp-for="HinhThucNhan"><option value="@Rules.Delivery">Giao tận nơi</option><option value="@Rules.Pickup">Nhận tại showroom</option></select>
+        </label>
+        <label data-receive="delivery">Địa chỉ giao hàng<textarea asp-for="DiaChiNhan" rows="3" autocomplete="street-address" placeholder="Số nhà, đường, phường / xã, tỉnh / thành"></textarea></label>
+        <label data-receive="pickup">Showroom nhận hàng<select asp-for="Showroom"><option value="@Rules.Showroom">@Rules.Showroom</option></select></label>
+        <button disabled="@(!cart.HopLe)">Xác nhận đặt hàng <partial name="_Icon" model='@("arrow")' /></button>
+    </form>
+    <aside class="panel summary">
+        <p class="kicker">ĐỒNG HỒ BẠN ĐÃ CHỌN</p><h2>Đơn hàng của bạn</h2>
+        @foreach (var item in cart.Dong)
+        { <div class="summary-row"><span>@item.TenMau <small>× @item.SoLuong</small></span><strong>@Rules.Money(item.Gia * item.SoLuong)</strong></div> }
+        <div class="summary-total"><span>Tổng tiền</span><strong>@Rules.Money(cart.TongTien)</strong></div>
+        <a class="text-link" asp-controller="Cart" asp-action="Index">Chỉnh sửa giỏ hàng →</a>
+    </aside>
+</div>

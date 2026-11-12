@@ -1,8 +1,42 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
-
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+@model TrangChuVm
+@{ ViewData["Title"] = "Trang chủ"; }
+<section class="hero">
+    <div class="hero-copy">
+        <p class="kicker"><span></span> AUREL MAISON COLLECTION</p>
+        <h1>Thời gian.<br /><em>Dấu ấn riêng.</em></h1>
+        <p class="hero-description">Một chiếc đồng hồ, một câu chuyện. Khám phá những thiết kế dành cho từng dấu mốc của bạn.</p>
+        <a class="button gold" asp-controller="DanhMuc" asp-action="Index">Khám phá bộ sưu tập <partial name="_Icon" model='@("arrow")' /></a>
+        <a class="hero-link" asp-controller="Booking" asp-action="Index">Đặt lịch trải nghiệm tại showroom <span>↗</span></a>
+        <div class="hero-caption"><span>01 / COLLECTION</span><span>Đà Nẵng, Việt Nam</span></div>
+    </div>
+    <div class="hero-visual">
+        <img src="~/images/boutique-hero.jpg" alt="Đồng hồ thép trên bệ đá trong ánh sáng ấm, hình ảnh minh họa bộ sưu tập" fetchpriority="high" />
+        <span class="visual-label">THE ART OF KEEPING TIME</span>
+    </div>
+</section>
+<section class="brand-strip" aria-label="Thương hiệu đồng hồ">
+    <p class="kicker">NHỮNG TÊN TUỔI TRONG BỘ SƯU TẬP</p>
+    <div class="brands">
+    @foreach (var brand in Model.Hang)
+    {
+        <a asp-controller="DanhMuc" asp-action="Index" asp-route-hang="@brand.MaHang">@brand.TenHang</a>
+    }
+    </div>
+</section>
+<section class="section">
+    <div class="section-heading">
+        <div><p class="kicker">KHÁM PHÁ BỘ SƯU TẬP</p><h2>Thiết kế đáng chú ý</h2></div>
+        <a class="text-link" asp-controller="DanhMuc" asp-action="Index">Xem tất cả đồng hồ <partial name="_Icon" model='@("arrow")' /></a>
+    </div>
+    <partial name="_Cards" model="Model.NoiBat" />
+</section>
+<section class="showroom-banner">
+    <div class="showroom-number">AM<span>ĐÀ NẴNG</span></div>
+    <div><p class="kicker">MỘT CUỘC HẸN DÀNH RIÊNG CHO BẠN</p><h2>Cảm nhận trên cổ tay.</h2><p>Chọn mẫu bạn yêu thích và đặt lịch xem trực tiếp. Mỗi chi tiết đều xứng đáng được cảm nhận.</p></div>
+    <a class="button" asp-controller="Booking" asp-action="Index">Đặt lịch showroom <partial name="_Icon" model='@("calendar")' /></a>
+</section>
+<div class="service-strip">
+    <div><partial name="_Icon" model='@("clock")' /><span><strong>Khám phá theo cách của bạn</strong><small>Tìm theo hãng, loại máy và chất liệu</small></span></div>
+    <div><partial name="_Icon" model='@("calendar")' /><span><strong>Hẹn gặp tại showroom</strong><small>Chọn mẫu và thời gian phù hợp</small></span></div>
+    <div><partial name="_Icon" model='@("shield")' /><span><strong>Bảo hành luôn rõ ràng</strong><small>Tra cứu phiếu từ tài khoản của bạn</small></span></div>
 </div>

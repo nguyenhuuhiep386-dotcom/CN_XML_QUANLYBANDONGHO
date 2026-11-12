@@ -1,0 +1,27 @@
+@model TraCuuVm
+@{ ViewData["Title"] = "Bảo hành của tôi"; }
+<nav class="breadcrumb" aria-label="Đường dẫn"><a asp-controller="Account" asp-action="Index">Tài khoản của tôi</a><span>/</span><span>Bảo hành</span></nav>
+<header class="page-heading"><div><p class="kicker">DỊCH VỤ SAU MUA</p><h1>Bảo hành của tôi</h1><p>Thông tin bảo hành cho chiếc đồng hồ đồng hành cùng bạn.</p></div></header>
+<div class="booking-layout">
+    <div>
+        <section class="panel">
+            <h2>Tra cứu phiếu bảo hành</h2>
+            <form asp-action="Index" method="get" class="warranty-search">
+                <label>Mã phiếu bảo hành<input name="maPhieu" value="@Model.MaPhieu" placeholder="Ví dụ BH20260012" maxlength="10" required /></label>
+                <button><partial name="_Icon" model='@("search")' /> Tra cứu</button>
+            </form>
+        </section>
+        @if (Model.Loi is not null) { <p class="notice error" role="alert"><partial name="_Icon" model='@("info")' />@Model.Loi</p> }
+        @if (Model.Phieu is { } item)
+        {
+            <section class="panel warranty-card">
+                <div class="section-heading"><div><p class="kicker">@item.MaPhieu</p><h2>@item.TenMau</h2></div><span class="pill">@Rules.State(item.TrangThai)</span></div>
+                <dl>
+                    <dt>Mã phiếu</dt><dd>@item.MaPhieu</dd><dt>Mã đơn</dt><dd>@item.MaDon</dd><dt>Serial</dt><dd>@item.Serial</dd>
+                    <dt>Ngày bắt đầu</dt><dd>@item.NgayBatDau.ToString("dd/MM/yyyy")</dd><dt>Ngày hết hạn</dt><dd>@item.NgayHetHan.ToString("dd/MM/yyyy")</dd>
+                </dl>
+            </section>
+        }
+    </div>
+    <aside class="info-panel"><partial name="_Icon" model='@("shield")' /><p class="kicker">ĐỒNG HÀNH SAU MỖI ĐƠN MUA</p><h2>Thông tin rõ ràng.<br />An tâm mỗi ngày.</h2><p>Nhập mã trên phiếu bảo hành để xem thông tin và thời hạn. Bạn có thể tra cứu các phiếu thuộc tài khoản của mình.</p><p class="info-rule">Cần xem lại đơn mua? <a asp-controller="Order" asp-action="Tracking">Mở Đơn hàng của tôi →</a></p></aside>
+</div>

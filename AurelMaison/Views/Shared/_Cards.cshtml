@@ -1,0 +1,19 @@
+@model IReadOnlyList<DongHo>
+<div class="grid product-grid">
+@foreach (var item in Model)
+{
+    <article class="card product-card">
+        <a asp-controller="DanhMuc" asp-action="ChiTiet" asp-route-id="@item.MaMau" class="photo">
+            <span class="product-code">@item.MaMau</span>
+            <img src="@(string.IsNullOrEmpty(item.HinhAnh) ? "/images/watch.svg" : item.HinhAnh)" alt="@item.TenMau" loading="lazy" />
+            <span class="photo-cta">Khám phá mẫu <span>↗</span></span>
+        </a>
+        <div class="cardbody">
+            <p class="kicker">@item.TenHang</p>
+            <h3><a asp-controller="DanhMuc" asp-action="ChiTiet" asp-route-id="@item.MaMau">@item.TenMau</a></h3>
+            <p class="product-spec">@item.LoaiMay <span>·</span> @item.KichThuoc.ToString("0.#") mm</p>
+            <div class="product-price"><strong>@Rules.Money(item.Gia)</strong><span class="stock @(item.SoConHang == 0 ? "soldout" : "")">@(item.SoConHang > 0 ? "Còn hàng" : "Hết hàng")</span></div>
+        </div>
+    </article>
+}
+</div>

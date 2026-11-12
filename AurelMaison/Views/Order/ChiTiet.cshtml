@@ -1,0 +1,22 @@
+@model DonHang
+@{ ViewData["Title"] = Model.MaDon; }
+<nav class="breadcrumb" aria-label="Đường dẫn"><a asp-action="Tracking">Đơn hàng của tôi</a><span>/</span><span>@Model.MaDon</span></nav>
+<header class="page-heading"><div><p class="kicker">CHI TIẾT ĐƠN HÀNG</p><h1>@Model.MaDon</h1><p>Đặt ngày @Model.NgayDat.ToString("dd/MM/yyyy HH:mm")</p></div><span class="pill @(Model.TrangThai == Rules.Pending ? "pending" : Model.TrangThai == Rules.Cancelled ? "cancelled" : "")">@Rules.State(Model.TrangThai)</span></header>
+<div class="checkout-layout">
+    <div>
+        <section class="panel">
+            <h2>Đồng hồ trong đơn</h2>
+            @foreach (var item in Model.Dong)
+            { <div class="summary-row"><span><strong>@item.TenMau</strong><br /><span class="muted">@item.MaMau · 1 chiếc</span></span><strong>@Rules.Money(item.DonGia)</strong></div> }
+            <div class="summary-total"><span>Tổng tiền</span><strong>@Rules.Money(Model.TongTien)</strong></div>
+            @if (Model.LyDoHuy is { } reason) { <p class="muted">Lý do hủy: @reason</p> }
+        </section>
+        @if (Model.TrangThai == Rules.Pending)
+        {
+            <form asp-action="Huy" asp-route-id="@Model.MaDon" method="post" class="panel stack">
+                <h2>Thay đổi kế hoạch?</h2><label>Lý do hủy đơn<input name="lyDo" maxlength="250" placeholder="Cho chúng mình biết lý do bạn hủy đơn" required /></label><div><button class="outline">Hủy đơn hàng</button></div>
+            </form>
+        }
+    </div>
+    <aside class="panel summary"><p class="kicker">THÔNG TIN NHẬN HÀNG</p><h2>@(Model.HinhThucNhan == Rules.Pickup ? "Nhận tại showroom" : "Giao tận nơi")</h2><dl><dt>Người nhận</dt><dd>@Model.TenNguoiNhan</dd><dt>Điện thoại</dt><dd>@Model.SoDienThoai</dd><dt>Địa điểm</dt><dd>@(Model.HinhThucNhan == Rules.Pickup ? Model.Showroom : Model.DiaChiNhan)</dd></dl></aside>
+</div>

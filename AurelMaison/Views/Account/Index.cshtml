@@ -1,0 +1,49 @@
+@model TaiKhoanVm
+@{ ViewData["Title"] = "Tài khoản của tôi"; }
+<nav class="breadcrumb" aria-label="Đường dẫn"><a asp-controller="Home" asp-action="Index">Trang chủ</a><span>/</span><span>Tài khoản của tôi</span></nav>
+<header class="page-heading"><div><p class="kicker">KHÔNG GIAN CỦA BẠN</p><h1>Tài khoản của tôi</h1><p>Quản lý thông tin cá nhân và những cuộc hẹn với Aurel Maison.</p></div></header>
+<div class="account-layout">
+<nav class="tabs" aria-label="Tài khoản">
+    <a class="@(Model.Tab == "ho-so" ? "active" : "")" asp-action="Index" asp-route-tab="ho-so">Hồ sơ</a>
+    <a class="@(Model.Tab == "mat-khau" ? "active" : "")" asp-action="Index" asp-route-tab="mat-khau">Đổi mật khẩu</a>
+    <a class="@(Model.Tab == "lich-hen" ? "active" : "")" asp-action="Index" asp-route-tab="lich-hen">Lịch hẹn của tôi</a>
+    <a asp-controller="Order" asp-action="Tracking">Đơn hàng của tôi</a>
+    <form class="logout" asp-controller="Account" asp-action="Logout" method="post"><button class="quiet">Đăng xuất tài khoản</button></form>
+</nav>
+<div class="account-content">
+@if (Model.Tab == "ho-so")
+{
+    <form asp-action="HoSo" method="post" class="panel stack form-width">
+        <h2>Thông tin cá nhân</h2><div asp-validation-summary="All" class="validation"></div>
+        <label>Họ và tên<input asp-for="HoSo.HoTen" /></label>
+        <label>Số điện thoại<input asp-for="HoSo.SoDienThoai" type="tel" /></label>
+        <label>Địa chỉ nhận hàng mặc định<textarea asp-for="HoSo.DiaChi" rows="3"></textarea></label>
+        <button>Lưu hồ sơ</button>
+    </form>
+}
+else if (Model.Tab == "mat-khau")
+{
+    <form asp-action="MatKhau" method="post" class="panel stack form-width">
+        <h2>Đổi mật khẩu</h2><div asp-validation-summary="All" class="validation"></div>
+        <label>Mật khẩu hiện tại<input asp-for="MatKhau.MatKhauCu" autocomplete="current-password" /></label>
+        <label>Mật khẩu mới<input asp-for="MatKhau.MatKhauMoi" autocomplete="new-password" /></label>
+        <label>Nhập lại mật khẩu<input asp-for="MatKhau.NhapLai" autocomplete="new-password" /></label>
+        <button>Đổi mật khẩu</button>
+    </form>
+}
+else
+{
+    if (Model.Lich.Count == 0) { <p class="panel">Bạn chưa có lịch hẹn.</p> }
+    foreach (var item in Model.Lich)
+    {
+        <article class="panel">
+            <div class="spread"><h2>@item.MaLH</h2><span class="pill">@Rules.State(item.TrangThai)</span></div>
+            <p>@item.NgayHen.ToString("dd/MM/yyyy HH:mm") · @item.Showroom · @(item.MaMau ?? "Tư vấn chung")</p>
+            @if (item.LyDoHuy is { } reason) { <p>Lý do hủy: @reason</p> }
+        </article>
+    }
+    <p><a class="button" asp-controller="Booking" asp-action="Index">Đặt lịch mới</a></p>
+}
+
+</div>
+</div>
