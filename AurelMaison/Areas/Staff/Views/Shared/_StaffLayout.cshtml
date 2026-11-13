@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>@ViewData["Title"] · Aurel Maison</title>
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/staff.css" asp-append-version="true"/>
+</head>
+<body class="am">
+<header class="am-header"><a class="am-logo" asp-area="Staff" asp-controller="Home" asp-action="Index">AUREL MAISON</a><span class="am-header-phai">@User.Identity?.Name · Bán hàng</span></header>
+<div class="am-workspace">
+    <nav class="am-sidebar" aria-label="Khu nhân viên">
+        <p class="am-sidebar-nhom">Bán hàng</p>
+        <a class="am-nav" asp-area="Staff" asp-controller="Home" asp-action="Index">Tổng quan</a>
+        <a class="am-nav" asp-area="Staff" asp-controller="DonHang" asp-action="Index">Quản lý đơn hàng</a>
+        <a class="am-nav" asp-area="Staff" asp-controller="DonHang" asp-action="TaiQuay">Tạo đơn tại quầy</a>
+        <a class="am-nav" asp-area="Staff" asp-controller="LichHen" asp-action="Index">Lịch hẹn tư vấn</a>
+        <a class="am-nav" asp-area="Staff" asp-controller="BaoHanh" asp-action="Index">Quản lý bảo hành</a>
+        @if (User.IsInRole(VaiTro.Admin)) { <a class="am-nav" asp-area="Admin" asp-controller="Home" asp-action="Index">Quản trị hệ thống</a> }
+        <form method="post" asp-area="" asp-controller="Account" asp-action="Logout"><button class="am-nav-dangxuat">Đăng xuất</button></form>
+    </nav>
+    <main class="am-noidung staff">
+        @if (TempData["Loi"] is string loi) { <div class="am-thongbao loi" role="alert">@loi</div> }
+        @if (TempData["ThongBao"] is string tb) { <div class="am-thongbao ok" role="status">@tb</div> }
+        @RenderBody()
+    </main>
+</div>
+@await RenderSectionAsync("Scripts", required: false)
+</body></html>

@@ -1,0 +1,13 @@
+@model DanhSachDonViewModel
+@{ ViewData["Title"] = "Quản lý đơn hàng"; }
+<h1>Quản lý đơn hàng</h1><p>Theo dõi đơn online và giao dịch tại quầy.</p>
+<form method="get" class="panel filters">
+    <label>Tìm đơn hoặc khách<input asp-for="TuKhoa" placeholder="Mã đơn, tên, số điện thoại"/></label>
+    <label>Trạng thái<select asp-for="TrangThai"><option value="">Tất cả</option>@foreach(var s in new[]{"ChoXacNhan","DaXacNhan","DangGiao","HoanTat","DaHuy"}){<option value="@s">@TrangThai(s)</option>}</select></label>
+    <label>Nguồn đơn<select asp-for="NguonDon"><option value="">Tất cả</option><option value="Online">Online</option><option value="TaiQuay">Tại quầy</option></select></label>
+    <label>Từ ngày<input asp-for="TuNgay" type="date"/></label><label>Đến ngày<input asp-for="DenNgay" type="date"/></label><button>Lọc đơn</button>
+</form>
+<div class="panel table-wrap"><table><thead><tr><th>Mã đơn</th><th>Khách nhận</th><th>Ngày đặt</th><th>Nguồn</th><th>Tổng tiền</th><th>Trạng thái</th></tr></thead><tbody>
+@foreach(var d in Model.Don){<tr><td><a asp-action="ChiTiet" asp-route-id="@Text(d,"MaDon")">@Text(d,"MaDon")</a></td><td>@Text(d,"TenNguoiNhan")<br/><span class="muted">@Text(d,"SoDienThoai")</span></td><td>@HienThi.NgayGio((DateTime)d.Element("NgayDat")!)</td><td>@(Text(d,"NguonDon")=="Online"?"Online":"Tại quầy")</td><td>@HienThi.Tien((decimal)d.Element("TongTien")!)</td><td><span class="badge">@TrangThai(Text(d,"TrangThai"))</span></td></tr>}
+@if(Model.Don.Count==0){<tr><td colspan="6">Không có đơn phù hợp.</td></tr>}
+</tbody></table></div>

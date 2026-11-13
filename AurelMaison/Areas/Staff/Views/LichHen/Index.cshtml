@@ -1,0 +1,12 @@
+@model List<XElement>
+@{ViewData["Title"]="Lịch hẹn tư vấn";}
+<h1>Lịch hẹn tư vấn</h1>
+<form method="get" class="panel filters"><label>Ngày hẹn<input type="date" name="ngay" value="@ViewBag.Ngay"/></label><label>Trạng thái<select name="trangThai"><option value="">Tất cả</option>@foreach(var s in new[]{"ChoXacNhan","DaXacNhan","HoanTat","DaHuy"}){<option value="@s" selected="@(ViewBag.TrangThai==s)">@TrangThai(s)</option>}</select></label><button>Lọc lịch</button></form>
+@foreach(var l in Model){ var state=Text(l,"TrangThai");
+<section class="panel"><h2>@Text(l,"MaLH") · @Text(l,"HoTen")</h2><p>@HienThi.NgayGio((DateTime)l.Element("NgayHen")!) · @Text(l,"Showroom")</p><p>@Text(l,"SoDienThoai") · Mẫu @Text(l,"MaMau") · @Text(l,"GhiChu")</p><p><span class="badge">@TrangThai(state)</span> · Nhân viên xử lý: @Text(l,"MaNVXuLy")</p>
+@if(state is "ChoXacNhan" or "DaXacNhan"){
+<div class="actions"><form asp-action="XuLy" method="post"><input type="hidden" name="maLH" value="@Text(l,"MaLH")"/><input type="hidden" name="thaoTac" value="@(state=="ChoXacNhan"?"XacNhan":"HoanTat")"/><button>@(state=="ChoXacNhan"?"Xác nhận lịch":"Hoàn tất tư vấn")</button></form>
+<form asp-action="XuLy" method="post" class="actions"><input type="hidden" name="maLH" value="@Text(l,"MaLH")"/><input type="hidden" name="thaoTac" value="Huy"/><label>Lý do hủy<input name="lyDo" required maxlength="250"/></label><button class="danger">Hủy lịch</button></form></div>
+}else if(state=="DaHuy"){<p>Lý do hủy: @Text(l,"LyDoHuy")</p>}
+</section>}
+@if(Model.Count==0){<div class="panel">Không có lịch phù hợp.</div>}

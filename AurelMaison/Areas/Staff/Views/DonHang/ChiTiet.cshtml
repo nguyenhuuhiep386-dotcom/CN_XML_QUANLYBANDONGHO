@@ -1,0 +1,23 @@
+@model ChiTietDonViewModel
+@{ var d=Model.Don; var ma=Text(d,"MaDon"); var state=Text(d,"TrangThai"); ViewData["Title"]="Đơn "+ma; }
+<a asp-action="Index">← Danh sách đơn</a><h1>Đơn @ma</h1><span class="badge">@TrangThai(state)</span>
+<div class="panel"><h2>Thông tin nhận hàng</h2><p>@Text(d,"TenNguoiNhan") · @Text(d,"SoDienThoai")</p><p>@Text(d,"DiaChiNhan") @Text(d,"Showroom")</p><p>Nhân viên phụ trách: @(string.IsNullOrEmpty(Text(d,"MaNVPhuTrach"))?"Chưa xác nhận":Text(d,"MaNVPhuTrach"))</p>
+@if(state=="DaHuy"){<p>Lý do hủy: @Text(d,"LyDoHuy")</p>}</div>
+<form asp-action="XacNhan" method="post" class="panel">
+<input type="hidden" name="maDon" value="@ma"/><div class="table-wrap"><table><thead><tr><th>STT</th><th>Mẫu đồng hồ</th><th>Đơn giá</th><th>Bảo hành</th><th>Serial</th></tr></thead><tbody>
+@foreach(var ct in d.Element("ChiTiet")!.Elements()){
+<tr><td>@Text(ct,"STT")</td><td>@Text(ct,"TenMau")<br/>@Text(ct,"MaMau")</td><td>@HienThi.Tien((decimal)ct.Element("DonGia")!)</td><td>@Text(ct,"ThoiHanBaoHanh") tháng</td><td>
+@if(state=="ChoXacNhan"){<select name="serial" required aria-label="Serial dòng @Text(ct,"STT")"><option value="">Chọn serial còn hàng</option>@foreach(var s in Model.SerialTheoMau[Text(ct,"MaMau")]){<option value="@s">@s</option>}</select>}else{ @Text(ct,"Serial") }
+</td></tr>}
+</tbody></table></div><p class="total">@HienThi.Tien((decimal)d.Element("TongTien")!)</p>
+@if(state=="ChoXacNhan"){<button>Xác nhận và giữ serial</button>}
+</form>
+<div class="actions">
+@if(state=="DaXacNhan" && Text(d,"HinhThucNhan")=="GiaoTanNoi"){
+<form asp-action="GiaoHang" method="post"><input type="hidden" name="maDon" value="@ma"/><button>Chuyển sang đang giao</button></form>}
+@if(state is "DaXacNhan" or "DangGiao"){
+<form asp-action="HoanTat" method="post" class="actions"><input type="hidden" name="maDon" value="@ma"/><label>Phương thức thanh toán<select name="phuongThucTT" required><option value="TienMat">Tiền mặt</option><option value="ChuyenKhoan">Chuyển khoản</option><option value="The">Thẻ</option></select></label><button>Hoàn tất và lập hóa đơn</button></form>}
+@if(d.Element("HoaDon") is XElement hd){<a class="button" href="@Url.Content("~/Staff/HoaDon/"+Text(hd,"MaHD"))">Xem hóa đơn</a><a class="button" asp-controller="BaoHanh" asp-action="Index" asp-route-maDon="@ma">Lập bảo hành</a>}
+</div>
+@if(state is "ChoXacNhan" or "DaXacNhan"){
+<form asp-action="Huy" method="post" class="panel actions"><input type="hidden" name="maDon" value="@ma"/><label>Lý do hủy<input name="lyDo" required maxlength="250"/></label><button class="danger">Hủy đơn</button></form>}

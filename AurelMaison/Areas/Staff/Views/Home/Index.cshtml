@@ -1,0 +1,6 @@
+@model TongQuanStaff
+@{ViewData["Title"]="Tổng quan bán hàng";}
+<h1>Tổng quan bán hàng</h1><p>@HienThi.Ngay(DateTime.Today) · @User.Identity?.Name</p>
+<div class="metrics"><div class="metric">Đơn chờ xác nhận<strong>@Model.ChoXacNhan</strong></div><div class="metric">Lịch hẹn hôm nay<strong>@Model.LichHomNay.Count</strong></div><div class="metric">Doanh số của bạn trong tháng<strong>@HienThi.Tien(Model.DoanhSoThang)</strong></div></div>
+<div class="panel"><h2>Đơn đang chờ xử lý</h2>@foreach(var d in Model.DonMoi){<p><a asp-controller="DonHang" asp-action="ChiTiet" asp-route-id="@Text(d,"MaDon")">@Text(d,"MaDon")</a> · @Text(d,"TenNguoiNhan") · @HienThi.Tien((decimal)d.Element("TongTien")!)</p>}@if(Model.DonMoi.Count==0){<p>Không có đơn chờ xác nhận.</p>}<a asp-controller="DonHang" asp-action="Index">Xem tất cả đơn →</a></div>
+<div class="panel"><h2>Lịch hẹn hôm nay</h2>@foreach(var l in Model.LichHomNay){<p>@HienThi.NgayGio((DateTime)l.Element("NgayHen")!) · @Text(l,"HoTen") · @TrangThai(Text(l,"TrangThai"))</p>}@if(Model.LichHomNay.Count==0){<p>Chưa có lịch hẹn hôm nay.</p>}<a asp-controller="LichHen" asp-action="Index">Mở lịch tư vấn →</a></div>

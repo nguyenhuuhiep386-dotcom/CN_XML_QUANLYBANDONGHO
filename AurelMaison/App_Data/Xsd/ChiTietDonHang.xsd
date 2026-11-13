@@ -1,53 +1,117 @@
-<?xml version='1.0' encoding='UTF-8'?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:simpleType name="Tien">
+    <xs:restriction base="xs:decimal">
+      <xs:minInclusive value="0" />
+      <xs:totalDigits value="18" />
+      <xs:fractionDigits value="0" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="Thang">
+    <xs:restriction base="xs:int">
+      <xs:minInclusive value="0" />
+      <xs:maxInclusive value="120" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="Chu15">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1" />
+      <xs:maxLength value="15" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="Chu30">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1" />
+      <xs:maxLength value="30" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="Chu100">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1" />
+      <xs:maxLength value="100" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="Chu150">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1" />
+      <xs:maxLength value="150" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="Chu250">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1" />
+      <xs:maxLength value="250" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="MaBaoHanh">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="BH[0-9]{8}" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="MaNgan">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[A-Z]{2}[0-9]{3,8}" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="MaHoaDon">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="HD[0-9]{8}" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="MaDon">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="AM[0-9]{8}" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="Nhan">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="GiaoTanNoi" />
+      <xs:enumeration value="NhanTaiShowroom" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="ThanhToan">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="TienMat" />
+      <xs:enumeration value="ChuyenKhoan" />
+      <xs:enumeration value="The" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="TrangThaiDon">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="ChoXacNhan" />
+      <xs:enumeration value="DaXacNhan" />
+      <xs:enumeration value="DangGiao" />
+      <xs:enumeration value="HoanTat" />
+      <xs:enumeration value="DaHuy" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="Nguon">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Online" />
+      <xs:enumeration value="TaiQuay" />
+    </xs:restriction>
+  </xs:simpleType>
   <xs:element name="DanhSachChiTietDonHang">
     <xs:complexType>
       <xs:sequence>
         <xs:element name="ChiTietDonHang" minOccurs="0" maxOccurs="unbounded">
           <xs:complexType>
-            <xs:sequence>
-              <xs:element name="MaDon">
-                <xs:simpleType>
-                  <xs:restriction base="xs:string">
-                    <xs:maxLength value="12"/>
-                  </xs:restriction>
-                </xs:simpleType>
-              </xs:element>
-              <xs:element name="STT" type="xs:int"/>
-              <xs:element name="MaMau">
-                <xs:simpleType>
-                  <xs:restriction base="xs:string">
-                    <xs:maxLength value="10"/>
-                  </xs:restriction>
-                </xs:simpleType>
-              </xs:element>
-              <xs:element name="TenMau">
-                <xs:simpleType>
-                  <xs:restriction base="xs:string">
-                    <xs:maxLength value="150"/>
-                  </xs:restriction>
-                </xs:simpleType>
-              </xs:element>
-              <xs:element name="Serial" minOccurs="0">
-                <xs:simpleType>
-                  <xs:restriction base="xs:string">
-                    <xs:maxLength value="30"/>
-                  </xs:restriction>
-                </xs:simpleType>
-              </xs:element>
-              <xs:element name="DonGia">
-                <xs:simpleType>
-                  <xs:restriction base="xs:decimal">
-                    <xs:totalDigits value="18"/>
-                    <xs:fractionDigits value="0"/>
-                  </xs:restriction>
-                </xs:simpleType>
-              </xs:element>
-              <xs:element name="ThoiHanBaoHanh" type="xs:int"/>
-            </xs:sequence>
+            <xs:all>
+              <xs:element name="MaDon" type="MaDon" />
+              <xs:element name="STT" type="xs:positiveInteger" />
+              <xs:element name="MaMau" type="MaNgan" />
+              <xs:element name="TenMau" type="Chu150" />
+              <xs:element name="Serial" type="Chu30" minOccurs="0" />
+              <xs:element name="DonGia" type="Tien" />
+              <xs:element name="ThoiHanBaoHanh" type="Thang" />
+            </xs:all>
           </xs:complexType>
         </xs:element>
       </xs:sequence>
     </xs:complexType>
+    <xs:key name="KhoaChiTietDonHang">
+      <xs:selector xpath="ChiTietDonHang" />
+      <xs:field xpath="MaDon" />
+      <xs:field xpath="STT" />
+    </xs:key>
   </xs:element>
 </xs:schema>
