@@ -11,6 +11,8 @@
     --mint: #eaf0e8;
     --danger: #a03f2f;
     --radius: 6px;
+    /* Keep Vietnamese letters and diacritics in one serif font. */
+    --font-serif: "Times New Roman", Times, serif;
     font-family: "Segoe UI", Arial, sans-serif;
     font-size: 15px;
     line-height: 1.6;
@@ -40,7 +42,7 @@ button:disabled { opacity: .45; cursor: not-allowed; }
 .announcement b { margin: 0 8px; color: var(--gold); }
 .top { background: var(--paper); border-bottom: 1px solid var(--line); }
 .nav { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 28px; min-height: 92px; }
-.logo { display: inline-flex; align-items: center; gap: 12px; width: fit-content; font: 19px Georgia, "Times New Roman", serif; letter-spacing: .09em; text-decoration: none; color: var(--green); }
+.logo { display: inline-flex; align-items: center; gap: 12px; width: fit-content; font: 19px var(--font-serif); letter-spacing: .09em; text-decoration: none; color: var(--green); }
 .logo small { display: block; font: 8px "Segoe UI", Arial, sans-serif; letter-spacing: .25em; margin-top: 5px; text-align: center; }
 .brand-mark { display: grid; place-items: center; width: 39px; height: 43px; border: 1px solid #a18e69; font-size: 15px; letter-spacing: -.14em; padding-right: 3px; }
 .primary-nav, .header-actions { display: flex; align-items: center; gap: 26px; }
@@ -53,7 +55,7 @@ button:disabled { opacity: .45; cursor: not-allowed; }
 .cart-count { display: grid; place-items: center; min-width: 19px; height: 19px; border-radius: 50%; background: var(--green); color: white; font-size: 10px; }
 .menu-toggle { display: none; }
 h1, h2, h3, p { margin-top: 0; }
-h1, h2 { font-family: Georgia, "Times New Roman", serif; font-weight: 400; }
+h1, h2 { font-family: var(--font-serif); font-weight: 400; }
 h1 { margin-bottom: 16px; font-size: clamp(32px, 3.8vw, 49px); line-height: 1.18; letter-spacing: -.035em; }
 h2 { font-size: 31px; line-height: 1.25; letter-spacing: -.025em; }
 h3 { font-size: 18px; line-height: 1.4; font-weight: 500; }
@@ -94,7 +96,7 @@ h3 { font-size: 18px; line-height: 1.4; font-weight: 500; }
 .brand-strip { padding: 30px 0 31px; border-bottom: 1px solid var(--line); text-align: center; }
 .brand-strip .kicker { font-size: 8px; color: #8b8d80; }
 .brands { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-evenly; gap: 20px; padding-top: 6px; }
-.brands a { font: 20px Georgia, serif; color: #52604f; text-decoration: none; }
+.brands a { font: 20px var(--font-serif); color: #52604f; text-decoration: none; }
 .section { margin-block: 52px 54px; }
 .section-heading { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 26px; }
 .section-heading h2 { margin: 0; font-size: 35px; }
@@ -110,7 +112,7 @@ h3 { font-size: 18px; line-height: 1.4; font-weight: 500; }
 .photo:hover .photo-cta, .photo:focus-visible .photo-cta { opacity: 1; transform: translateY(0); }
 .cardbody { display: flex; flex-direction: column; flex: 1; padding: 23px 23px 20px; }
 .cardbody .kicker { font-size: 8px; margin-bottom: 9px; }
-.cardbody h3 { min-height: 51px; margin-bottom: 8px; font: 21px/1.25 Georgia, serif; }
+.cardbody h3 { min-height: 51px; margin-bottom: 8px; font: 21px/1.25 var(--font-serif); }
 .cardbody h3 a { text-decoration: none; }
 .product-spec { font-size: 11px; color: var(--muted); margin-bottom: 18px; }
 .product-spec span { padding: 0 5px; color: #aeb3a6; }
@@ -123,7 +125,7 @@ h3 { font-size: 18px; line-height: 1.4; font-weight: 500; }
 .showroom-banner { display: grid; grid-template-columns: 120px 1fr auto; align-items: center; gap: 33px; padding: 34px 38px; border: 1px solid #dbdfd2; background: #edf0e7; }
 .showroom-banner h2 { margin-bottom: 11px; font-size: 33px; }
 .showroom-banner p:not(.kicker) { max-width: 460px; font-size: 12px; color: #7b8171; margin-bottom: 0; }
-.showroom-number { padding: 23px 0; border-right: 1px solid #d5dcca; font: 43px Georgia, serif; color: #9f936e; letter-spacing: -.09em; }
+.showroom-number { padding: 23px 0; border-right: 1px solid #d5dcca; font: 43px var(--font-serif); color: #9f936e; letter-spacing: -.09em; }
 .showroom-number span { display: block; margin-top: 8px; font: 8px "Segoe UI", sans-serif; letter-spacing: .2em; color: #75816d; }
 .service-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; padding-top: 38px; }
 .service-strip > div { display: flex; align-items: center; gap: 14px; }
@@ -140,7 +142,7 @@ h3 { font-size: 18px; line-height: 1.4; font-weight: 500; }
 .page-heading .kicker { margin-bottom: 11px; }
 .collection-layout { display: grid; grid-template-columns: 218px 1fr; gap: 33px; align-items: start; }
 .filters { display: grid; gap: 20px; padding: 23px 22px; background: white; border: 1px solid var(--line); border-radius: 3px; }
-.filters h2 { font: 17px Georgia, serif; margin: 0; }
+.filters h2 { font: 17px var(--font-serif); margin: 0; }
 .filters .actions { flex-direction: column; gap: 13px; align-items: stretch; border-top: 1px solid var(--line); padding-top: 19px; }
 .filters .actions a { text-align: center; font-size: 10px; color: var(--muted); }
 .filter-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
@@ -153,7 +155,7 @@ h3 { font-size: 18px; line-height: 1.4; font-weight: 500; }
 .collection-results .product-price strong { font-size: 12px; }
 .results-top { margin-bottom: 18px; display: flex; align-items: center; justify-content: space-between; font-size: 11px; color: var(--muted); }
 .panel { background: white; padding: 28px; margin: 0 0 22px; border: 1px solid var(--line); border-radius: var(--radius); }
-.panel h2 { font: 23px Georgia, serif; margin-bottom: 22px; }
+.panel h2 { font: 23px var(--font-serif); margin-bottom: 22px; }
 .stack { display: grid; gap: 20px; }
 form { margin: 0; }
 label { display: block; font-size: 12px; font-weight: 500; color: #435146; }
@@ -227,7 +229,7 @@ dd { margin: 0; color: #3b4b3f; }
 .cartline:last-child { border-bottom: 0; }
 .cart-items { padding: 0; }
 .cartline > img { width: 96px; height: 105px; object-fit: contain; background: #efeee7; border-radius: 3px; }
-.cartline h2 { font: 20px/1.3 Georgia, serif; margin: 0 0 6px; }
+.cartline h2 { font: 20px/1.3 var(--font-serif); margin: 0 0 6px; }
 .cartline p { margin: 0 0 4px; font-size: 11px; }
 .cartline .actions { gap: 7px; }
 .cartline .actions form.actions { gap: 8px; }
