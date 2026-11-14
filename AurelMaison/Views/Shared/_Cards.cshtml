@@ -34,9 +34,11 @@
     <div class="dossier-grid">
         <div class="dossier-inspection">
             <div class="dossier-caliber-frame" id="dossier-caliber-frame">
-                <img id="dossier-image" src="/images/watch.svg" alt="" />
+                <img id="dossier-image" src="/images/watch.svg" alt="" draggable="false" />
+                <button class="dossier-spin" type="button" data-dossier-spin aria-label="Xoay ảnh đồng hồ 360 độ"><partial name="_Icon" model='@("rotate")' /><span>Xoay 360°</span></button>
                 <span class="inspection-label">CALIBER MACRO INSPECTION</span>
             </div>
+            <p class="dossier-rotation-hint">Kéo ảnh sang ngang để xoay đồng hồ.</p>
             <button class="lume-toggle" type="button" data-dossier-lume aria-pressed="false">Bật dạ quang Chromalight</button>
             <p class="dossier-disclaimer">Hiệu ứng dạ quang mô phỏng để tham khảo.</p>
         </div>

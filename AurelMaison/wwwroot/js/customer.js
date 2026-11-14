@@ -41,8 +41,53 @@
         const fitMeter = document.getElementById("dossier-fit-meter");
         const fitCopy = document.getElementById("dossier-fit-copy");
         const imageFrame = document.getElementById("dossier-caliber-frame");
+        const watchImage = document.getElementById("dossier-image");
+        const spinButton = document.querySelector("[data-dossier-spin]");
         const lumeToggle = document.querySelector("[data-dossier-lume]");
         const setText = (id, value) => { document.getElementById(id).textContent = value || "—"; };
+        let watchRotation = 0;
+        let activePointer = null;
+        let previousPointerX = 0;
+
+        const setWatchRotation = () => {
+            watchImage.style.setProperty("--dossier-rotation", `${watchRotation}deg`);
+        };
+
+        watchImage.addEventListener("pointerdown", event => {
+            if (event.button !== 0 && event.pointerType === "mouse") return;
+            activePointer = event.pointerId;
+            previousPointerX = event.clientX;
+            watchImage.classList.add("is-dragging");
+            watchImage.setPointerCapture(event.pointerId);
+        });
+        watchImage.addEventListener("pointermove", event => {
+            if (event.pointerId !== activePointer) return;
+            const delta = event.clientX - previousPointerX;
+            previousPointerX = event.clientX;
+            watchRotation = (watchRotation + delta / Math.max(1, imageFrame.clientWidth) * 360) % 360;
+            setWatchRotation();
+        });
+        const endWatchDrag = event => {
+            if (event.pointerId !== activePointer) return;
+            activePointer = null;
+            watchImage.classList.remove("is-dragging");
+            if (watchImage.hasPointerCapture(event.pointerId)) watchImage.releasePointerCapture(event.pointerId);
+        };
+        watchImage.addEventListener("pointerup", endWatchDrag);
+        watchImage.addEventListener("pointercancel", endWatchDrag);
+
+        spinButton.addEventListener("click", () => {
+            imageFrame.classList.remove("is-spinning");
+            watchRotation += 360;
+            setWatchRotation();
+            if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+            void watchImage.offsetWidth;
+            imageFrame.classList.add("is-spinning");
+        });
+        watchImage.addEventListener("animationend", event => {
+            if (event.animationName !== "dossier-turntable") return;
+            imageFrame.classList.remove("is-spinning");
+        });
 
         const updateWristEstimate = () => {
             const wristCm = Number(wrist.value);
@@ -73,6 +118,9 @@
                 setText("dossier-warranty", card.dataset.watchWarranty);
                 document.getElementById("dossier-image").src = card.dataset.watchImage;
                 document.getElementById("dossier-image").alt = card.dataset.watchName || "Đồng hồ";
+                watchRotation = 0;
+                watchImage.style.setProperty("--dossier-rotation", "0deg");
+                imageFrame.classList.remove("is-spinning", "is-dragging");
                 document.getElementById("dossier-cart-id").value = card.dataset.watchId || "";
                 const addToTray = dossier.querySelector("form button[type='submit']");
                 addToTray.disabled = (card.dataset.watchStock || "").includes("hết hàng");
