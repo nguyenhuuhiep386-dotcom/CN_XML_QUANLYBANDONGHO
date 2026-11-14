@@ -10,7 +10,9 @@
         <div class="hero-caption"><span>01 / COLLECTION</span><span>Đà Nẵng, Việt Nam</span></div>
     </div>
     <div class="hero-visual">
-        <img src="~/images/boutique-hero.jpg" alt="Đồng hồ thép trên bệ đá trong ánh sáng ấm, hình ảnh minh họa bộ sưu tập" fetchpriority="high" />
+        <video class="hero-video" autoplay muted loop playsinline preload="metadata" poster="~/images/boutique-hero.jpg" aria-label="Video giới thiệu bộ sưu tập đồng hồ Aurel Maison">
+            <source src="~/videos/aurel-maison-hero-15s.mp4" type="video/mp4" />
+        </video>
         <span class="visual-label">THE ART OF KEEPING TIME</span>
     </div>
 </section>
@@ -19,11 +21,30 @@
     <div class="brands">
     @foreach (var brand in Model.Hang)
     {
-        <a asp-controller="DanhMuc" asp-action="Index" asp-route-hang="@brand.MaHang">@brand.TenHang</a>
+        var logoFile = brand.TenHang switch
+        {
+            "Audemars Piguet" => "audemars-piguet.svg",
+            "Cartier" => "cartier.svg",
+            "Jaeger-LeCoultre" => "jaeger-lecoultre.svg",
+            "Omega" => "omega.svg",
+            "Patek Philippe" => "patek-philippe.svg",
+            "Rolex" => "rolex.svg",
+            _ => ""
+        };
+        <a asp-controller="DanhMuc" asp-action="Index" asp-route-hang="@brand.MaHang" aria-label="Xem đồng hồ @brand.TenHang">
+            @if (!string.IsNullOrEmpty(logoFile))
+            {
+                <img src="~/images/brands/@logoFile" alt="@brand.TenHang" loading="lazy" />
+            }
+            else
+            {
+                <span>@brand.TenHang</span>
+            }
+        </a>
     }
     </div>
 </section>
-<section class="section">
+<section class="section featured-section">
     <div class="section-heading">
         <div><p class="kicker">KHÁM PHÁ BỘ SƯU TẬP</p><h2>Thiết kế đáng chú ý</h2></div>
         <a class="text-link" asp-controller="DanhMuc" asp-action="Index">Xem tất cả đồng hồ <partial name="_Icon" model='@("arrow")' /></a>
