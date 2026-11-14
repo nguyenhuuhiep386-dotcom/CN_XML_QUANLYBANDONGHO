@@ -4,7 +4,10 @@
     var controller = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
     var action = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
     var isCustomer = User.IsInRole(Security.Customer);
-    var accountName = isCustomer ? (User.Identity?.Name?.Trim() ?? "Tài khoản") : "Đăng nhập";
+    var accountName = isCustomer
+        ? (User.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value?.Trim() ?? User.Identity?.Name?.Trim() ?? "Tài khoản")
+        : "Đăng nhập";
+    var daNangTime = DateTimeOffset.UtcNow.ToOffset(TimeSpan.FromHours(7));
 }
 <!doctype html>
 <html lang="vi">
@@ -37,7 +40,7 @@
             <span class="brand-mark">AM</span><span>AUREL MAISON<small>THE WATCH COLLECTION</small></span>
         </a>
         <div class="header-actions">
-            <div class="header-time"><span>ĐÀ NẴNG · GMT+7</span><time id="header-danang-clock">--:--:--</time></div>
+            <div class="header-time"><span>ĐÀ NẴNG · GMT+7</span><time id="header-danang-clock" datetime="@daNangTime.ToString("O")">@daNangTime.ToString("HH:mm:ss")</time></div>
             <a class="header-appointment" asp-area="" asp-controller="Booking" asp-action="Index"><partial name="_Icon" model='@("calendar")' /><span>Đặt lịch</span></a>
             <a class="account-link" asp-area="" asp-controller="Account" asp-action="@(isCustomer ? "Index" : "Login")">
                 <partial name="_Icon" model='@("user")' /><span title="@accountName">@accountName</span>

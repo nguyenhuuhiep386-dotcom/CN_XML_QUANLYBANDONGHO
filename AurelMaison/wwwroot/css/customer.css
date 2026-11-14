@@ -809,7 +809,9 @@ body.customer { color: var(--ink); background: var(--deep); }
     background: rgba(6,11,9,.94);
     border-bottom: 1px solid rgba(197,168,128,.14);
     backdrop-filter: blur(14px);
+    transition: transform .28s cubic-bezier(.2,.7,.2,1);
 }
+.top.is-hidden { transform: translateY(-100%); }
 .nav {
     grid-template-columns: minmax(0,1fr) auto minmax(0,1fr);
     gap: clamp(14px,2vw,30px);
@@ -1082,6 +1084,7 @@ td, th { border-color: rgba(197,168,128,.16); }
 }
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { scroll-behavior: auto !important; }
+    .top { transition: none; }
     .featured-section .product-card, .product-card, .photo img, .fit-meter span { transition-duration: .01ms !important; }
 }
 @media (prefers-reduced-motion: reduce) {

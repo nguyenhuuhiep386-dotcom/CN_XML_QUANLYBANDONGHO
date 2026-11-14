@@ -21,6 +21,24 @@
         });
     }
 
+    const stickyHeader = document.querySelector(".top");
+    if (stickyHeader && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        let previousScrollY = window.scrollY;
+        let scrollFramePending = false;
+        window.addEventListener("scroll", () => {
+            if (scrollFramePending) return;
+            scrollFramePending = true;
+            window.requestAnimationFrame(() => {
+                const currentScrollY = window.scrollY;
+                const scrollDelta = currentScrollY - previousScrollY;
+                if (currentScrollY < 100 || scrollDelta < -6) stickyHeader.classList.remove("is-hidden");
+                else if (scrollDelta > 6) stickyHeader.classList.add("is-hidden");
+                previousScrollY = currentScrollY;
+                scrollFramePending = false;
+            });
+        }, { passive: true });
+    }
+
     const delivery = document.querySelector("[name='HinhThucNhan']");
     if (delivery) {
         const address = document.querySelector("[data-receive='delivery']");
