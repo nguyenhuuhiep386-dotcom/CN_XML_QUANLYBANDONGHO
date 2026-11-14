@@ -85,7 +85,7 @@ Nhận qua constructor (đã đăng ký trong `Program.cs`):
 
 Màn `/Admin/DuLieu` (chỉ Admin): kiểm tra toàn bộ 12 file (XSD, trùng khóa, tham chiếu), thử XSD một file, XML → SQL (một transaction, lỗi thì rollback), SQL → XML ra `App_Data/KiemTra/<thời điểm>` kèm bảng đối chiếu, Khởi tạo từ SQL (ghi đè `App_Data/Xml`, phải tick xác nhận), sao lưu / phục hồi `App_Data/Backup`. Mọi thao tác ghi đều tự sao lưu trước. Chuỗi kết nối ở `ConnectionStrings:QuanLyBanDongHo` trong `appsettings.json`.
 
-Bảng chưa có XSD (LichHen, DonHang, ChiTietDonHang, HoaDon, PhieuBaoHanh) chỉ hiện cảnh báo; thêm file `App_Data/Xsd/<Bảng>.xsd` là tự được kiểm tra.
+Đã có đủ XSD cho 12 bảng, gồm LichHen, DonHang, ChiTietDonHang, HoaDon và PhieuBaoHanh. Màn Dữ liệu XML dùng các lược đồ này để kiểm tra dữ liệu.
 
 Chuẩn bị demo (`AurelMaison/Database/Demo/`):
 
@@ -97,10 +97,51 @@ Chuẩn bị demo (`AurelMaison/Database/Demo/`):
 Cần .NET SDK 8 trở lên; máy chỉ có .NET 10 vẫn build và chạy được.
 
 ```bash
-dotnet run --project AurelMaison --launch-profile http
+dotnet run --project AurelMaison -p:UseAppHost=false --launch-profile http
 ```
 
 Website chạy ở `http://localhost:5269`. Chuỗi kết nối nằm trong `appsettings.json`, mặc định là instance `.` với Windows Authentication; đổi thành `.\SQLEXPRESS` nếu máy dùng bản đó.
+
+### Phần Nguyên đã triển khai
+
+- `/Staff`: tổng quan đơn chờ, lịch hôm nay, doanh số tháng theo nhân viên phụ trách.
+- `/Staff/DonHang`: tìm/lọc đơn; chi tiết, xác nhận và giữ serial, giao hàng, hoàn tất/lập hóa đơn, hủy và giải phóng serial.
+- `/Staff/DonHang/TaiQuay`: tìm/thêm khách, chọn mẫu và serial, tính tổng tạm tính; máy chủ tính lại giá và hoàn tất đơn khi thanh toán.
+- `/Staff/HoaDon/{maHD}`: hóa đơn HTML qua `PhieuHoaDon.xslt`, có nút In.
+- `/Staff/LichHen`: lọc, xác nhận, hoàn tất, hủy có lý do. Dùng chung `LichHenService` với trang đặt lịch và tài khoản khách của Hiệp.
+- `/Staff/BaoHanh`: lập phiếu cho serial thuộc đơn hoàn tất, chặn trùng, tính thời hạn từ dữ liệu chốt lúc bán.
+- `GET /api/baohanh` và `GET /api/baohanh/{maPhieu}`: XML dành cho khách đang đăng nhập; 401 chưa đăng nhập, 403 sai vai trò/chủ phiếu, 404 không tìm thấy.
+
+Admin dùng chung các trang Staff. Mọi thao tác thay đổi dùng POST và kiểm tra chống giả mạo yêu cầu. Mã nhân viên/khách lấy từ cookie, không nhận quyền từ form.
+
+#### Bàn giao cho Hiệp
+
+`DonHangService` đã đăng ký sẵn, nhận qua constructor. Ví dụ trong controller có `[Authorize(Roles = VaiTro.KhachHang)]`:
+
+```csharp
+var ketQua = donHangService.TaoDonOnline(User.MaKH() ?? "",
+    new[] { new MucDatHang("DH001", 1) },
+    new ThongTinNhanHang("Người nhận", "0901234567", "NhanTaiShowroom", Showroom: "Showroom Đà Nẵng"));
+// Chỉ xóa giỏ khi ketQua.ThanhCong; lấy mã và tiền từ ketQua.Ma, ketQua.TongTien.
+var danhSach = donHangService.LayTheoKhach(User.MaKH() ?? "");
+var chiTiet = donHangService.LayChiTietTheoKhach(maDon, User.MaKH() ?? "");
+var huy = donHangService.Huy(maDon, User.MaKH() ?? "", lyDo);
+```
+
+Các hàm đọc hiện trả `XElement`/`List<XElement>`; chi tiết chứa nút `ChiTiet` với các dòng `ChiTietDonHang`. `LayChiTiet` không giới hạn theo khách dành riêng cho controller Staff đã kiểm tra quyền. Hiệp dùng `LayChiTietTheoKhach` ở khu khách. Cột lưu phiếu là `MaPBH`, tên trường API là `MaPhieu` theo hợp đồng nhóm. API danh sách có gốc `DanhSachPhieuBaoHanh`.
+
+Phần khách đã nối vào dịch vụ thật qua `CustomerOrderAdapter`: giỏ, thanh toán, theo dõi/hủy đơn và tra bảo hành qua HttpClient dùng chung dữ liệu với Staff. Không có SQL chạy trong các thao tác bán hàng. Khi nhiều file được ghi, kiểm tra đủ trước; có phục hồi lỗi ghi thông thường, chưa có giao dịch chống mất điện giữa các file.
+
+#### Kiểm tra
+
+```powershell
+dotnet build AurelMaison -p:UseAppHost=false -p:NuGetAudit=false
+dotnet run --project Tests/DonHangSmoke -p:UseAppHost=false -p:NuGetAudit=false -- AurelMaison
+# Khi website đã chạy ở cổng 5269:
+./Tests/StaffHttpSmoke.ps1 -BaseUrl http://localhost:5269
+```
+
+Bộ kiểm tra nghiệp vụ dùng bản sao riêng của dữ liệu và tự xóa sau khi chạy. Bộ HTTP mặc định chỉ đăng nhập, đọc trang và kiểm tra các yêu cầu bị từ chối, không thay đổi XML. Xem [hướng dẫn kiểm tra](Tests/DonHangSmoke/README.md).
 
 ## 👥 Thành viên thực hiện & Phân công nhiệm vụ
 
@@ -331,7 +372,7 @@ Bản giao diện dùng chung `Views/Shared/_CustomerLayout.cshtml`, `wwwroot/cs
 
 #### Điểm nối khi ghép với các thành viên
 
-- `Services/Interfaces.cs` là ranh giới của phần khách hàng. Giao diện khách hàng dùng `CustomerGroupAdapter` để gọi AuthService, KhachHangService, DanhMucService và KhoService đã có trên main. Adapter đơn online trong `Services/CustomerDemo` hỗ trợ thử đặt và hủy đơn khi chờ DonHangService của Nguyên. Đổi riêng đăng ký `IDonHangService` khi phần này được bàn giao. Giữ các XSD tài khoản và hồ sơ của Phương; ba XSD thêm cho phần khách là LichHen, DonHang và ChiTietDonHang.
+- `Services/Interfaces.cs` là ranh giới của phần khách hàng. Giao diện khách dùng `CustomerGroupAdapter` cho tài khoản, hồ sơ, danh mục và kho; `CustomerOrderAdapter` nối `IDonHangService` với dịch vụ đơn hàng thật của Nguyên. `Services/CustomerDemo` không được đăng ký khi chạy ứng dụng. `LichHenService` của Hiệp phục vụ cả khách và Staff. XSD đơn/chi tiết dùng `xs:all` để nhận cột serial và nhân viên bổ sung khi chuyển trạng thái, đồng thời kiểm tra khóa trùng.
 - `LichHenService` dùng cùng khóa của `XmlHelper` cho cả đọc, kiểm tra, sinh mã và ghi. Khi nối khu nhân viên, truyền mã nhân viên từ phiên đăng nhập cho thao tác xác nhận, hoàn tất hoặc hủy lịch.
 - `WarrantyClient` dùng URL gốc trong `Warranty:BaseUrl` và tên cookie trong `Security.CookieName`. Đồng bộ hai cấu hình này khi ghép API của Nguyên. Profile HTTPS cần chứng chỉ phát triển được tin cậy.
 

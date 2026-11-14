@@ -1,0 +1,15 @@
+@model BaoHanhViewModel
+@{ ViewData["Title"]="Quản lý bảo hành"; }
+<h1>Quản lý bảo hành</h1><p>Thời hạn bảo hành được tính từ ngày hoàn tất và thời hạn đã lưu lúc bán.</p>
+<form method="get" class="panel filters"><label>Đơn đã hoàn tất<select name="maDon" required><option value="">Chọn đơn</option>@foreach(var d in Model.DonHoanTat){<option value="@Text(d,"MaDon")" selected="@(Model.Don!=null && Text(Model.Don,"MaDon")==Text(d,"MaDon"))">@Text(d,"MaDon") · @Text(d,"TenNguoiNhan")</option>}</select></label><button>Xem serial</button></form>
+@if(Model.Don is XElement don && Text(don,"TrangThai")=="HoanTat"){
+<div class="panel table-wrap"><table><thead><tr><th>Mẫu</th><th>Serial</th><th>Ngày bắt đầu</th><th>Ngày hết hạn</th><th>Thao tác</th></tr></thead><tbody>
+@foreach(var ct in don.Element("ChiTiet")!.Elements()){
+var start=((DateTime)don.Element("NgayHoanTat")!).Date; var end=start.AddMonths((int)ct.Element("ThoiHanBaoHanh")!);
+var exists=Model.Phieu.Any(p=>Text(p,"MaDon")==Text(don,"MaDon") && Text(p,"Serial")==Text(ct,"Serial"));
+<tr><td>@Text(ct,"TenMau")</td><td>@Text(ct,"Serial")</td><td>@HienThi.Ngay(start)</td><td>@HienThi.Ngay(end)</td><td>@if(exists){<span>Đã lập phiếu</span>}else{<form asp-action="LapPhieu" method="post"><input type="hidden" name="maDon" value="@Text(don,"MaDon")"/><input type="hidden" name="serial" value="@Text(ct,"Serial")"/><button>Lập phiếu</button></form>}</td></tr>
+}</tbody></table></div>}
+<div class="panel table-wrap"><h2>Phiếu đã lập</h2><table><thead><tr><th>Mã phiếu</th><th>Đơn hàng</th><th>Serial</th><th>Khách</th><th>Ngày hết hạn</th></tr></thead><tbody>
+@foreach(var p in Model.Phieu){<tr><td>@Text(p,"MaPBH")</td><td><a asp-controller="DonHang" asp-action="ChiTiet" asp-route-id="@Text(p,"MaDon")">@Text(p,"MaDon")</a></td><td>@Text(p,"Serial")</td><td>@Text(p,"MaKH")</td><td>@HienThi.Ngay((DateTime)p.Element("NgayHetHan")!)</td></tr>}
+@if(Model.Phieu.Count==0){<tr><td colspan="5">Chưa có phiếu bảo hành.</td></tr>}
+</tbody></table></div>

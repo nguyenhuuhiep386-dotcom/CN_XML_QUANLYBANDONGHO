@@ -1,0 +1,13 @@
+@model TaiQuayViewModel
+@{ ViewData["Title"]="Tạo đơn tại quầy"; }
+<h1>Tạo đơn tại quầy</h1><p>Chọn khách và serial. Đơn được hoàn tất ngay khi ghi nhận thanh toán.</p>
+<form method="get" class="panel filters"><label>Số điện thoại khách<input asp-for="SoDienThoai" required/></label><button>Tìm khách</button></form>
+@if(Model.Khach==null){
+<form method="post" asp-action="ThemKhach" class="panel"><h2>Thêm khách mới</h2><div class="filters"><label>Họ tên<input name="hoTen" required maxlength="100"/></label><label>Số điện thoại<input name="soDienThoai" value="@Model.SoDienThoai" required maxlength="15"/></label><label>Email<input name="email" type="email"/></label><label>Địa chỉ<input name="diaChi" maxlength="250"/></label><button>Thêm khách</button></div></form>
+}else{
+<form method="post" asp-action="TaoTaiQuay" class="panel"><h2>@Model.Khach.HoTen · @Model.Khach.MaKH</h2><input type="hidden" name="maKH" value="@Model.Khach.MaKH"/>
+<label>Mẫu đồng hồ<select id="loc-mau"><option value="">Tất cả mẫu còn hàng</option>@foreach(var g in Model.Chiec.Where(x=>Model.GiaTheoMau.ContainsKey(x.MaMau)).GroupBy(x=>x.MaMau)){<option value="@g.Key">@g.First().TenMau</option>}</select></label>
+<div class="table-wrap"><table><thead><tr><th>Chọn</th><th>Mẫu</th><th>Serial</th><th>Giá bán</th></tr></thead><tbody>
+@foreach(var c in Model.Chiec.Where(x=>Model.GiaTheoMau.ContainsKey(x.MaMau))){<tr data-mau="@c.MaMau"><td><input type="checkbox" name="serial" value="@c.Serial" data-gia="@Model.GiaTheoMau[c.MaMau].ToString(System.Globalization.CultureInfo.InvariantCulture)" aria-label="Chọn @c.Serial"/></td><td>@c.TenMau · @c.MaMau</td><td>@c.Serial</td><td>@HienThi.Tien(Model.GiaTheoMau[c.MaMau])</td></tr>}
+</tbody></table></div><p id="serial-da-chon" aria-live="polite">Chưa chọn chiếc nào.</p><p class="total">Tạm tính: <strong id="tong-tai-quay">0 ₫</strong></p><div class="actions"><label>Phương thức thanh toán<select name="phuongThucTT"><option value="TienMat">Tiền mặt</option><option value="ChuyenKhoan">Chuyển khoản</option><option value="The">Thẻ</option></select></label><button>Ghi nhận thanh toán và hoàn tất</button></div></form>}
+@section Scripts { <script src="~/js/staff-pos.js" asp-append-version="true"></script> }

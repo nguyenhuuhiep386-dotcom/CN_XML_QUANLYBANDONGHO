@@ -5,6 +5,13 @@ namespace AurelMaison.Services;
 
 public sealed class LichHenService(IDanhMucService danhMuc)
 {
+    // Khu Staff cần lọc tùy chọn ngày và đọc các cột để hiển thị; khu khách giữ model của Hiệp.
+    public List<XElement> LayTheoNgay(DateTime? ngay = null, string? trangThai = null) => XmlHelper.ChayTrongKhoa(() =>
+        XmlHelper.Load("LichHen").Root!.Elements("LichHen")
+            .Where(x => ngay == null || ((DateTime)x.Element("NgayHen")!).Date == ngay.Value.Date)
+            .Where(x => string.IsNullOrEmpty(trangThai) || x.Value("TrangThai") == trangThai)
+            .OrderBy(x => (DateTime)x.Element("NgayHen")!).Select(x => new XElement(x)).ToList());
+
     public KetQua Tao(string maKH, DatLichForm form) => XmlHelper.ChayTrongKhoa(() =>
     {
         if (XmlHelper.Load("KhachHang").Find("MaKH", maKH) is null)
