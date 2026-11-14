@@ -1,13 +1,13 @@
 @model DatLichForm
 @{
-    ViewData["Title"] = "Đặt lịch showroom";
+    ViewData["Title"] = "Hẹn thử tại Private Lounge";
     var watches = (IReadOnlyList<DongHo>)ViewData["Mau"]!;
 }
-<nav class="breadcrumb" aria-label="Đường dẫn"><a asp-controller="Home" asp-action="Index">Trang chủ</a><span>/</span><span>Đặt lịch showroom</span></nav>
-<header class="page-heading"><div><p class="kicker">MỘT TRẢI NGHIỆM DÀNH CHO BẠN</p><h1>Hẹn gặp tại showroom</h1><p>Đặt một cuộc hẹn để xem trực tiếp mẫu đồng hồ bạn đang quan tâm.</p></div></header>
+<nav class="breadcrumb" aria-label="Đường dẫn"><a asp-controller="Home" asp-action="Index">Trang chủ</a><span>/</span><span>Private Lounge</span></nav>
+<header class="page-heading"><div><p class="kicker">PRIVATE LOUNGE · ĐÀ NẴNG</p><h1>Buổi thử dành riêng cho bạn</h1><p>Chọn một mẫu đồng hồ, thời gian ghé thăm và thức uống đón tiếp tại lounge.</p></div></header>
 <div class="booking-layout">
     <form asp-action="Index" method="post" class="panel stack">
-        <h2>Thông tin lịch hẹn</h2>
+        <h2>Chi tiết buổi hẹn</h2>
         <div asp-validation-summary="All" class="validation"></div>
         <label>Mẫu đồng hồ
             <select asp-for="MaMau"><option value="">Tư vấn chung</option>
@@ -15,19 +15,26 @@
             </select>
         </label>
         <div class="form-row">
-            <label>Showroom<select asp-for="Showroom"><option value="@Rules.Showroom">@Rules.Showroom</option></select></label>
+            <label>Địa điểm<select asp-for="Showroom"><option value="@Rules.Showroom">Private Lounge · Đà Nẵng</option></select></label>
             <label>Ngày và giờ hẹn<input asp-for="NgayHen" type="datetime-local" required /></label>
         </div>
+        <label>Thức uống đón tiếp
+            <select asp-for="DoUong">
+                <option value="Espresso">Espresso</option>
+                <option value="Trà Ô Long">Trà Ô Long</option>
+                <option value="Champagne">Champagne</option>
+            </select>
+        </label>
         <div class="form-row">
             <label>Họ và tên<input asp-for="HoTen" autocomplete="name" /></label>
             <label>Số điện thoại<input asp-for="SoDienThoai" type="tel" autocomplete="tel" /></label>
         </div>
-        <label>Lời nhắn cho showroom <span class="muted">(tùy chọn)</span><textarea asp-for="GhiChu" rows="3" placeholder="Bạn muốn tìm hiểu thêm về mẫu đồng hồ nào?"></textarea></label>
-        <button>Gửi lịch hẹn <partial name="_Icon" model='@("calendar")' /></button>
+        <label>Lời nhắn riêng <span class="muted">(tùy chọn)</span><textarea asp-for="GhiChu" maxlength="200" rows="3" placeholder="Chi tiết bạn muốn chúng tôi chuẩn bị"></textarea></label>
+        <button>Đặt buổi thử <partial name="_Icon" model='@("calendar")' /></button>
     </form>
     <aside class="info-panel">
-        <partial name="_Icon" model='@("calendar")' /><p class="kicker">SHOWROOM ĐÀ NẴNG</p><h2>Trực tiếp cảm nhận<br />từng chi tiết.</h2>
-        <p>Từ kích thước trên cổ tay đến sắc độ mặt số. Một cuộc hẹn sẽ giúp bạn lựa chọn chiếc đồng hồ phù hợp hơn.</p>
+        <partial name="_Icon" model='@("calendar")' /><p class="kicker">AUREL MAISON · ĐÀ NẴNG</p><h2>Trực tiếp cảm nhận<br />từng chi tiết.</h2>
+        <p>Chúng tôi chuẩn bị mẫu bạn quan tâm cùng thức uống đã chọn cho buổi thử riêng tại Private Lounge.</p>
         <dl class="info-rule"><dt>THỜI GIAN ĐÓN KHÁCH</dt><dd>Hằng ngày · 09:00–20:00</dd><dt>SAU KHI ĐẶT LỊCH</dt><dd>Theo dõi xác nhận trong<br />Tài khoản → Lịch hẹn của tôi.</dd></dl>
     </aside>
 </div>

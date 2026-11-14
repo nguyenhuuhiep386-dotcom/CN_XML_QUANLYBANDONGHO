@@ -32,4 +32,108 @@
         delivery.addEventListener("change", update);
         update();
     }
+
+    const dossier = document.getElementById("technical-dossier");
+    if (dossier && typeof dossier.showModal === "function") {
+        const wrist = document.getElementById("dossier-wrist");
+        const wristValue = document.getElementById("dossier-wrist-value");
+        const fitValue = document.getElementById("dossier-fit-value");
+        const fitMeter = document.getElementById("dossier-fit-meter");
+        const fitCopy = document.getElementById("dossier-fit-copy");
+        const imageFrame = document.getElementById("dossier-caliber-frame");
+        const lumeToggle = document.querySelector("[data-dossier-lume]");
+        const setText = (id, value) => { document.getElementById(id).textContent = value || "—"; };
+
+        const updateWristEstimate = () => {
+            const wristCm = Number(wrist.value);
+            const diameter = Number(dossier.dataset.diameter || 0);
+            const percentage = Math.max(25, Math.min(95, Math.round(diameter / (wristCm * 10 / Math.PI) * 100)));
+            wristValue.value = `${wristCm.toFixed(1).replace(".0", "")} cm`;
+            fitValue.style.width = `${percentage}%`;
+            fitMeter.setAttribute("aria-valuenow", String(percentage));
+            fitCopy.textContent = `Mặt số rộng khoảng ${percentage}% bề ngang cổ tay ước tính.`;
+        };
+        wrist.addEventListener("input", updateWristEstimate);
+
+        document.addEventListener("click", event => {
+            const trigger = event.target.closest("[data-dossier-open]");
+            if (trigger) {
+                const card = trigger.closest("[data-dossier-source]");
+                if (!card) return;
+                event.preventDefault();
+                dossier.dataset.diameter = card.dataset.watchSize || "0";
+                setText("dossier-brand", card.dataset.watchBrand);
+                setText("dossier-title", card.dataset.watchName);
+                setText("dossier-description", card.dataset.watchDescription);
+                setText("dossier-price", card.dataset.watchPrice);
+                setText("dossier-reference", `REF. ${card.dataset.watchId || "—"}`);
+                setText("dossier-movement", card.dataset.watchMovement);
+                setText("dossier-size", `${card.dataset.watchSize || "—"} mm`);
+                setText("dossier-material", card.dataset.watchMaterial);
+                setText("dossier-warranty", card.dataset.watchWarranty);
+                document.getElementById("dossier-image").src = card.dataset.watchImage;
+                document.getElementById("dossier-image").alt = card.dataset.watchName || "Đồng hồ";
+                document.getElementById("dossier-cart-id").value = card.dataset.watchId || "";
+                const addToTray = dossier.querySelector("form button[type='submit']");
+                addToTray.disabled = (card.dataset.watchStock || "").includes("hết hàng");
+                addToTray.setAttribute("aria-label", `Thêm ${card.dataset.watchName || "mẫu đồng hồ"} vào khay thử`);
+                const detailLink = document.getElementById("dossier-detail");
+                detailLink.href = card.dataset.watchDetail || detailLink.href;
+                const bookingLink = document.getElementById("dossier-booking");
+                const bookingUrl = new URL(bookingLink.href, window.location.origin);
+                bookingUrl.searchParams.set("maMau", card.dataset.watchId || "");
+                bookingLink.href = bookingUrl.toString();
+                wrist.value = "17";
+                imageFrame.classList.remove("is-luminous");
+                lumeToggle.setAttribute("aria-pressed", "false");
+                lumeToggle.textContent = "Bật dạ quang Chromalight";
+                updateWristEstimate();
+                dossier.showModal();
+            }
+
+            if (event.target.closest("[data-dossier-close]")) dossier.close();
+        });
+
+        lumeToggle.addEventListener("click", () => {
+            const active = imageFrame.classList.toggle("is-luminous");
+            lumeToggle.setAttribute("aria-pressed", String(active));
+            lumeToggle.textContent = active ? "Tắt mô phỏng dạ quang" : "Bật dạ quang Chromalight";
+        });
+        dossier.addEventListener("click", event => {
+            if (event.target === dossier) dossier.close();
+        });
+        dossier.addEventListener("close", () => imageFrame.classList.remove("is-luminous"));
+    }
+
+    const liveClock = document.getElementById("danang-clock");
+    if (liveClock) {
+        const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const formatter = new Intl.DateTimeFormat("vi-VN", {
+            timeZone: "Asia/Ho_Chi_Minh", hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23"
+        });
+        const hourHand = document.getElementById("live-hour-hand");
+        const minuteHand = document.getElementById("live-minute-hand");
+        const secondHand = document.getElementById("live-second-hand");
+        let lastDigitalTime = "";
+        const updateClock = () => {
+            const now = new Date();
+            const parts = Object.fromEntries(formatter.formatToParts(now).map(part => [part.type, part.value]));
+            const hour = Number(parts.hour) % 12;
+            const minute = Number(parts.minute);
+            const second = Number(parts.second) + now.getMilliseconds() / 1000;
+            hourHand.style.transform = `rotate(${(hour + minute / 60 + second / 3600) * 30}deg)`;
+            minuteHand.style.transform = `rotate(${(minute + second / 60) * 6}deg)`;
+            secondHand.style.transform = `rotate(${second * 6}deg)`;
+            const digitalTime = formatter.format(now);
+            if (digitalTime !== lastDigitalTime) {
+                liveClock.textContent = digitalTime;
+                liveClock.dateTime = now.toISOString();
+                lastDigitalTime = digitalTime;
+            }
+            if (reducedMotion) window.setTimeout(updateClock, 1000);
+            else window.requestAnimationFrame(updateClock);
+        };
+        if (reducedMotion) updateClock();
+        else window.requestAnimationFrame(updateClock);
+    }
 })();

@@ -108,7 +108,9 @@ public sealed class DatLichForm
     [Required] public DateTime? NgayHen { get; set; }
     [Required, StringLength(100)] public string HoTen { get; set; } = "";
     [Required, StringLength(15), RegularExpression(@"^\+?[0-9]{8,14}$", ErrorMessage = "Số điện thoại không hợp lệ.")] public string SoDienThoai { get; set; } = "";
-    [StringLength(250)] public string? GhiChu { get; set; }
+    [Required, RegularExpression(@"^(Espresso|Trà Ô Long|Champagne)$", ErrorMessage = "Chọn một thức uống trong danh sách.")]
+    public string DoUong { get; set; } = "Espresso";
+    [StringLength(200)] public string? GhiChu { get; set; }
 }
 
 public record LichHen(string MaLH, string MaKH, string? MaMau, string Showroom, DateTime NgayHen, string HoTen,

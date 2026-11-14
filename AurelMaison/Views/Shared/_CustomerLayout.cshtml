@@ -36,8 +36,8 @@
             <a class="account-link" asp-area="" asp-controller="Account" asp-action="@(isCustomer ? "Index" : "Login")">
                 <partial name="_Icon" model='@("user")' /><span>@(isCustomer ? "Tài khoản" : "Đăng nhập")</span>
             </a>
-            <a class="bag" asp-area="" asp-controller="Cart" asp-action="Index" aria-label="Giỏ hàng có @soLuong sản phẩm">
-                <partial name="_Icon" model='@("bag")' />
+            <a class="bag" asp-area="" asp-controller="Cart" asp-action="Index" aria-label="Khay thử có @soLuong mẫu">
+                <partial name="_Icon" model='@("tray")' /><span class="tray-label">Khay thử</span>
                 @if (soLuong > 0) { <span class="cart-count">@soLuong</span> }
             </a>
             @if (User.Identity?.IsAuthenticated == true)

@@ -36,9 +36,16 @@ else
     if (Model.Lich.Count == 0) { <p class="panel">Bạn chưa có lịch hẹn.</p> }
     foreach (var item in Model.Lich)
     {
+        const string drinkPrefix = "Đồ uống tại Private Lounge: ";
+        var appointmentNotes = (item.GhiChu ?? "").Split(" · ", 2, StringSplitOptions.None);
+        var drink = appointmentNotes[0].StartsWith(drinkPrefix, StringComparison.Ordinal)
+            ? appointmentNotes[0][drinkPrefix.Length..] : null;
+        var privateNote = drink is not null && appointmentNotes.Length > 1 ? appointmentNotes[1] : null;
         <article class="panel">
             <div class="spread"><h2>@item.MaLH</h2><span class="pill">@Rules.State(item.TrangThai)</span></div>
             <p>@item.NgayHen.ToString("dd/MM/yyyy HH:mm") · @item.Showroom · @(item.MaMau ?? "Tư vấn chung")</p>
+            @if (drink is not null) { <p>Private Lounge · @drink</p> }
+            @if (!string.IsNullOrWhiteSpace(privateNote)) { <p>Lời nhắn: @privateNote</p> }
             @if (item.LyDoHuy is { } reason) { <p>Lý do hủy: @reason</p> }
         </article>
     }

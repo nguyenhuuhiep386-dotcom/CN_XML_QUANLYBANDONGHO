@@ -25,11 +25,13 @@ public sealed class LichHenService(IDanhMucService danhMuc)
 
         var doc = XmlHelper.Load("LichHen");
         string id = doc.Next("MaLH", "LH" + Rules.Now.Year, 4);
+        var ghiChu = $"Đồ uống tại Private Lounge: {form.DoUong}"
+            + (string.IsNullOrWhiteSpace(form.GhiChu) ? "" : $" · {form.GhiChu.Trim()}");
         doc.Root!.Add(new XElement("LichHen", new XElement("MaLH", id), new XElement("MaKH", maKH),
             model is null ? null : new XElement("MaMau", model.MaMau),
             new XElement("Showroom", form.Showroom), new XElement("NgayHen", XmlData.Iso(time)),
             new XElement("HoTen", form.HoTen.Trim()), new XElement("SoDienThoai", form.SoDienThoai.Trim()),
-            string.IsNullOrWhiteSpace(form.GhiChu) ? null : new XElement("GhiChu", form.GhiChu.Trim()),
+            new XElement("GhiChu", ghiChu),
             new XElement("TrangThai", Rules.Pending), new XElement("NgayTao", XmlData.Iso(Rules.Now))));
         var saved = XmlHelper.Save("LichHen", doc);
         if (!saved.ThanhCong) return saved;

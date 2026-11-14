@@ -1,14 +1,23 @@
 @model LichHen
-@{ ViewData["Title"] = "Đã gửi lịch hẹn"; }
+@{
+    ViewData["Title"] = "Đã xác nhận yêu cầu buổi thử";
+    const string drinkPrefix = "Đồ uống tại Private Lounge: ";
+    var bookingNotes = (Model.GhiChu ?? "").Split(" · ", 2, StringSplitOptions.None);
+    var drink = bookingNotes[0].StartsWith(drinkPrefix, StringComparison.Ordinal)
+        ? bookingNotes[0][drinkPrefix.Length..] : "Chưa chọn";
+    var privateNote = drink != "Chưa chọn" && bookingNotes.Length > 1 ? bookingNotes[1] : null;
+}
 <section class="panel result">
     <div class="result-symbol"><partial name="_Icon" model='@("calendar")' /></div>
-    <p class="kicker">AUREL MAISON SHOWROOM</p><h1>Cuộc hẹn đã được ghi nhận</h1>
-    <p>Kiểm tra trạng thái xác nhận trong Lịch hẹn của tôi trước khi ghé showroom.</p>
+    <p class="kicker">PRIVATE LOUNGE · ĐÀ NẴNG</p><h1>Yêu cầu buổi thử đã được ghi nhận</h1>
+    <p>Đội ngũ Aurel Maison sẽ xác nhận lịch hẹn trong tài khoản của bạn.</p>
     <dl>
         <dt>Mã lịch hẹn</dt><dd><strong>@Model.MaLH</strong></dd>
         <dt>Mẫu đồng hồ</dt><dd>@ViewData["TenMau"]</dd>
         <dt>Ngày giờ</dt><dd>@Model.NgayHen.ToString("dd/MM/yyyy HH:mm")</dd>
-        <dt>Showroom</dt><dd>@Model.Showroom</dd>
+        <dt>Địa điểm</dt><dd>Private Lounge · Đà Nẵng</dd>
+        <dt>Thức uống</dt><dd>@drink</dd>
+        @if (!string.IsNullOrWhiteSpace(privateNote)) { <dt>Lời nhắn</dt><dd>@privateNote</dd> }
         <dt>Trạng thái</dt><dd><span class="pill pending">@Rules.State(Model.TrangThai)</span></dd>
     </dl>
     <div class="actions"><a class="button" asp-controller="Account" asp-action="Index" asp-route-tab="lich-hen">Xem lịch của tôi <partial name="_Icon" model='@("arrow")' /></a><a class="text-link" asp-controller="Home" asp-action="Index">Về trang chủ</a></div>

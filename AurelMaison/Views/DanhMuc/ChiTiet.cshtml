@@ -19,8 +19,8 @@
             <input type="hidden" name="maMau" value="@Model.MaMau" />
             @if (Model.SoConHang > 0)
             { <label>Số lượng<input name="soLuong" type="number" min="1" max="@Model.SoConHang" value="1" required /></label> }
-            <button disabled="@(Model.SoConHang == 0)"><partial name="_Icon" model='@("bag")' /> Thêm vào giỏ</button>
-            <a class="button outline" asp-controller="Booking" asp-action="Index" asp-route-maMau="@Model.MaMau"><partial name="_Icon" model='@("calendar")' /> Đặt lịch xem mẫu này</a>
+            <button disabled="@(Model.SoConHang == 0)"><partial name="_Icon" model='@("tray")' /> Thêm vào khay thử</button>
+            <a class="button outline" asp-controller="Booking" asp-action="Index" asp-route-maMau="@Model.MaMau"><partial name="_Icon" model='@("calendar")' /> Hẹn thử tại Private Lounge</a>
         </form>
         <p class="detail-note">Xem trực tiếp tại Showroom Đà Nẵng · 09:00–20:00</p>
     </section>

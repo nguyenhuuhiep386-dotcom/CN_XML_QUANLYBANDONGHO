@@ -2,18 +2,72 @@
 <div class="grid product-grid">
 @foreach (var item in Model)
 {
-    <article class="card product-card">
-        <a asp-controller="DanhMuc" asp-action="ChiTiet" asp-route-id="@item.MaMau" class="photo">
-            <span class="product-code">@item.MaMau</span>
+    <article class="card product-card" data-dossier-source
+        data-watch-id="@item.MaMau"
+        data-watch-name="@item.TenMau"
+        data-watch-brand="@item.TenHang"
+        data-watch-price="@Rules.Money(item.Gia)"
+        data-watch-movement="@item.LoaiMay"
+        data-watch-size="@item.KichThuoc.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture)"
+        data-watch-material="@item.ChatLieu"
+        data-watch-description="@item.MoTa"
+        data-watch-warranty="@item.ThoiHanBaoHanh tháng"
+        data-watch-stock="@(item.SoConHang > 0 ? "Có sẵn tại showroom" : "Hiện đã hết hàng")"
+        data-watch-image="@(string.IsNullOrEmpty(item.HinhAnh) ? "/images/watch.svg" : item.HinhAnh)"
+        data-watch-detail="@Url.Action("ChiTiet", "DanhMuc", new { id = item.MaMau })">
+        <a asp-controller="DanhMuc" asp-action="ChiTiet" asp-route-id="@item.MaMau" class="photo" data-dossier-open aria-haspopup="dialog" aria-label="Mở hồ sơ kỹ thuật: @item.TenMau">
+            <span class="product-code">REF. @item.MaMau</span>
             <img src="@(string.IsNullOrEmpty(item.HinhAnh) ? "/images/watch.svg" : item.HinhAnh)" alt="@item.TenMau" loading="lazy" />
             <span class="photo-cta">Khám phá mẫu <span>↗</span></span>
         </a>
         <div class="cardbody">
             <p class="kicker">@item.TenHang</p>
-            <h3><a asp-controller="DanhMuc" asp-action="ChiTiet" asp-route-id="@item.MaMau">@item.TenMau</a></h3>
+            <h3><a asp-controller="DanhMuc" asp-action="ChiTiet" asp-route-id="@item.MaMau" data-dossier-open aria-haspopup="dialog">@item.TenMau</a></h3>
             <p class="product-spec">@item.LoaiMay <span>·</span> @item.KichThuoc.ToString("0.#") mm</p>
             <div class="product-price"><strong>@Rules.Money(item.Gia)</strong><span class="stock @(item.SoConHang == 0 ? "soldout" : "")">@(item.SoConHang > 0 ? "Còn hàng" : "Hết hàng")</span></div>
         </div>
     </article>
 }
 </div>
+<dialog class="technical-dossier" id="technical-dossier" aria-labelledby="dossier-title">
+    <div class="dossier-topline"><p class="kicker">AUREL MAISON · TECHNICAL DOSSIER</p><button class="dossier-close" type="button" data-dossier-close aria-label="Đóng hồ sơ kỹ thuật"><partial name="_Icon" model='@("close")' /></button></div>
+    <div class="dossier-grid">
+        <div class="dossier-inspection">
+            <div class="dossier-caliber-frame" id="dossier-caliber-frame">
+                <img id="dossier-image" src="/images/watch.svg" alt="" />
+                <span class="inspection-label">CALIBER MACRO INSPECTION</span>
+            </div>
+            <button class="lume-toggle" type="button" data-dossier-lume aria-pressed="false">Bật dạ quang Chromalight</button>
+            <p class="dossier-disclaimer">Hiệu ứng dạ quang mô phỏng để tham khảo.</p>
+        </div>
+        <div class="dossier-content">
+            <p class="kicker" id="dossier-brand"></p>
+            <h2 id="dossier-title"></h2>
+            <p class="dossier-description" id="dossier-description"></p>
+            <div class="dossier-price" id="dossier-price"></div>
+            <dl class="dossier-specs">
+                <dt>Tham chiếu</dt><dd id="dossier-reference"></dd>
+                <dt>Bộ máy</dt><dd id="dossier-movement"></dd>
+                <dt>Đường kính</dt><dd id="dossier-size"></dd>
+                <dt>Chất liệu</dt><dd id="dossier-material"></dd>
+                <dt>Bảo hành</dt><dd id="dossier-warranty"></dd>
+            </dl>
+            <section class="wrist-estimator" aria-labelledby="wrist-title">
+                <div class="spread"><h3 id="wrist-title">Ước lượng trên cổ tay</h3><output id="dossier-wrist-value" for="dossier-wrist">17 cm</output></div>
+                <label class="sr-only" for="dossier-wrist">Chu vi cổ tay, từ 14 đến 20 centimet</label>
+                <input id="dossier-wrist" type="range" min="14" max="20" step="0.5" value="17" />
+                <div class="fit-meter" id="dossier-fit-meter" role="progressbar" aria-label="Tỷ lệ mặt đồng hồ so với bề ngang cổ tay" aria-valuemin="0" aria-valuemax="100" aria-valuenow="66"><span id="dossier-fit-value"></span></div>
+                <p id="dossier-fit-copy">Tỷ lệ ước lượng dựa trên đường kính mặt số.</p>
+            </section>
+            <div class="dossier-actions">
+                <form asp-controller="Cart" asp-action="Them" method="post">
+                    <input id="dossier-cart-id" type="hidden" name="maMau" value="" />
+                    <input type="hidden" name="soLuong" value="1" />
+                    <button class="button" type="submit"><partial name="_Icon" model='@("tray")' /> Thêm vào khay thử</button>
+                </form>
+                <a class="button outline" id="dossier-booking" asp-controller="Booking" asp-action="Index"><partial name="_Icon" model='@("calendar")' /> Đặt lịch thử mẫu này</a>
+                <a class="dossier-detail-link" id="dossier-detail" asp-controller="DanhMuc" asp-action="Index">Xem toàn bộ thông tin mẫu ↗</a>
+            </div>
+        </div>
+    </div>
+</dialog>

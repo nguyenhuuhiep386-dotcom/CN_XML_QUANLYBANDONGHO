@@ -9,12 +9,14 @@ namespace AurelMaison.Controllers;
 public sealed class BookingController(LichHenService booking, IKhachHangService customers, IDanhMucService catalog) : Controller
 {
     [HttpGet]
-    public IActionResult Index(string? maMau)
+    public IActionResult Index(string? maMau, string? mauQuanTam)
     {
         var profile = customers.LayTheoTaiKhoan(User.MaTK()!);
         if (profile is null) return NotFound();
         if (!string.IsNullOrWhiteSpace(maMau) && catalog.LayChiTiet(maMau) is null) return NotFound();
-        return BookingView(new() { MaMau = maMau, HoTen = profile.HoTen, SoDienThoai = profile.SoDienThoai ?? "" });
+        var note = string.IsNullOrWhiteSpace(mauQuanTam) ? "" : $"Các mẫu quan tâm: {mauQuanTam.Trim()}";
+        if (note.Length > 200) note = note[..200];
+        return BookingView(new() { MaMau = maMau, HoTen = profile.HoTen, SoDienThoai = profile.SoDienThoai ?? "", GhiChu = note });
     }
 
     [HttpPost]
