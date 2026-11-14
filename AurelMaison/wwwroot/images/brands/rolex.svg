@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 80" role="img" aria-labelledby="title">
+  <title id="title">Rolex</title>
+  <g fill="#d9c9a8" text-anchor="middle">
+    <path d="M120 5l7 11 8-8 3 13 12-3-3 12 13 3-9 9 10 8-13 1 1 13-12-6-7 12-7-12-12 6 1-13-13-1 10-8-9-9 13-3-3-12 12 3 3-13 8 8z"/>
+    <text x="120" y="69" font-family="Georgia, 'Times New Roman', serif" font-size="31" letter-spacing="4">ROLEX</text>
+  </g>
+</svg>

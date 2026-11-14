@@ -17,7 +17,7 @@
 </head>
 <body class="customer page-@controller.ToLowerInvariant() action-@action.ToLowerInvariant()">
 <a class="skip-link" href="#main-content">Đến nội dung chính</a>
-<div class="announcement"><span>AUREL MAISON · WATCH BOUTIQUE</span><span>Showroom Đà Nẵng <b>·</b> 09:00–20:00</span></div>
+<div class="announcement" hidden><span>AUREL MAISON · WATCH BOUTIQUE</span><span>Showroom Đà Nẵng <b>·</b> 09:00–20:00</span></div>
 <header class="top">
     <div class="wrap nav">
         <a class="logo" asp-area="" asp-controller="Home" asp-action="Index" aria-label="Aurel Maison — Trang chủ">
@@ -37,7 +37,8 @@
                 <partial name="_Icon" model='@("user")' /><span>@(isCustomer ? "Tài khoản" : "Đăng nhập")</span>
             </a>
             <a class="bag" asp-area="" asp-controller="Cart" asp-action="Index" aria-label="Giỏ hàng có @soLuong sản phẩm">
-                <partial name="_Icon" model='@("bag")' /><span class="cart-count">@soLuong</span>
+                <partial name="_Icon" model='@("bag")' />
+                @if (soLuong > 0) { <span class="cart-count">@soLuong</span> }
             </a>
             @if (User.Identity?.IsAuthenticated == true)
             {
