@@ -349,7 +349,7 @@ dd { margin: 0; color: #3b4b3f; }
     .brand-mark { width: 30px; height: 34px; font-size: 12px; }
     .logo { font-size: 13px; gap: 8px; }
     .logo small { font-size: 6px; margin-top: 4px; }
-    .account-link span { display: none; }
+    .account-link span { display: inline-block; max-width: clamp(44px, 17vw, 76px); overflow: hidden; text-overflow: ellipsis; font-size: 8px; }
     .account-link .icon, .bag .icon { width: 18px; height: 18px; }
     .header-actions { gap: 10px; }
     .bag { padding-left: 10px; gap: 5px; }
@@ -1047,8 +1047,9 @@ td, th { border-color: rgba(197,168,128,.16); }
     .primary-nav { grid-column: 1/-1; grid-row: 2; padding-bottom: 15px; }
     .primary-nav a { padding: 6px 0; font-size: 8px; }
     .header-actions { grid-column: 3; grid-row: 1; }
-    .header-time, .header-appointment span, .account-link span { display: none; }
+    .header-time, .header-appointment span { display: none; }
     .header-appointment, .account-link, .bag { gap: 4px; }
+    .account-link span { display: inline-block; max-width: 96px; overflow: hidden; text-overflow: ellipsis; }
     .header-appointment .icon, .account-link .icon, .bag .icon { width: 18px; height: 18px; }
     .hero { height: min(78svh,760px); min-height: 560px; }
     .hero h1 { font-size: clamp(48px,7vw,68px); }
