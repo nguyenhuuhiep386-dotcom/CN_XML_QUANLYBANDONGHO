@@ -105,8 +105,8 @@
         dossier.addEventListener("close", () => imageFrame.classList.remove("is-luminous"));
     }
 
-    const liveClock = document.getElementById("danang-clock");
-    if (liveClock) {
+    const clockDisplays = [document.getElementById("danang-clock"), document.getElementById("header-danang-clock")].filter(Boolean);
+    if (clockDisplays.length) {
         const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
         const formatter = new Intl.DateTimeFormat("vi-VN", {
             timeZone: "Asia/Ho_Chi_Minh", hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23"
@@ -121,14 +121,18 @@
             const hour = Number(parts.hour) % 12;
             const minute = Number(parts.minute);
             const second = Number(parts.second) + now.getMilliseconds() / 1000;
-            hourHand.style.transform = `rotate(${(hour + minute / 60 + second / 3600) * 30}deg)`;
-            minuteHand.style.transform = `rotate(${(minute + second / 60) * 6}deg)`;
-            secondHand.style.transform = `rotate(${second * 6}deg)`;
             const digitalTime = formatter.format(now);
             if (digitalTime !== lastDigitalTime) {
-                liveClock.textContent = digitalTime;
-                liveClock.dateTime = now.toISOString();
+                clockDisplays.forEach(clock => {
+                    clock.textContent = digitalTime;
+                    clock.dateTime = now.toISOString();
+                });
                 lastDigitalTime = digitalTime;
+            }
+            if (hourHand && minuteHand && secondHand) {
+                hourHand.style.transform = `rotate(${(hour + minute / 60 + second / 3600) * 30}deg)`;
+                minuteHand.style.transform = `rotate(${(minute + second / 60) * 6}deg)`;
+                secondHand.style.transform = `rotate(${second * 6}deg)`;
             }
             if (reducedMotion) window.setTimeout(updateClock, 1000);
             else window.requestAnimationFrame(updateClock);

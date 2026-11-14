@@ -52,7 +52,20 @@ public sealed class CustomerGroupAdapter(AuthService auth, KhachHangService cust
 
     public int DemConHang(string maMau) => stock.DemConHang(maMau);
 
-    private static DongHo Map(MauDongHo model) => new(model.MaMau, model.TenMau, model.MaHang, model.TenHang,
-        model.Gia, model.LoaiMay, model.KichThuoc, model.ChatLieu, model.MoTa ?? "", model.HinhAnh ?? "",
-        model.ThoiHanBaoHanh, model.SoConHang);
+    private static DongHo Map(MauDongHo model)
+    {
+        var image = model.MaMau switch
+        {
+            "DH001" => "/images/dh001-cutout.png",
+            "DH002" => "/images/dh002-cutout.png",
+            "DH003" => "/images/dh003-cutout.png",
+            "DH004" => "/images/dh004-cutout.png",
+            "DH005" => "/images/dh005-cutout.png",
+            _ => model.HinhAnh ?? ""
+        };
+
+        return new(model.MaMau, model.TenMau, model.MaHang, model.TenHang,
+            model.Gia, model.LoaiMay, model.KichThuoc, model.ChatLieu, model.MoTa ?? "", image,
+            model.ThoiHanBaoHanh, model.SoConHang);
+    }
 }

@@ -10,7 +10,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#183a30" />
+    <meta name="theme-color" content="#060B09" />
     <title>@ViewData["Title"] | Aurel Maison</title>
     <link rel="stylesheet" href="~/css/customer.css" asp-append-version="true" />
     <script src="~/js/customer.js" asp-append-version="true" defer></script>
@@ -20,19 +20,21 @@
 <div class="announcement" hidden><span>AUREL MAISON · WATCH BOUTIQUE</span><span>Showroom Đà Nẵng <b>·</b> 09:00–20:00</span></div>
 <header class="top">
     <div class="wrap nav">
-        <a class="logo" asp-area="" asp-controller="Home" asp-action="Index" aria-label="Aurel Maison — Trang chủ">
-            <span class="brand-mark">AM</span><span>AUREL MAISON<small>THE WATCH COLLECTION</small></span>
-        </a>
         <button class="menu-toggle" type="button" aria-controls="customer-nav" aria-expanded="false" aria-label="Mở menu">
             <partial name="_Icon" model='@("menu")' />
         </button>
         <nav id="customer-nav" class="primary-nav" aria-label="Menu chính">
             <a class="@(controller == "Home" ? "active" : "")" asp-area="" asp-controller="Home" asp-action="Index">Trang chủ</a>
             <a class="@(controller == "DanhMuc" ? "active" : "")" asp-area="" asp-controller="DanhMuc" asp-action="Index">Bộ sưu tập</a>
-            <a class="@(controller == "Booking" ? "active" : "")" asp-area="" asp-controller="Booking" asp-action="Index">Đặt lịch</a>
+            <a class="@(controller == "Booking" ? "active" : "")" asp-area="" asp-controller="Booking" asp-action="Index">Dịch vụ</a>
             <a class="@(controller == "Warranty" ? "active" : "")" asp-area="" asp-controller="Warranty" asp-action="Index">Bảo hành</a>
         </nav>
+        <a class="logo" asp-area="" asp-controller="Home" asp-action="Index" aria-label="Aurel Maison — Trang chủ">
+            <span class="brand-mark">AM</span><span>AUREL MAISON<small>THE WATCH COLLECTION</small></span>
+        </a>
         <div class="header-actions">
+            <div class="header-time"><span>ĐÀ NẴNG · GMT+7</span><time id="header-danang-clock">--:--:--</time></div>
+            <a class="header-appointment" asp-area="" asp-controller="Booking" asp-action="Index"><partial name="_Icon" model='@("calendar")' /><span>Đặt lịch</span></a>
             <a class="account-link" asp-area="" asp-controller="Account" asp-action="@(isCustomer ? "Index" : "Login")">
                 <partial name="_Icon" model='@("user")' /><span>@(isCustomer ? "Tài khoản" : "Đăng nhập")</span>
             </a>
@@ -59,9 +61,9 @@
 <footer class="foot">
     <div class="wrap footer-main">
         <div class="footer-brand"><a class="logo" asp-area="" asp-controller="Home" asp-action="Index">AUREL MAISON</a><p>Khám phá đồng hồ.<br />Tìm dấu ấn của riêng bạn.</p></div>
-        <div><h2>Khám phá</h2><a asp-area="" asp-controller="DanhMuc" asp-action="Index">Bộ sưu tập đồng hồ</a><a asp-area="" asp-controller="Booking" asp-action="Index">Đặt lịch tại showroom</a></div>
+        <div><h2>Khám phá</h2><a asp-area="" asp-controller="DanhMuc" asp-action="Index">Bộ sưu tập đồng hồ</a><a asp-area="" asp-controller="Booking" asp-action="Index">Đặt lịch tại Private Lounge</a></div>
         <div><h2>Dịch vụ khách hàng</h2><a asp-area="" asp-controller="Order" asp-action="Tracking">Đơn hàng của tôi</a><a asp-area="" asp-controller="Warranty" asp-action="Index">Tra cứu bảo hành</a><a asp-area="" asp-controller="Account" asp-action="Index">Tài khoản của tôi</a></div>
-        <div><h2>Ghé thăm showroom</h2><p>Showroom Đà Nẵng<br />Hằng ngày · 09:00–20:00</p><a asp-area="" asp-controller="Booking" asp-action="Index">Hẹn gặp tại showroom →</a></div>
+        <div><h2>Private Lounge</h2><p>Đà Nẵng<br />Hằng ngày · 09:00–20:00</p><a asp-area="" asp-controller="Booking" asp-action="Index">Đặt buổi thử riêng →</a></div>
     </div>
     <div class="wrap footer-bottom"><span>© @Rules.Now.Year Aurel Maison</span><a asp-area="" asp-controller="DanhMuc" asp-action="Xml">Xem danh mục HTML</a><span>Thời gian được trân trọng.</span></div>
 </footer>
