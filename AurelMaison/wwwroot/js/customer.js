@@ -60,51 +60,75 @@
         const fitCopy = document.getElementById("dossier-fit-copy");
         const imageFrame = document.getElementById("dossier-caliber-frame");
         const watchImage = document.getElementById("dossier-image");
+        const backImage = document.getElementById("dossier-back-image");
+        const watchStage = document.getElementById("dossier-watch-stage");
+        const sideLabel = document.getElementById("dossier-side-label");
         const spinButton = document.querySelector("[data-dossier-spin]");
         const lumeToggle = document.querySelector("[data-dossier-lume]");
         const setText = (id, value) => { document.getElementById(id).textContent = value || "—"; };
-        let watchRotation = 0;
+        let watchAngle = 0;
         let activePointer = null;
         let previousPointerX = 0;
+        let spinAnimationFrame = 0;
 
-        const setWatchRotation = () => {
-            watchImage.style.setProperty("--dossier-rotation", `${watchRotation}deg`);
+        const setWatchAngle = () => {
+            const normalizedAngle = ((watchAngle % 360) + 360) % 360;
+            watchStage.style.setProperty("--dossier-angle", `${watchAngle}deg`);
+            const side = normalizedAngle > 90 && normalizedAngle < 270 ? "back" : "front";
+            imageFrame.dataset.watchSide = side;
+            sideLabel.textContent = side === "back" ? "MẶT SAU" : "MẶT TRƯỚC";
         };
 
-        watchImage.addEventListener("pointerdown", event => {
+        imageFrame.addEventListener("pointerdown", event => {
+            if (event.target.closest("[data-dossier-spin]")) return;
             if (event.button !== 0 && event.pointerType === "mouse") return;
+            if (spinAnimationFrame) window.cancelAnimationFrame(spinAnimationFrame);
+            spinAnimationFrame = 0;
+            imageFrame.classList.remove("is-spinning");
             activePointer = event.pointerId;
             previousPointerX = event.clientX;
-            watchImage.classList.add("is-dragging");
-            watchImage.setPointerCapture(event.pointerId);
+            imageFrame.classList.add("is-dragging");
+            imageFrame.setPointerCapture(event.pointerId);
         });
-        watchImage.addEventListener("pointermove", event => {
+        imageFrame.addEventListener("pointermove", event => {
             if (event.pointerId !== activePointer) return;
             const delta = event.clientX - previousPointerX;
             previousPointerX = event.clientX;
-            watchRotation = (watchRotation + delta / Math.max(1, imageFrame.clientWidth) * 360) % 360;
-            setWatchRotation();
+            watchAngle = (watchAngle + delta / Math.max(1, imageFrame.clientWidth) * 360) % 360;
+            setWatchAngle();
         });
         const endWatchDrag = event => {
             if (event.pointerId !== activePointer) return;
             activePointer = null;
-            watchImage.classList.remove("is-dragging");
-            if (watchImage.hasPointerCapture(event.pointerId)) watchImage.releasePointerCapture(event.pointerId);
+            imageFrame.classList.remove("is-dragging");
+            if (imageFrame.hasPointerCapture(event.pointerId)) imageFrame.releasePointerCapture(event.pointerId);
         };
-        watchImage.addEventListener("pointerup", endWatchDrag);
-        watchImage.addEventListener("pointercancel", endWatchDrag);
+        imageFrame.addEventListener("pointerup", endWatchDrag);
+        imageFrame.addEventListener("pointercancel", endWatchDrag);
 
         spinButton.addEventListener("click", () => {
-            imageFrame.classList.remove("is-spinning");
-            watchRotation += 360;
-            setWatchRotation();
-            if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-            void watchImage.offsetWidth;
+            if (spinAnimationFrame) return;
+            if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+                watchAngle += 360;
+                setWatchAngle();
+                return;
+            }
+            const initialAngle = watchAngle;
+            const startedAt = performance.now();
             imageFrame.classList.add("is-spinning");
-        });
-        watchImage.addEventListener("animationend", event => {
-            if (event.animationName !== "dossier-turntable") return;
-            imageFrame.classList.remove("is-spinning");
+            const animateTurn = now => {
+                const progress = Math.min(1, (now - startedAt) / 1250);
+                watchAngle = initialAngle + 360 * progress;
+                setWatchAngle();
+                if (progress < 1) spinAnimationFrame = window.requestAnimationFrame(animateTurn);
+                else {
+                    watchAngle = initialAngle + 360;
+                    setWatchAngle();
+                    spinAnimationFrame = 0;
+                    imageFrame.classList.remove("is-spinning");
+                }
+            };
+            spinAnimationFrame = window.requestAnimationFrame(animateTurn);
         });
 
         const updateWristEstimate = () => {
@@ -134,10 +158,14 @@
                 setText("dossier-size", `${card.dataset.watchSize || "—"} mm`);
                 setText("dossier-material", card.dataset.watchMaterial);
                 setText("dossier-warranty", card.dataset.watchWarranty);
-                document.getElementById("dossier-image").src = card.dataset.watchImage;
-                document.getElementById("dossier-image").alt = card.dataset.watchName || "Đồng hồ";
-                watchRotation = 0;
-                watchImage.style.setProperty("--dossier-rotation", "0deg");
+                watchImage.src = card.dataset.watchImage;
+                watchImage.alt = `${card.dataset.watchName || "Đồng hồ"} — mặt trước`;
+                backImage.src = card.dataset.watchBackImage || "/images/watch.svg";
+                backImage.alt = `${card.dataset.watchName || "Đồng hồ"} — mặt sau`;
+                watchAngle = 0;
+                setWatchAngle();
+                if (spinAnimationFrame) window.cancelAnimationFrame(spinAnimationFrame);
+                spinAnimationFrame = 0;
                 imageFrame.classList.remove("is-spinning", "is-dragging");
                 document.getElementById("dossier-cart-id").value = card.dataset.watchId || "";
                 const addToTray = dossier.querySelector("form button[type='submit']");
@@ -168,7 +196,13 @@
         dossier.addEventListener("click", event => {
             if (event.target === dossier) dossier.close();
         });
-        dossier.addEventListener("close", () => imageFrame.classList.remove("is-luminous"));
+        dossier.addEventListener("close", () => {
+            if (spinAnimationFrame) window.cancelAnimationFrame(spinAnimationFrame);
+            spinAnimationFrame = 0;
+            imageFrame.classList.remove("is-luminous", "is-spinning", "is-dragging");
+            lumeToggle.setAttribute("aria-pressed", "false");
+            lumeToggle.textContent = "Bật dạ quang Chromalight";
+        });
     }
 
     const clockDisplays = [document.getElementById("danang-clock"), document.getElementById("header-danang-clock")].filter(Boolean);

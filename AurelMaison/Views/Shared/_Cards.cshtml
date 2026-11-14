@@ -2,6 +2,15 @@
 <div class="grid product-grid">
 @foreach (var item in Model)
 {
+    var backImage = item.MaMau switch
+    {
+        "DH001" => "/images/dh001-back.png",
+        "DH002" => "/images/dh002-back.png",
+        "DH003" => "/images/dh003-back.png",
+        "DH004" => "/images/dh004-back.png",
+        "DH005" => "/images/dh005-back.png",
+        _ => "/images/watch.svg"
+    };
     <article class="card product-card" data-dossier-source
         data-watch-id="@item.MaMau"
         data-watch-name="@item.TenMau"
@@ -14,6 +23,7 @@
         data-watch-warranty="@item.ThoiHanBaoHanh tháng"
         data-watch-stock="@(item.SoConHang > 0 ? "Có sẵn tại showroom" : "Hiện đã hết hàng")"
         data-watch-image="@(string.IsNullOrEmpty(item.HinhAnh) ? "/images/watch.svg" : item.HinhAnh)"
+        data-watch-back-image="@backImage"
         data-watch-detail="@Url.Action("ChiTiet", "DanhMuc", new { id = item.MaMau })">
         <a asp-controller="DanhMuc" asp-action="ChiTiet" asp-route-id="@item.MaMau" class="photo" data-dossier-open aria-haspopup="dialog" aria-label="Mở hồ sơ kỹ thuật: @item.TenMau">
             <span class="product-code">REF. @item.MaMau</span>
@@ -34,11 +44,15 @@
     <div class="dossier-grid">
         <div class="dossier-inspection">
             <div class="dossier-caliber-frame" id="dossier-caliber-frame">
-                <img id="dossier-image" src="/images/watch.svg" alt="" draggable="false" />
-                <button class="dossier-spin" type="button" data-dossier-spin aria-label="Xoay ảnh đồng hồ 360 độ"><partial name="_Icon" model='@("rotate")' /><span>Xoay 360°</span></button>
+                <div class="dossier-watch-stage" id="dossier-watch-stage">
+                    <img class="watch-face watch-face-front" id="dossier-image" src="/images/watch.svg" alt="" draggable="false" />
+                    <img class="watch-face watch-face-back" id="dossier-back-image" src="/images/watch.svg" alt="Mặt sau đồng hồ" draggable="false" />
+                </div>
+                <span class="dossier-side-label" id="dossier-side-label">MẶT TRƯỚC</span>
+                <button class="dossier-spin" type="button" data-dossier-spin aria-label="Xoay đồng hồ 360 độ để xem mặt sau"><partial name="_Icon" model='@("rotate")' /><span>Xoay 360°</span></button>
                 <span class="inspection-label">CALIBER MACRO INSPECTION</span>
             </div>
-            <p class="dossier-rotation-hint">Kéo ảnh sang ngang để xoay đồng hồ.</p>
+            <p class="dossier-rotation-hint">Kéo ngang để lật qua mặt sau; dùng nút để xem trọn một vòng.</p>
             <button class="lume-toggle" type="button" data-dossier-lume aria-pressed="false">Bật dạ quang Chromalight</button>
             <p class="dossier-disclaimer">Hiệu ứng dạ quang mô phỏng để tham khảo.</p>
         </div>
