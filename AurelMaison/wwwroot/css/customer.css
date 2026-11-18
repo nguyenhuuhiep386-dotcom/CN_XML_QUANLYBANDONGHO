@@ -1074,15 +1074,10 @@ td, th { border-color: rgba(197,168,128,.16); }
     .caliber-gear-one, .caliber-gear-two, .caliber-cage { animation: none; }
 }
 
-/* Front/back turntable in the technical dossier */
-.dossier-caliber-frame { perspective: 1100px; touch-action: pan-y; }
+/* Use real multi-angle product views from the linked source gallery. */
 .dossier-watch-stage {
     position: absolute;
     inset: 0;
-    transform: rotateY(var(--dossier-angle, 0deg));
-    transform-style: preserve-3d;
-    transition: transform .12s linear;
-    cursor: grab;
 }
 .dossier-watch-stage .watch-face {
     position: absolute;
@@ -1093,45 +1088,105 @@ td, th { border-color: rgba(197,168,128,.16); }
     pointer-events: none;
     user-select: none;
     -webkit-user-drag: none;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
     transition: filter .4s ease;
 }
-.dossier-watch-stage .watch-face-back { transform: rotateY(180deg) translateZ(1px); }
-.dossier-caliber-frame.is-dragging .dossier-watch-stage { cursor: grabbing; transition: none; }
-.dossier-caliber-frame.is-spinning .dossier-watch-stage { transition: none; }
-.dossier-caliber-frame.is-luminous .watch-face-front { filter: brightness(.78) saturate(.75) drop-shadow(0 0 22px rgba(56,242,210,.42)); }
-.dossier-caliber-frame.is-luminous .watch-face-back { filter: drop-shadow(0 16px 25px #0008); }
-.dossier-caliber-frame.is-luminous[data-watch-side="back"]::after { opacity: 0; }
-.dossier-side-label {
-    position: absolute;
-    z-index: 2;
-    top: 18px;
-    left: 16px;
-    color: var(--muted);
-    font: 8px/1.2 "JetBrains Mono", Consolas, monospace;
-    letter-spacing: .14em;
-    pointer-events: none;
-}
-.dossier-spin {
-    position: absolute;
-    z-index: 2;
-    top: 12px;
-    right: 12px;
-    min-height: 34px;
-    padding: 7px 10px;
-    gap: 7px;
-    border: 1px solid rgba(197,168,128,.38);
-    background: rgba(6,11,9,.82);
-    color: #e8dcc5;
-    font-size: 9px;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    backdrop-filter: blur(8px);
-}
-.dossier-spin:hover { border-color: var(--gold); background: #17241e; color: var(--gold); }
-.dossier-spin .icon { width: 15px; height: 15px; }
+.dossier-caliber-frame.is-luminous .watch-face { filter: brightness(.78) saturate(.75) drop-shadow(0 0 22px rgba(56,242,210,.42)); }
+.dossier-caliber-frame { touch-action: pan-y; }
+.dossier-watch-stage { cursor: default; }
+.dossier-caliber-frame.has-rotation .dossier-watch-stage { cursor: grab; }
+.dossier-caliber-frame.is-dragging .dossier-watch-stage { cursor: grabbing; }
+.dossier-rotation-controls:not([hidden]) { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; border: 1px solid rgba(197,168,128,.28); color: var(--gold); font-size: 11px; letter-spacing: .08em; }
+.dossier-rotation-controls button { min-width: 48px; min-height: 36px; border: 0; background: transparent; color: inherit; font-size: 18px; cursor: pointer; }
+.dossier-rotation-controls button:hover { background: rgba(197,168,128,.12); }
 .dossier-rotation-hint { margin: 7px 0 0; color: var(--muted); font-size: 9px; text-align: center; }
+.dossier-rotation-source { display: block; margin: 5px 0 12px; color: var(--muted); font-size: 9px; text-align: center; text-decoration: underline; text-underline-offset: 3px; }
+.dossier-rotation-source:hover { color: var(--gold); }
+
+/* Login: pull the clock cord to reveal the form. */
+body.ritual-locked #login-form-panel { display: none; }
+.login-ritual[hidden], .dossier-rotation-controls[hidden], .dossier-rotation-source[hidden] { display: none !important; }
+.login-ritual {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 420px) 170px;
+    align-items: center;
+    gap: 14px;
+    min-height: min(760px, calc(100svh - 170px));
+    margin: 8px auto 20px;
+    padding: clamp(34px, 5vw, 76px);
+    overflow: hidden;
+    border: 1px solid rgba(197,168,128,.2);
+    background: #07110e;
+    color: #f4f1ea;
+    isolation: isolate;
+}
+.ritual-ambient { position: absolute; z-index: -1; inset: 0; background: radial-gradient(ellipse at 54% 42%, #15281f 0, #0a1712 38%, #050b09 74%); }
+.ritual-ambient::before { content: ""; position: absolute; inset: 0; opacity: 0; background: radial-gradient(ellipse at 58% 40%, #b5966333 0, #3160482b 28%, transparent 69%); transition: opacity .8s ease; }
+.login-ritual.is-unlocking .ritual-ambient::before { opacity: 1; }
+.ritual-ambient::after { content: ""; position: absolute; inset: 22px; border: 1px solid rgba(197,168,128,.1); pointer-events: none; }
+.ritual-copy { position: relative; z-index: 2; max-width: 470px; }
+.ritual-copy .kicker { color: #c5a880; font-size: 10px; letter-spacing: .24em; }
+.ritual-copy h1 { margin: 24px 0 20px; color: #f4f1ea; font: 400 clamp(48px, 5.5vw, 86px)/.99 "Cormorant Garamond", Georgia, serif; }
+.ritual-copy h1 em { color: #c5a880; font-weight: 400; }
+.ritual-copy > p:last-child { max-width: 36ch; color: #b9c4bb; font-size: 13px; line-height: 1.9; }
+.ritual-scene { display: flex; align-items: center; justify-content: center; min-height: 570px; }
+.ritual-clock { position: relative; width: min(100%, 380px); aspect-ratio: 3 / 4; border: 2px solid #b59663; border-radius: 190px 190px 26px 26px; background: linear-gradient(125deg, #314032, #112219 44%, #08120e 80%); box-shadow: inset 0 0 0 9px #07140f, inset 0 0 0 11px #887754, inset 0 0 45px #000b, 0 38px 80px #0009, 0 0 80px #c5a88013; filter: brightness(.74); transition: filter .8s ease, box-shadow .8s ease; }
+.login-ritual.is-unlocking .ritual-clock { filter: brightness(1.12); box-shadow: inset 0 0 0 9px #07140f, inset 0 0 0 11px #c5a880, inset 0 0 45px #000b, 0 38px 80px #0009, 0 0 100px #c5a88066; }
+.ritual-clock::after { content: ""; position: absolute; inset: 12px; border: 1px solid #c5a88033; border-radius: inherit; pointer-events: none; }
+.ritual-clock-crown { position: absolute; left: 50%; top: -14px; width: 76px; height: 22px; transform: translateX(-50%); border-radius: 8px 8px 0 0; border: 1px solid #ba9c6a; background: linear-gradient(#b89a66, #57482b); }
+.ritual-clock-face { position: absolute; z-index: 2; left: 50%; top: 9%; width: 78%; aspect-ratio: 1; transform: translateX(-50%); border: 9px solid #968052; border-radius: 50%; background: radial-gradient(circle at 48% 39%, #1b392b, #0a1c14 72%); box-shadow: inset 0 0 0 2px #d0b47b, inset 0 0 0 9px #06120e, 0 18px 28px #0008; }
+.ritual-clock-face::before { content: ""; position: absolute; inset: 15px; border: 1px solid #c5a88077; border-radius: 50%; background: repeating-conic-gradient(from -1deg, #c5a880 0deg 1deg, transparent 1deg 6deg); mask: radial-gradient(circle, transparent 0 88%, #000 89% 94%, transparent 95%); }
+.ritual-clock-monogram { position: absolute; left: 50%; top: 27%; transform: translateX(-50%); color: #bda578; font: 22px "Cormorant Garamond", Georgia, serif; letter-spacing: .16em; }
+.ritual-clock-index { position: absolute; color: #d8c391; font: 19px "Cormorant Garamond", Georgia, serif; }
+.index-12 { top: 6%; left: 50%; transform: translateX(-50%); }
+.index-3 { right: 6%; top: 50%; transform: translateY(-50%); }
+.index-6 { bottom: 4%; left: 50%; transform: translateX(-50%); }
+.index-9 { left: 6%; top: 50%; transform: translateY(-50%); }
+.ritual-hand { position: absolute; z-index: 3; left: calc(50% - 2px); bottom: 50%; width: 4px; border-radius: 4px; background: linear-gradient(#f2dfb7, #9b8155); transform-origin: bottom center; }
+.ritual-hand-hour { height: 25%; transform: rotate(44deg); }
+.ritual-hand-minute { height: 35%; transform: rotate(232deg); }
+.ritual-hand-pin { position: absolute; z-index: 4; left: calc(50% - 6px); top: calc(50% - 6px); width: 12px; height: 12px; border-radius: 50%; background: #e0c696; box-shadow: 0 0 0 3px #584b31; }
+.ritual-pendulum { position: absolute; left: calc(50% - 10px); top: 69%; width: 20px; height: 24%; transform-origin: 50% 0; }
+.ritual-pendulum::before { content: ""; display: block; width: 3px; height: 77%; margin: auto; background: linear-gradient(90deg, #7f673c, #e2c996, #6e5631); }
+.ritual-pendulum span { display: block; width: 54px; height: 54px; margin: -2px 0 0 -17px; border: 2px solid #d9bc83; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #e4c990, #9c7840 55%, #372b18); box-shadow: 0 6px 17px #0009; }
+.ritual-action { position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center; align-self: stretch; justify-content: center; text-align: center; }
+.ritual-action-label { color: #c5a880; font: 10px "JetBrains Mono", Consolas, monospace; letter-spacing: .18em; white-space: nowrap; }
+.ritual-cord { position: relative; display: block; width: 100px; height: 260px; margin: 12px auto 0; padding: 0; border: 0; background: transparent; cursor: grab; touch-action: none; --cord-pull: 0px; }
+.ritual-cord:active { cursor: grabbing; }
+.ritual-cord-line { position: absolute; left: calc(50% - 1px); top: 0; width: 2px; height: calc(184px + var(--cord-pull)); background: linear-gradient(90deg, #755d38, #e2ca99, #725932); }
+.ritual-cord-handle { position: absolute; left: calc(50% - 19px); top: 180px; width: 38px; height: 38px; transform: translateY(var(--cord-pull)); border: 3px solid #c9aa73; border-radius: 50%; background: radial-gradient(circle, #3b3829, #121a15); box-shadow: 0 0 0 8px #c5a88016, 0 10px 22px #0008; }
+.ritual-cord:focus-visible { outline: 2px solid #ead6af; outline-offset: 5px; }
+.ritual-action p { margin: 0; max-width: 15ch; color: #aab7aa; font-size: 10px; line-height: 1.5; }
+.login-ritual.is-unlocking .ritual-pendulum { animation: ritual-swing .74s ease-in-out infinite alternate; }
+.login-ritual.is-unlocking .ritual-hand-minute { animation: ritual-hand-turn 1.3s ease-in-out both; }
+.login-ritual.is-unlocking .ritual-scene { animation: ritual-glow 1.3s ease-in-out both; }
+.ritual-revealed #login-form-panel { animation: ritual-form-enter .55s ease-out both; }
+@keyframes ritual-swing { from { transform: rotate(-22deg); } to { transform: rotate(22deg); } }
+@keyframes ritual-hand-turn { to { transform: rotate(580deg); } }
+@keyframes ritual-glow { to { filter: drop-shadow(0 0 35px #c5a88069); } }
+@keyframes ritual-form-enter { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 980px) {
+    .login-ritual { grid-template-columns: minmax(0, 1fr) minmax(230px, 330px); min-height: 630px; padding: 36px; }
+    .ritual-action { grid-column: 1 / -1; flex-direction: row; justify-content: center; gap: 12px; align-self: auto; }
+    .ritual-cord { width: 75px; height: 160px; margin: 0; }
+    .ritual-cord-line { height: calc(70px + var(--cord-pull)); }
+    .ritual-cord-handle { top: 65px; }
+    .ritual-action p { max-width: 18ch; }
+    .ritual-scene { min-height: 400px; }
+}
+@media (max-width: 650px) {
+    .login-ritual { display: flex; flex-direction: column; min-height: calc(100svh - 90px); gap: 20px; padding: 38px 22px; }
+    .ritual-copy { align-self: stretch; text-align: center; }
+    .ritual-copy h1 { margin: 12px 0; font-size: clamp(44px, 13vw, 64px); }
+    .ritual-copy > p:last-child { margin-inline: auto; }
+    .ritual-scene { width: 100%; min-height: 0; flex: 1; }
+    .ritual-clock { width: min(56vw, 230px); }
+    .ritual-clock-face { border-width: 6px; }
+    .ritual-clock-index { font-size: 13px; }
+    .ritual-clock-monogram { font-size: 15px; }
+    .ritual-action { flex-wrap: wrap; }
+    .ritual-action-label { width: 100%; }
+}
 @media (prefers-reduced-motion: reduce) {
-    .dossier-watch-stage { transition: none; }
+    .login-ritual.is-unlocking .ritual-pendulum, .login-ritual.is-unlocking .ritual-hand-minute, .login-ritual.is-unlocking .ritual-scene, .ritual-revealed #login-form-panel { animation: none; }
 }

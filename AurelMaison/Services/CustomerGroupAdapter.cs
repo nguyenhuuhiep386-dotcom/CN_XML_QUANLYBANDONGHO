@@ -54,15 +54,7 @@ public sealed class CustomerGroupAdapter(AuthService auth, KhachHangService cust
 
     private static DongHo Map(MauDongHo model)
     {
-        var image = model.MaMau switch
-        {
-            "DH001" => "/images/dh001-cutout.png",
-            "DH002" => "/images/dh002-cutout.png",
-            "DH003" => "/images/dh003-cutout.png",
-            "DH004" => "/images/dh004-cutout.png",
-            "DH005" => "/images/dh005-cutout.png",
-            _ => model.HinhAnh ?? ""
-        };
+        var image = model.HinhAnh ?? "";
 
         return new(model.MaMau, model.TenMau, model.MaHang, model.TenHang,
             model.Gia, model.LoaiMay, model.KichThuoc, model.ChatLieu, model.MoTa ?? "", image,

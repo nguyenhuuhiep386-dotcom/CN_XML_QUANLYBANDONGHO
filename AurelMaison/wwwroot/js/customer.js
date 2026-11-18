@@ -60,77 +60,68 @@
         const fitCopy = document.getElementById("dossier-fit-copy");
         const imageFrame = document.getElementById("dossier-caliber-frame");
         const watchImage = document.getElementById("dossier-image");
-        const backImage = document.getElementById("dossier-back-image");
-        const watchStage = document.getElementById("dossier-watch-stage");
-        const sideLabel = document.getElementById("dossier-side-label");
-        const spinButton = document.querySelector("[data-dossier-spin]");
+        const rotationLink = document.getElementById("dossier-360-link");
+        const rotationHint = document.getElementById("dossier-rotation-hint");
+        const rotationControls = document.getElementById("dossier-rotation-controls");
+        const rotationCount = document.getElementById("dossier-rotation-count");
         const lumeToggle = document.querySelector("[data-dossier-lume]");
         const setText = (id, value) => { document.getElementById(id).textContent = value || "—"; };
-        let watchAngle = 0;
-        let activePointer = null;
-        let previousPointerX = 0;
-        let spinAnimationFrame = 0;
+        let rotationFramesBase = "";
+        let rotationPointer = null;
+        let previousRotationX = 0;
+        let rotationFrame = 0;
+        let rotationRemainder = 0;
+        let fallbackWatchImage = "/images/watch.svg";
 
-        const setWatchAngle = () => {
-            const normalizedAngle = ((watchAngle % 360) + 360) % 360;
-            watchStage.style.setProperty("--dossier-angle", `${watchAngle}deg`);
-            const side = normalizedAngle > 90 && normalizedAngle < 270 ? "back" : "front";
-            imageFrame.dataset.watchSide = side;
-            sideLabel.textContent = side === "back" ? "MẶT SAU" : "MẶT TRƯỚC";
+        const rotationFrameUrl = frame => `${rotationFramesBase}${String(frame + 1).padStart(2, "0")}.jpg`;
+        const showRotationFrame = () => {
+            watchImage.src = rotationFrameUrl(rotationFrame);
+            rotationCount.textContent = `Góc ${rotationFrame + 1} / 36`;
         };
-
+        watchImage.addEventListener("error", () => {
+            if (!rotationFramesBase) return;
+            rotationFramesBase = "";
+            imageFrame.classList.remove("has-rotation");
+            rotationControls.hidden = true;
+            rotationHint.textContent = "Bộ ảnh 360° hiện không tải được. Mở trang nguồn để xem trực tiếp.";
+            watchImage.src = fallbackWatchImage;
+        });
         imageFrame.addEventListener("pointerdown", event => {
-            if (event.target.closest("[data-dossier-spin]")) return;
-            if (event.button !== 0 && event.pointerType === "mouse") return;
-            if (spinAnimationFrame) window.cancelAnimationFrame(spinAnimationFrame);
-            spinAnimationFrame = 0;
-            imageFrame.classList.remove("is-spinning");
-            activePointer = event.pointerId;
-            previousPointerX = event.clientX;
-            imageFrame.classList.add("is-dragging");
+            if (!rotationFramesBase || (event.button !== 0 && event.pointerType === "mouse")) return;
+            rotationPointer = event.pointerId;
+            previousRotationX = event.clientX;
             imageFrame.setPointerCapture(event.pointerId);
+            imageFrame.classList.add("is-dragging");
         });
         imageFrame.addEventListener("pointermove", event => {
-            if (event.pointerId !== activePointer) return;
-            const delta = event.clientX - previousPointerX;
-            previousPointerX = event.clientX;
-            watchAngle = (watchAngle + delta / Math.max(1, imageFrame.clientWidth) * 360) % 360;
-            setWatchAngle();
+            if (event.pointerId !== rotationPointer) return;
+            const delta = event.clientX - previousRotationX;
+            previousRotationX = event.clientX;
+            rotationRemainder -= delta / Math.max(1, imageFrame.clientWidth) * 36;
+            const frameDelta = Math.trunc(rotationRemainder);
+            if (!frameDelta) return;
+            rotationRemainder -= frameDelta;
+            rotationFrame = (rotationFrame - frameDelta + 36) % 36;
+            showRotationFrame();
         });
-        const endWatchDrag = event => {
-            if (event.pointerId !== activePointer) return;
-            activePointer = null;
+        const endRotationDrag = event => {
+            if (event.pointerId !== rotationPointer) return;
+            rotationPointer = null;
             imageFrame.classList.remove("is-dragging");
             if (imageFrame.hasPointerCapture(event.pointerId)) imageFrame.releasePointerCapture(event.pointerId);
         };
-        imageFrame.addEventListener("pointerup", endWatchDrag);
-        imageFrame.addEventListener("pointercancel", endWatchDrag);
-
-        spinButton.addEventListener("click", () => {
-            if (spinAnimationFrame) return;
-            if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-                watchAngle += 360;
-                setWatchAngle();
-                return;
-            }
-            const initialAngle = watchAngle;
-            const startedAt = performance.now();
-            imageFrame.classList.add("is-spinning");
-            const animateTurn = now => {
-                const progress = Math.min(1, (now - startedAt) / 1250);
-                watchAngle = initialAngle + 360 * progress;
-                setWatchAngle();
-                if (progress < 1) spinAnimationFrame = window.requestAnimationFrame(animateTurn);
-                else {
-                    watchAngle = initialAngle + 360;
-                    setWatchAngle();
-                    spinAnimationFrame = 0;
-                    imageFrame.classList.remove("is-spinning");
-                }
-            };
-            spinAnimationFrame = window.requestAnimationFrame(animateTurn);
+        imageFrame.addEventListener("pointerup", endRotationDrag);
+        imageFrame.addEventListener("pointercancel", endRotationDrag);
+        document.querySelector("[data-rotation-prev]").addEventListener("click", () => {
+            if (!rotationFramesBase) return;
+            rotationFrame = (rotationFrame + 35) % 36;
+            showRotationFrame();
         });
-
+        document.querySelector("[data-rotation-next]").addEventListener("click", () => {
+            if (!rotationFramesBase) return;
+            rotationFrame = (rotationFrame + 1) % 36;
+            showRotationFrame();
+        });
         const updateWristEstimate = () => {
             const wristCm = Number(wrist.value);
             const diameter = Number(dossier.dataset.diameter || 0);
@@ -158,15 +149,25 @@
                 setText("dossier-size", `${card.dataset.watchSize || "—"} mm`);
                 setText("dossier-material", card.dataset.watchMaterial);
                 setText("dossier-warranty", card.dataset.watchWarranty);
-                watchImage.src = card.dataset.watchImage;
+                rotationFramesBase = card.dataset.watch360Frames || "";
+                rotationFrame = 0;
+                rotationRemainder = 0;
+                fallbackWatchImage = card.dataset.watchImage || "/images/watch.svg";
+                rotationControls.hidden = !rotationFramesBase;
+                imageFrame.classList.toggle("has-rotation", Boolean(rotationFramesBase));
+                if (rotationFramesBase) showRotationFrame();
+                else watchImage.src = fallbackWatchImage;
                 watchImage.alt = `${card.dataset.watchName || "Đồng hồ"} — mặt trước`;
-                backImage.src = card.dataset.watchBackImage || "/images/watch.svg";
-                backImage.alt = `${card.dataset.watchName || "Đồng hồ"} — mặt sau`;
-                watchAngle = 0;
-                setWatchAngle();
-                if (spinAnimationFrame) window.cancelAnimationFrame(spinAnimationFrame);
-                spinAnimationFrame = 0;
-                imageFrame.classList.remove("is-spinning", "is-dragging");
+                rotationLink.href = card.dataset.watch360Url || "#";
+                rotationLink.hidden = !card.dataset.watch360Url;
+                rotationLink.textContent = rotationFramesBase
+                    ? "Nguồn bộ ảnh 360° ↗"
+                    : card.dataset.watchId === "DH003"
+                        ? "Xem bộ ảnh nhiều góc chính hãng ↗"
+                        : "Mở trang nguồn, chọn xem 360° ↗";
+                rotationHint.textContent = rotationFramesBase
+                    ? "Kéo ngang trên ảnh hoặc bấm mũi tên để xem 36 góc."
+                    : "Mở thư viện ảnh 360° của nhà bán lẻ để xem đầy đủ góc cạnh.";
                 document.getElementById("dossier-cart-id").value = card.dataset.watchId || "";
                 const addToTray = dossier.querySelector("form button[type='submit']");
                 addToTray.disabled = (card.dataset.watchStock || "").includes("hết hàng");
@@ -197,9 +198,9 @@
             if (event.target === dossier) dossier.close();
         });
         dossier.addEventListener("close", () => {
-            if (spinAnimationFrame) window.cancelAnimationFrame(spinAnimationFrame);
-            spinAnimationFrame = 0;
-            imageFrame.classList.remove("is-luminous", "is-spinning", "is-dragging");
+            imageFrame.classList.remove("is-luminous");
+            imageFrame.classList.remove("is-dragging");
+            rotationPointer = null;
             lumeToggle.setAttribute("aria-pressed", "false");
             lumeToggle.textContent = "Bật dạ quang Chromalight";
         });

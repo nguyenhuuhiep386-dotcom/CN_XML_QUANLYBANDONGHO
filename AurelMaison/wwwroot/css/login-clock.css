@@ -1,0 +1,217 @@
+.login-stage {
+    display: grid;
+    grid-template-columns: minmax(270px, .82fr) minmax(360px, 1fr);
+    align-items: center;
+    gap: clamp(24px, 5vw, 80px);
+    max-width: 1260px;
+    min-height: 610px;
+    margin: 14px auto 32px;
+    padding: clamp(34px, 5vw, 74px);
+    border: 1px solid rgba(197, 168, 128, .2);
+    background: radial-gradient(ellipse at 50% 37%, #15231c 0, #07110d 52%, #040907 100%);
+    color: #f4f1ea;
+    transition: min-height .7s ease;
+}
+.login-stage.is-ready:not(.is-open) { grid-template-columns: minmax(0, 1fr) minmax(270px, 470px); min-height: min(730px, calc(100svh - 170px)); }
+.login-stage .ritual-copy { display: none; grid-column: 1; grid-row: 1; max-width: 530px; }
+.login-stage.is-ready:not(.is-open) .ritual-copy { display: block; }
+.login-stage .ritual-copy .kicker { color: #c5a880; font-size: 10px; letter-spacing: .2em; }
+.login-stage .ritual-copy h1 { margin: 22px 0; color: #f4f1ea; font: 400 clamp(56px, 6vw, 92px)/1 "Cormorant Garamond", Georgia, serif; }
+.login-stage .ritual-copy h1 em { color: #c5a880; font-weight: 400; }
+.login-stage .ritual-copy > p:last-child { max-width: 38ch; color: #adbcb0; font-size: 14px; line-height: 1.8; }
+.login-stage .ritual-scene { grid-column: 1; grid-row: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 520px; overflow: visible; }
+.login-stage.is-ready:not(.is-open) .ritual-scene { grid-column: 2; }
+.login-stage .ritual-clock {
+    position: relative;
+    width: 240px;
+    height: 465px;
+    aspect-ratio: auto;
+    flex: none;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    filter: drop-shadow(0 20px 22px #000b);
+    transform: scale(.78);
+    transform-origin: 50% 50%;
+    transition: transform .7s cubic-bezier(.22, 1, .36, 1), filter .5s ease;
+}
+.login-stage.is-ready:not(.is-open) .ritual-clock { transform: scale(1.14); }
+.login-stage.is-open .ritual-clock { transform: scale(.78); }
+.login-stage .ritual-clock::after { content: none; }
+.ritual-top-bead { position: absolute; left: 103px; top: 0; width: 34px; height: 34px; border: 1px solid #d0a975; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #ebcb98, #926840 66%, #3a291a); box-shadow: 0 0 20px #c5a8802a; }
+.ritual-upper-chain { position: absolute; left: 118px; top: 33px; width: 4px; height: 140px; background: repeating-linear-gradient(to bottom, #d8b47d 0 3px, #503a22 3px 6px); box-shadow: 1px 0 2px #000; }
+.ritual-canopy { position: absolute; left: 86px; top: 170px; width: 68px; height: 22px; border: 1px solid #c69b65; border-radius: 50% 50% 42% 42%; background: linear-gradient(#e4bd86, #6e4726 50%, #d2a271 72%, #382417); box-shadow: 0 5px 10px #0008; }
+.login-stage .ritual-clock-face {
+    position: absolute;
+    left: 48px;
+    top: 203px;
+    width: 144px;
+    height: 144px;
+    aspect-ratio: 1;
+    transform: none;
+    border: 7px ridge #a87543;
+    border-radius: 50%;
+    background: radial-gradient(circle at 42% 36%, #765332 0, #342418 62%, #160f0b 100%);
+    box-shadow: inset 0 0 0 3px #d6a36e, inset 0 0 0 8px #312018, 0 0 0 2px #4f321d, 0 12px 20px #000a;
+}
+.login-stage .ritual-clock-face::before { inset: 9px; border-color: #a67849; }
+.login-stage .ritual-clock-index { color: #dfbb86; font-size: 16px; text-shadow: 0 1px 2px #000; }
+.login-stage .index-12 { top: 9%; }
+.login-stage .index-3 { right: 9%; }
+.login-stage .index-6 { bottom: 6%; }
+.login-stage .index-9 { left: 9%; }
+.login-stage .ritual-hand { width: 3px; left: calc(50% - 1.5px); background: linear-gradient(#edca91, #8f5c32); }
+.login-stage .ritual-hand-hour { height: 27%; transform: rotate(-42deg); }
+.login-stage .ritual-hand-minute { height: 39%; transform: rotate(44deg); }
+.login-stage .ritual-hand-pin { background: #e5bc7e; box-shadow: 0 0 0 2px #684221; }
+.login-stage .ritual-cord { position: absolute; left: 70px; top: 346px; width: 100px; height: 116px; margin: 0; padding: 0; border: 0; background: transparent; cursor: grab; touch-action: none; --cord-pull: 0px; }
+.login-stage .ritual-cord:active { cursor: grabbing; }
+.login-stage .ritual-cord-line { position: absolute; left: 49px; top: 0; width: 2px; height: calc(79px + var(--cord-pull)); background: linear-gradient(90deg, #563920, #d6ac72, #51341c); }
+.login-stage .ritual-cord-handle { position: absolute; left: 37px; top: 76px; width: 26px; height: 26px; transform: translateY(var(--cord-pull)); border: 1px solid #d8af78; border-radius: 50%; background: radial-gradient(circle at 36% 28%, #e4c194, #86603a 65%, #2e1d13); box-shadow: 0 8px 15px #0009; }
+.login-stage .ritual-cord:focus-visible { outline: 2px solid #f0d3a2; outline-offset: 2px; }
+.login-stage .ritual-instruction { margin: -15px 0 0; color: #c5a880; font: 10px "JetBrains Mono", Consolas, monospace; letter-spacing: .13em; text-align: center; }
+.login-stage .auth-form { grid-column: 2; grid-row: 1; padding: 36px; background: transparent; }
+.login-stage .auth-form h2 { font: 400 48px/1.1 "Cormorant Garamond", Georgia, serif; }
+.login-stage .auth-form .stack { gap: 17px; }
+.login-stage.is-ready:not(.is-open) .auth-form { display: none; }
+.login-stage.is-switching .ritual-clock-face { animation: clock-awaken .7s ease-in-out; }
+.login-stage.is-open .auth-form { animation: login-reveal .55s ease-out; }
+@keyframes clock-awaken { 50% { box-shadow: inset 0 0 0 3px #e3c08c, inset 0 0 0 8px #312018, 0 0 35px #c5a88077; } }
+@keyframes login-reveal { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 760px) {
+    .login-stage, .login-stage.is-ready:not(.is-open) { display: flex; flex-direction: column; gap: 10px; min-height: auto; padding: 30px 20px; }
+    .login-stage .ritual-copy { text-align: center; }
+    .login-stage .ritual-copy h1 { font-size: clamp(48px, 12vw, 70px); }
+    .login-stage .ritual-copy > p:last-child { margin-inline: auto; }
+    .login-stage .ritual-scene { min-height: 380px; width: 100%; }
+    .login-stage.is-ready:not(.is-open) .ritual-scene { min-height: 490px; }
+    .login-stage .ritual-clock, .login-stage.is-open .ritual-clock { transform: scale(.72); }
+    .login-stage.is-ready:not(.is-open) .ritual-clock { transform: scale(.94); }
+    .login-stage .auth-form { width: 100%; padding: 15px 2px 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .login-stage, .login-stage .ritual-clock { transition: none; }
+    .login-stage.is-switching .ritual-clock-face, .login-stage.is-open .auth-form { animation: none; }
+}
+
+/* Skeleton ignition: a single pocket watch and its attached winding chain. */
+.login-stage, .login-stage.is-ready:not(.is-open) {
+    border: 0;
+    background: radial-gradient(ellipse at 42% 46%, #0e2017 0, #06100c 48%, #030806 100%);
+    --wind-angle: 0deg;
+    --light-strength: 0;
+}
+.login-stage .ritual-scene, .login-stage.is-ready:not(.is-open) .ritual-scene {
+    position: relative;
+    min-height: 670px;
+    isolation: isolate;
+}
+.login-stage.is-open .ritual-scene { min-height: 550px; }
+.login-stage .ritual-scene::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    left: 24%;
+    top: 12%;
+    width: 170%;
+    height: 75%;
+    opacity: var(--light-strength);
+    pointer-events: none;
+    background: radial-gradient(ellipse at 30% 50%, rgba(201,169,119,.3), rgba(201,169,119,.1) 37%, transparent 70%);
+    filter: blur(22px);
+    transition: opacity .65s ease;
+}
+.login-stage.is-open .ritual-scene::before { opacity: 1; }
+.login-stage .ritual-clock, .login-stage.is-ready:not(.is-open) .ritual-clock {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 360px;
+    height: 590px;
+    margin-left: -180px;
+    filter: drop-shadow(0 22px 24px #000b);
+    transform: scale(1);
+    transform-origin: 50% 42%;
+    transition: transform .75s cubic-bezier(.22, 1, .36, 1), filter .75s ease;
+}
+.login-stage.is-open .ritual-clock { transform: translateX(-12%) scale(.77); filter: drop-shadow(0 8px 28px #c9a97755); }
+.page-account.action-login { overflow-x: hidden; }
+.login-stage { max-width: 100%; overflow-x: clip; }
+.skeleton-watch { display: block; width: 360px; height: 380px; overflow: visible; }
+.skeleton-gears { opacity: .4; transition: opacity .5s ease; }
+.login-stage.is-open .skeleton-gears { opacity: .48; }
+.skeleton-gear { transform-box: fill-box; transform-origin: center; }
+.gear-a { transform: rotate(var(--wind-angle)); }
+.gear-b { transform: rotate(calc(var(--wind-angle) * -1.5)); }
+.login-stage.is-open:not(.is-pulling) .gear-a { animation: gear-wind-clockwise 9s linear infinite; }
+.login-stage.is-open:not(.is-pulling) .gear-b { animation: gear-wind-counterclockwise 6s linear infinite; }
+.skeleton-indices, .skeleton-hands { opacity: .35; transition: opacity .6s ease, filter .6s ease; }
+.login-stage.is-pulling .skeleton-indices, .login-stage.is-pulling .skeleton-hands, .login-stage.is-open .skeleton-indices, .login-stage.is-open .skeleton-hands { opacity: 1; filter: drop-shadow(0 0 5px #e5c18a); }
+.skeleton-hands line { stroke: #e5c18a; stroke-linecap: round; transform-box: view-box; transform-origin: 180px 202px; }
+.watch-hour-hand { stroke-width: 7; transform: rotate(var(--hour-angle, 0deg)); }
+.watch-minute-hand { stroke-width: 5; transform: rotate(var(--minute-angle, 0deg)); }
+.watch-second-hand { stroke: #f1d5a5 !important; stroke-width: 2; transform: rotate(var(--second-angle, 0deg)); }
+.login-stage.is-open .watch-second-hand { transition: transform .1s linear; }
+.login-stage .ritual-cord {
+    position: absolute;
+    left: 130px;
+    top: 360px;
+    width: 100px;
+    height: 210px;
+    --cord-pull: 0px;
+}
+.login-stage button.ritual-cord,
+.login-stage button.ritual-cord:hover,
+.login-stage button.ritual-cord:active {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    color: inherit;
+}
+.login-stage .ritual-cord-line { left: 49px; top: 0; height: calc(91px + var(--cord-pull)); width: 1.5px; background: linear-gradient(to bottom, #8b6d3f, #e6cc9c 55%, #b89356); }
+.login-stage .ritual-cord-handle { left: 36px; top: 88px; width: 28px; height: 28px; transform: translateY(var(--cord-pull)); box-shadow: 0 8px 16px #0009; animation: winding-bead-sway 2.8s ease-in-out infinite alternate; }
+.login-stage.is-pulling .ritual-cord-handle, .login-stage.is-switching .ritual-cord-handle { animation: none; }
+.login-stage:not(.is-pulling) .ritual-cord-line { transition: height .45s cubic-bezier(.34, 1.56, .64, 1); }
+.login-stage:not(.is-pulling) .ritual-cord-handle { transition: transform .45s cubic-bezier(.34, 1.56, .64, 1); }
+.login-stage .ritual-instruction { position: absolute; top: 635px; left: 0; right: 0; margin: 0; line-height: 1.6; }
+.login-stage.is-open .ritual-instruction { top: 525px; }
+.login-stage .auth-form.login-glass-card {
+    position: relative;
+    z-index: 2;
+    background: linear-gradient(135deg, rgba(201,169,119,.09), rgba(6,16,12,.78));
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(201,169,119,.14);
+    border-left-color: rgba(201,169,119,.55);
+    box-shadow: -20px 0 60px rgba(201,169,119,.11), 0 24px 48px rgba(0,0,0,.6);
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+    transition: opacity .65s ease .2s, transform .65s ease .2s, visibility .65s;
+}
+.login-stage.is-ready:not(.is-open) .auth-form.login-glass-card { display: block; opacity: 0; visibility: hidden; pointer-events: none; transform: translateX(24px); transition-delay: 0s; }
+.login-stage.is-open .auth-form.login-glass-card { animation: none; }
+.login-stage .auth-switch a { color: #c9a977; font-weight: 600; }
+.login-stage .auth-switch a:hover { color: #f1d3a1; }
+.login-stage .aurel-input { background: #0b1914; color: #f4efe6; border-color: rgba(201,169,119,.28); }
+.login-stage .aurel-input:-webkit-autofill,
+.login-stage .aurel-input:-webkit-autofill:hover,
+.login-stage .aurel-input:-webkit-autofill:focus { -webkit-text-fill-color: #f4efe6; -webkit-box-shadow: 0 0 0 1000px #0b1914 inset; transition: background-color 5000s ease-in-out 0s; }
+@keyframes winding-bead-sway { from { rotate: -2deg; } to { rotate: 2deg; } }
+@keyframes gear-wind-clockwise { to { transform: rotate(360deg); } }
+@keyframes gear-wind-counterclockwise { to { transform: rotate(-360deg); } }
+@media (max-width: 760px) {
+    .login-stage .ritual-scene, .login-stage.is-ready:not(.is-open) .ritual-scene { min-height: 570px; }
+    .login-stage.is-open .ritual-scene { min-height: 530px; }
+    .login-stage .ritual-clock, .login-stage.is-ready:not(.is-open) .ritual-clock { transform: scale(.8); }
+    .login-stage.is-open .ritual-clock { transform: scale(.66); }
+    .login-stage .ritual-instruction { top: 535px; }
+    .login-stage.is-open .ritual-instruction { top: 495px; }
+    .login-stage .auth-form.login-glass-card { width: 100%; padding: 26px 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .login-stage.is-open .gear-a, .login-stage.is-open .gear-b, .login-stage .ritual-cord-handle { animation: none; }
+    .login-stage .auth-form.login-glass-card, .login-stage .ritual-clock { transition-duration: .01ms; }
+}
